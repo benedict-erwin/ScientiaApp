@@ -149,8 +149,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $csearch = null;
             $corder = null;
             $prikey = null;
-            $gmp_val = [];
-            $gmp_fil = [];
             $input = [];
             $tbcols = [];
             $colTypeToSearch = ['char', 'text'];
@@ -192,6 +190,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             }
 
             /* Variable for generate backend */
+            $groupmenu = $this->dbpdo->get('m_groupmenu', ['nama', 'icon'], ['id_groupmenu' => $safe['m_groupmenu']]);
             $data['className'] = $safe['controller'];
             $data['tableName'] = $safe['get_tables'];
             $data['columnsSelect'] = empty($cselect) ? null : trim($cselect, ', ');
@@ -205,7 +204,8 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $data['describe'] = $describe;
             $data['relation'] = $relation;
             $data['id_groupmenu'] = $safe['m_groupmenu'];
-            $data['nama_groupmenu'] = $this->dbpdo->get('m_groupmenu', 'nama', ['id_groupmenu' => $safe['m_groupmenu']]);
+            $data['nama_groupmenu'] = $groupmenu['nama'];
+            $data['icon_groupmenu'] = $groupmenu['icon'];
             $data['menu'] = ucwords(strtolower($safe['menu']));
             $data['url'] = strtolower(trim($safe['url'], "/"));
             $data['crud'] = $safe['crud'];
@@ -916,7 +916,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $html .= "\n\t\t\t\t\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-12\">";
         $html .= "\n\t\t\t\t\t\t\t<div class=\"breadcomb-wp\">";
         $html .= "\n\t\t\t\t\t\t\t\t<div class=\"breadcomb-icon\">";
-        $html .= "\n\t\t\t\t\t\t\t\t\t<i class=\"notika-icon notika-app animated infinite flip\"></i>";
+        $html .= "\n\t\t\t\t\t\t\t\t\t<i class=\"notika-icon " . $data['icon_groupmenu'] . " animated infinite flip\"></i>";
         $html .= "\n\t\t\t\t\t\t\t\t</div>";
         $html .= "\n\t\t\t\t\t\t\t\t<div class=\"breadcomb-ctn\">";
         $html .= "\n\t\t\t\t\t\t\t\t\t<h2>" . $data['menu'] . "</h2>";
@@ -960,26 +960,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $fmSelect = null;
             $html .= $this->filterTableTop($data['relation']['relation']);
             foreach ($data['relation']['relation'] as $col) {
-                // /* Filter - Table Top */
-                // if ($idx % 4 == 0) {
-                //     $html .= "\n\t\t\t\t\t\t\t\t<div class=\"row margin-bt-20\">";
-                // }
-
-                // $html .= "\n\t\t\t\t\t\t\t\t\t<div class=\"col-lg-3 col-md-3 col-sm-3 col-xs-12\">";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t<div class=\"nk-int-mk sl-dp-mn\">";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t\t<h2>Filter " . ucwords($col["REFERENCED_COLUMN_NAME"]) . "</h2>";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t</div>";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t<span style=\"margin-left: 10px;\"><i class=\"fa fa-spinner fa-spin\"></i> Please wait...</span>";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t<div class=\"chosen-select-act fm-cmp-mg\" style=\"display:none;\">";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t\t<select id=\"" . $col['REFERENCED_TABLE_NAME'] . "\" name=\"" . $col['REFERENCED_TABLE_NAME'] . "\" class=\"chosen " . $col["REFERENCED_COLUMN_NAME"] . "\"></select>";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t\t</div>";
-                // $html .= "\n\t\t\t\t\t\t\t\t\t</div>";
-
-                // if ($idx % 4 == 0) {
-                //     $html .= "\n\t\t\t\t\t\t\t\t</div>";
-                // }
-                // $idx++;
-
                 /* Select - Modal Form */
                 $fmSelect .= "\n\t\t\t\t\t<div class=\"form-group-15\">";
                 $fmSelect .= "\n\t\t\t\t\t\t<label>" . ucwords($col["REFERENCED_COLUMN_NAME"]) . " <span class=\"required\">*</span></label>";
