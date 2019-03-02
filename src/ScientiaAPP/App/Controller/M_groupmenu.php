@@ -164,7 +164,7 @@ class M_groupmenu extends \App\Plugin\DataTables
 		if ($this->safe){
 			try {
 				/* Prepare vars */
-				$$this->safe['aktif'] = (isset($this->safe['aktif'])) ? (($this->safe['aktif'] == 1) ? 1:0):0;
+				$this->safe['aktif'] = (isset($this->safe['aktif'])) ? (($this->safe['aktif'] == 1) ? 1:0):0;
                 $where = [$this->PKEY => $this->safe['pKey']];
                 unset($this->safe['pKey']);
 
