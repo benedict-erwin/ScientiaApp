@@ -805,7 +805,10 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t/* Check Cache */";
             $php .= "\n\t\t\t\t\$output = [];";
             $php .= "\n\t\t\t\t\$opsional = (isset(\$this->safe[\"opsional\"]) ? json_encode(\$this->safe[\"opsional\"]):null);";
-            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$this->safe[\"start\"] . \$this->safe[\"length\"] . \$opsional . \$this->safe[\"search\"][\"value\"]);";
+            $php .= "\n\t\t\t\t\$search = (isset(\$this->safe['search']['value']) ? \$this->safe['search']['value']:null);";
+            $php .= "\n\t\t\t\t\$length = (isset(\$this->safe['length']) ? \$this->safe['length']:null);";
+            $php .= "\n\t\t\t\t\$start = (isset(\$this->safe['start']) ? \$this->safe['start']:null);";
+            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$start . \$length . \$opsional . \$search);";
             $php .= "\n\t\t\t\t\$CachedString = \$this->InstanceCache->getItem(\$ckey);\n";
             $php .= "\n\t\t\t\t/* If not in Cache */";
             $php .= "\n\t\t\t\tif(is_null(\$CachedString->get())){";

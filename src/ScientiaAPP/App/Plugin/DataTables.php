@@ -90,7 +90,7 @@ class DataTables extends \App\Controller\BaseController
             }, $this->COLUMNS));
             $sql = "SELECT " . $backtick . " FROM " . "`".$this->TABLE."`";
         }
-        
+
         if (array_key_exists('opsional', $safe)) {
             $x = 0;
             foreach ($safe['opsional'][0] as $key => $nilai) {
@@ -101,13 +101,13 @@ class DataTables extends \App\Controller\BaseController
                             return "`".$a."`";
                         }, explode('.', preg_replace('/[^a-zA-Z_.]*/', '', $key)))
                     );
-    
+
                     /* Explode get table column */
                     if (strpos($key, '.')!==false) {
                         $xp = explode('.', $key);
                         $binder = end($xp);
                     }
-                    
+
                     if ($x===0) { //first loop
                         if (!empty($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
@@ -115,7 +115,7 @@ class DataTables extends \App\Controller\BaseController
                             } else {
                                 $sql .= " WHERE ";
                             }
-                            
+
                             $sql .= " ( "; //open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
                             $sql .= $kol . " = :" . $binder;
                         }
@@ -126,11 +126,11 @@ class DataTables extends \App\Controller\BaseController
                             } else {
                                 $sql .= " WHERE ";
                             }
-    
+
                             $sql .= $kol . " = :" . $binder;
                         }
                     }
-                    
+
                     if (count(array_filter($safe['opsional'][0])) - 1 == $x) {
                         $sql .= " ) "; //close bracket
                     }
@@ -181,9 +181,16 @@ class DataTables extends \App\Controller\BaseController
     /* Function Execute main query for DataTables */
     protected function get_datatables(array $safe)
     {
+        if (!isset($safe['start'])) {
+            throw new \Exception("Start param is required!", 1);
+        }
+        if (!isset($safe['length'])) {
+            throw new \Exception("Length param is required!", 1);
+        }
+
         /* Get generated query */
         $sql = $this->_get_datatables_query($safe);
-        
+
         /* Check limit */
         if ($safe['length'] != -1) {
             $sql .= " LIMIT :length OFFSET :start";
@@ -285,7 +292,7 @@ class DataTables extends \App\Controller\BaseController
                 }
             }
         }
-        
+
         /* If Searching */
         if ($safe['search']['value']) {
             $query->bindParam(':search_value', $search_value, \PDO::PARAM_STR);
@@ -427,5 +434,5 @@ class DataTables extends \App\Controller\BaseController
 
         return $msg;
     }
-    
+
 }

@@ -128,8 +128,12 @@ class M_menu extends \App\Plugin\DataTables
         if ($this->safe){
             try  {
                 /* Check Cache */
+                $output = [];
                 $opsional = (isset($this->safe["opsional"]) ? json_encode($this->safe["opsional"]):null);
-                $ckey = hash("md5", "M_menu" . $this->safe["start"] . $this->safe["length"] . $opsional . $this->safe["search"]["value"]);
+                $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
+                $length = (isset($this->safe['length']) ? $this->safe['length']:null);
+                $start = (isset($this->safe['start']) ? $this->safe['start']:null);
+                $ckey = hash("md5", "M_menu" . $start . $length . $opsional . $search);
                 $CachedString = $this->InstanceCache->getItem($ckey);
 
                 /* If not in Cache */

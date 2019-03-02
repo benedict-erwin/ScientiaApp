@@ -131,7 +131,10 @@ class M_jabatan extends \App\Plugin\DataTables
 				/* Check Cache */
                 $output = [];
                 $opsional = (isset($this->safe["opsional"]) ? json_encode($this->safe["opsional"]):null);
-				$ckey = hash("md5","M_jabatan" . $this->safe["start"] . $this->safe["length"] . $opsional . $this->safe["search"]["value"]);
+                $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
+                $length = (isset($this->safe['length']) ? $this->safe['length']:null);
+                $start = (isset($this->safe['start']) ? $this->safe['start']:null);
+				$ckey = hash("md5","M_jabatan" . $start . $length . $opsional . $search);
 				$CachedString = $this->InstanceCache->getItem($ckey);
 				if (is_null($CachedString->get())) {
                     /* Execute DataTables */
