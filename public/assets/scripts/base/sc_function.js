@@ -702,7 +702,7 @@ function kickAss() {
 
 
 /* Check Page Auth */
-function checkAuth() {
+function checkAuth(callback) {
     post_data = { 'path': getCurrentPath() };
     $.ajax({
         type: 'POST',
@@ -757,6 +757,8 @@ function checkAuth() {
                     $('.btDels').prop('disabled', true);
                 }
             }
+            /* Execute callback if exist */
+            typeof callback === 'function' && callback();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');

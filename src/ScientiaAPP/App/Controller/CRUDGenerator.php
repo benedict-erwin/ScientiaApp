@@ -1280,13 +1280,14 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t},";
         $js .= "\n\t\t\t\"dataSrc\": function(json) {";
         $js .= "\n\t\t\t\t/* stop_loader */";
-        $js .= "\n\t\t\t\tcheckAuth();";
-        $js .= "\n\t\t\t\t\$(\".cssload-loader\").hide();";
-        $js .= "\n\t\t\t\t\$(\"#dtableDiv\").fadeIn(\"slow\");";
-        $js .= "\n\t\t\t\t\$(\"#tx_dtSpiner\").text('Reload');";
-        $js .= "\n\t\t\t\t\$(\"#dtSpiner\").addClass('pause-spinner');";
-        $js .= "\n\t\t\t\t\$(\"a.btn.btn-default.btn-sm\").removeClass('disabled');";
-        $js .= "\n\t\t\t\tsetNprogressLoader(\"done\");\n";
+        $js .= "\n\t\t\t\tcheckAuth(function(){";
+        $js .= "\n\t\t\t\t\t\$(\".cssload-loader\").hide();";
+        $js .= "\n\t\t\t\t\t\$(\"#dtableDiv\").fadeIn(\"slow\");";
+        $js .= "\n\t\t\t\t\t\$(\"#tx_dtSpiner\").text('Reload');";
+        $js .= "\n\t\t\t\t\t\$(\"#dtSpiner\").addClass('pause-spinner');";
+        $js .= "\n\t\t\t\t\t\$(\"a.btn.btn-default.btn-sm\").removeClass('disabled');";
+        $js .= "\n\t\t\t\t\tsetNprogressLoader(\"done\");\n";
+        $js .= "\n\t\t\t\t});";
 
         //start json reordering
         $js .= "\n\t\t\t\t/* return variable */";
