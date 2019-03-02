@@ -16,7 +16,9 @@ use App\Lib\Stringer;
 class CRUDGenerator extends \App\Plugin\DataTables
 {
     private $template;
-    private $aproject, $aauthor, $acopyright;
+    private $aproject;
+    private $aauthor;
+    private $acopyright;
 
     /**
      * Constructor
@@ -412,7 +414,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                     }
                 }
 
-				/* Commit transaction & Refresh Router  */
+                /* Commit transaction & Refresh Router  */
                 $this->dbpdo->pdo->commit();
                 $this->InstanceCache->deleteItemsByTags([
                     $this->sign . '_getMenus',
@@ -526,7 +528,16 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $CachedString = $this->InstanceCache->getItem($ckey);
             if (is_null($CachedString->get())) {
                 // Get Table Relation
-                $sql = "SELECT REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+                $sql = "SELECT  REFERENCED_TABLE_NAME,
+                                REFERENCED_COLUMN_NAME,
+                                (
+                                    SELECT COLUMN_NAME
+                                    FROM INFORMATION_SCHEMA.COLUMNS
+                                    WHERE TABLE_SCHEMA = DATABASE()
+                                    AND TABLE_NAME = REFERENCED_TABLE_NAME
+                                    AND (DATA_TYPE LIKE '%VARCHAR%' OR DATA_TYPE LIKE '%TEXT%')
+                                    LIMIT 1
+                                ) IS_CHAR
                         FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                         WHERE TABLE_SCHEMA = DATABASE()
                             AND TABLE_NAME = '$table'
@@ -535,20 +546,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 $query = $this->dbpdo->pdo->prepare($sql);
                 $query->execute();
                 $relation = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-                // Get char column
-                $qChar = $this->dbpdo->pdo->prepare("DESCRIBE `$table`");
-                $qChar->execute();
-                $rChar = $qChar->fetchAll(\PDO::FETCH_ASSOC);
-                $isChar = null;
-                foreach ($rChar as $col) {
-                    if (Stringer::is_like(['char'], $col['Type'])) {
-                        $isChar = $col['Field'];
-                        break;
-                    }
-                }
-
-                $output = ['relation' => $relation, 'isChar' => $isChar];
+                $output = ['relation' => $relation];
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_tableForeignKeys');
                 $this->InstanceCache->save($CachedString);
             } else {
@@ -599,7 +597,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
             //send back draw
             $output["draw"] = (int)(isset($safe["draw"]) ? $safe["draw"] : 0);
             return $this->jsonSuccess($output);
-
         } catch (\Exception $e) {
             return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
         }
@@ -715,7 +712,8 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $php .= "\n* @project    " . $this->aproject;
         $php .= "\n* @package    ScientiaAPP/App/Controller";
         $php .= "\n* @author     " . $this->aauthor;
-        $php .= "\n* @copyright  (c) " . date('Y') . " " . $this->acopyright;;
+        $php .= "\n* @copyright  (c) " . date('Y') . " " . $this->acopyright;
+        ;
         $php .= "\n* @created    on " . date('D M d Y') . "";
         $php .= "\n* @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>";
         $php .= "\n*/\n\n";
@@ -955,8 +953,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
         /* # Filter */
         if (!empty($data['relation']['relation'])) {
             $idx = 0;
-            $getSelect = [];
-            $changeSelect = [];
             $fmSelect = null;
             $html .= $this->filterTableTop($data['relation']['relation']);
             foreach ($data['relation']['relation'] as $col) {
@@ -970,7 +966,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 $fmSelect .= "\n\t\t\t\t\t\t\t</div>";
                 $fmSelect .= "\n\t\t\t\t\t\t</div>";
                 $fmSelect .= "\n\t\t\t\t\t</div>";
-
             }
         }
         // #-->
@@ -1091,7 +1086,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $changeSelect = [];
 
             foreach ($data['relation']['relation'] as $col) {
-                $isChar = (empty($data['relation']['isChar']) ? $col['REFERENCED_COLUMN_NAME'] : $data['relation']['isChar']);
+                $isChar = (empty( $col['IS_CHAR']) ? $col['REFERENCED_COLUMN_NAME'] : $col['IS_CHAR']);
                 $jsPopulate .= "\n/* Get " . $col['REFERENCED_TABLE_NAME'] . " */";
                 $jsPopulate .= "\nfunction get" . $col['REFERENCED_TABLE_NAME'] . "(obj, sel = null) {";
                 $jsPopulate .= "\n\tlet opt = \$(obj);";
