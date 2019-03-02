@@ -49,6 +49,7 @@ $(document).ready(function () {
 
     /* Datatables set_token */
     $("#datatable-generator").on('xhr.dt', function (e, settings, json, jqXHR) {
+        redirectLogin(jqXHR);
         set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
     });
 

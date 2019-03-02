@@ -595,6 +595,17 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+/**
+ * Redirect Login if token expired/invalid
+ * @param {*} jqXHR ajax xhr resutl
+ */
+function redirectLogin(jqXHR) {
+    if (jqXHR.status == 498 || jqXHR.status == 419) {
+        del_token(API_TOKEN);
+        window.location.reload();
+    }
+}
+
 /* DataTable Ajax Reload */
 function dtReload(table, time) {
     var time = (isNaN(time)) ? 100 : time;
@@ -681,6 +692,7 @@ function kickAss() {
             setNprogressLoader("done");
             del_token(API_TOKEN);
             notification(errorThrown, 'error');
+            redirectLogin(jqXHR);
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
@@ -748,10 +760,7 @@ function checkAuth() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
-            if (errorThrown == 'Token Expired') {
-                set_token(API_TOKEN, '');
-                window.location.reload();
-            }
+            redirectLogin(jqXHR);
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
@@ -879,6 +888,7 @@ function updateProfile() {
             "error": function (jqXHR, textStatus, errorThrown) {
                 setNprogressLoader("done");
                 notification(errorThrown, 'error');
+                redirectLogin(jqXHR);
                 $('.formModalEditProfile').modal('hide');
                 console.log(jqXHR);
                 console.log(textStatus);
@@ -931,6 +941,7 @@ function getProfile() {
         "error": function (jqXHR, textStatus, errorThrown) {
             setNprogressLoader("done");
             notification(errorThrown, 'error');
+            redirectLogin(jqXHR);
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);

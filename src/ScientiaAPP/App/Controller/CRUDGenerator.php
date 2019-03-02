@@ -1159,6 +1159,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
         $js .= "\n\t/* Datatables set_token */";
         $js .= "\n\t\$(\"#datatable-responsive\").on('xhr.dt', function(e, settings, json, jqXHR){";
+        $js .= "\n\t\tredirectLogin(jqXHR);";
         $js .= "\n\t\tset_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));";
         $js .= "\n\t});\n";
 

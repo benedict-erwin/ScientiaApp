@@ -53,6 +53,7 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                 $('.btn_save').prop('disabled', false);
                 $(document.body).css({ 'cursor': 'default' });
                 notification(errorThrown, 'error');
+                redirectLogin(jqXHR);
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -97,6 +98,7 @@ function deleteSingle(apiUrl, data, callback) {
             },
             "error": function (jqXHR, textStatus, errorThrown) {
                 notification(errorThrown, 'error');
+                redirectLogin(jqXHR);
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -148,6 +150,7 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
                 "error": function (jqXHR, textStatus, errorThrown) {
                     rows_selected.length = table.column(0).checkboxes.deselect();
                     notification(errorThrown, 'error');
+                    redirectLogin(jqXHR);
                     console.log(jqXHR);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -213,6 +216,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text) {
         },
         "error": function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
+            redirectLogin(jqXHR);
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
