@@ -1221,7 +1221,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\ttitleAttr: \"Export PDF\",";
         $js .= "\n\t\t\t\tdownload: \"open\",";
         $js .= "\n\t\t\t\tpageSize: \"LEGAL\",";
-        $js .= "\n\t\t\t\orientation: \"portrait\", /* portrait | landscape */";
+        $js .= "\n\t\t\t\torientation: \"portrait\", /* portrait | landscape */";
         $js .= "\n\t\t\t\ttitle: \"" . $data['menu'] . "\",";
         $js .= "\n\t\t\t\texportOptions: {";
         $js .= "\n\t\t\t\t\t/* Show column */";
