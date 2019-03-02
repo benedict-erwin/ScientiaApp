@@ -75,7 +75,7 @@ function ucfirst(str) {
 /* Random number with range
  * Usage:
  *     var ran = getRandomizer(0, 5);
- * alert(ran());                                         
+ * alert(ran());
  */
 function getRandomizer(bottom, top) {
     return function () {
@@ -92,7 +92,7 @@ function javascript_abort() {
  * example:
  * $("#txGbr").change(function(){
  *    preViewImage(this,'#imgPreview');
- * });                                                                
+ * });
  */
 function preViewImage(input, preview) {
     if (input.files && input.files[0]) {
@@ -114,7 +114,7 @@ function resetPreviewImage(preview) {
 
 /* Window open center screen
  * usage:
- * PopupCenter('http://www.xtf.dk','xtf','900','500');    
+ * PopupCenter('http://www.xtf.dk','xtf','900','500');
  */
 function PopupCenter(url, title, w, h) {
     /* Fixes dual-screen position    Most browsers Firefox */
@@ -486,7 +486,7 @@ function validateEmail(email) {
 
 /* Get Meta Tag Content
  * @param {string} metaName The meta tag name.
- * @return {string} The meta tag content value, or empty string if not found. 
+ * @return {string} The meta tag content value, or empty string if not found.
  */
 function getMetaContent(metaName) {
     var metas = document.getElementsByTagName('meta');
@@ -577,7 +577,7 @@ function getCurrentPath() {
     return pageURL.split('?')[0];
 }
 
-/* Read a page's GET URL variables 
+/* Read a page's GET URL variables
  * Usage :
  * query string: ?foo=lorem&bar=&baz
  * var foo = getParameterByName('foo'); // "lorem"
@@ -744,15 +744,14 @@ function checkAuth() {
                     $('.btDels').css('display', 'none');
                     $('.btDels').prop('disabled', true);
                 }
-
-            }else{
-                if (data.message == 'Token signature expired') {
-                    window.location.reload();
-                }
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
+            if (errorThrown == 'Token Expired') {
+                set_token(API_TOKEN, '');
+                window.location.reload();
+            }
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
@@ -891,7 +890,7 @@ function updateProfile() {
         btn.button('reset');
         btn.prop('disabled', false);
     }
-    
+
 }
 
 $(document).on('click', '#show_password', function() {
@@ -899,7 +898,7 @@ $(document).on('click', '#show_password', function() {
         $("#fp_password").attr("type", "text");
         $(".glyphicon")
             .removeClass("glyphicon-eye-open")
-            .addClass("glyphicon-eye-close");   
+            .addClass("glyphicon-eye-close");
     }else{
         $("#fp_password").attr("type", "password");
         $(".glyphicon")

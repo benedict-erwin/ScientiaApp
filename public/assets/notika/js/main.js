@@ -2,11 +2,11 @@
  "use strict";
 		/*--------------------------
 		 auto-size Active Class
-		---------------------------- */	
+		---------------------------- */
 		$(".auto-size")[0] && autosize($(".auto-size"));
 		/*--------------------------
 		 Collapse Accordion Active Class
-		---------------------------- */	
+		---------------------------- */
 		$(".collapse")[0] && ($(".collapse").on("show.bs.collapse", function(e) {
             $(this).closest(".panel").find(".panel-heading").addClass("active")
         }), $(".collapse").on("hide.bs.collapse", function(e) {
@@ -20,20 +20,20 @@
 		$('[data-toggle="tooltip"]').tooltip();
 		/*--------------------------
 		 popover
-		---------------------------- */	
+		---------------------------- */
 		$('[data-toggle="popover"]')[0] && $('[data-toggle="popover"]').popover();
 		/*--------------------------
 		 File Download
-		---------------------------- */	
+		---------------------------- */
 		$('.btn.dw-al-ft').on('click', function(e) {
 			e.preventDefault();
 		});
 		/*--------------------------
 		 Sidebar Left
-		---------------------------- */	
+		---------------------------- */
 		$('#sidebarCollapse').on('click', function () {
 			$('#sidebar').toggleClass('active');
-			 
+
 		 });
 		$('#sidebarCollapse').on('click', function () {
 			$("body").toggleClass("mini-navbar");
@@ -42,7 +42,7 @@
 		$('.menu-switcher-pro').on('click', function () {
 			let button = $(this).find('i.nk-indicator');
 			button.toggleClass('notika-menu-befores').toggleClass('notika-menu-after');
-			
+
 		});
 		$('.menu-switcher-pro.fullscreenbtn').on('click', function () {
 			let button = $(this).find('i.nk-indicator');
@@ -50,8 +50,8 @@
 		});
 		/*--------------------------
 		 Button BTN Left
-		---------------------------- */	
-		
+		---------------------------- */
+
 		$(".nk-int-st")[0] && ($("body").on("focus", ".nk-int-st .form-control", function() {
             $(this).closest(".nk-int-st").addClass("nk-toggled")
         }), $("body").on("blur", ".form-control", function() {
@@ -64,7 +64,7 @@
         });
 		/*--------------------------
 		 mCustomScrollbar
-		---------------------------- */	
+		---------------------------- */
 		$(window).on("load",function(){
 			$(".widgets-chat-scrollbar").mCustomScrollbar({
 				setHeight:460,
@@ -88,20 +88,20 @@
 	 jQuery MeanMenu
 	------------------------------ */
 	jQuery('nav#dropdown').meanmenu();
-	
+
 	/*----------------------------
 	 wow js active
 	------------------------------ */
 	 new WOW().init();
-	 
+
 	/*----------------------------
 	 owl active
-	------------------------------ */  
+	------------------------------ */
 	$("#owl-demo").owlCarousel({
-      autoPlay: false, 
+      autoPlay: false,
 	  slideSpeed:2000,
 	  pagination:false,
-	  navigation:true,	  
+	  navigation:true,
       items : 4,
 	  /* transitionStyle : "fade", */    /* [This code for animation ] */
 	  navigationText:["<i class='fa fa-angle-left'></i>","<i class='fa fa-angle-right'></i>"],
@@ -110,24 +110,24 @@
 	  itemsTablet: [768,2],
 	  itemsMobile : [479,1],
 	});
-	   
+
 	/*--------------------------
 	 scrollUp
-	---------------------------- */	
+	---------------------------- */
 	$.scrollUp({
         scrollText: '<i class="fa fa-angle-up"></i>',
         easingType: 'linear',
         scrollSpeed: 900,
         animation: 'fade'
-    }); 	   
-	
+    });
+
 	/*-------------------------
 	 Tanggal + Jam WIB
 	------------------------- */
 	setInterval(() => {
 		$("#tikClock").attr({"data-original-title": moment().format('dddd, Do MMMM YYYY') + " _ Pukul: "+ moment().format('HH:mm') + " WIB"});
 	}, 1000);
- 
+
 })(jQuery);
 
 /* Build Groupmenu */
@@ -223,25 +223,26 @@ function loadMenu(reload) {
 					$("#grpMenu a[href='#"+smx.attr('data-id')+"']").click();
                     smx.addClass('menu-active');
 				}
-				
+
 				/* Generate Mobile Menu */
 				$('#mobMenu').html(buildListMobile(arr, false));
 				if ($("div.mean-bar").length > 0){
 					$("div.mean-bar > a.meanmenu-reveal").removeClass("animated infinite flip");
 				}
-				
+
 				/* Set sp_uname */
 				$('h2#sp_uname').text('Selamat datang, ' + ucfirst(data.sp_uname));
             } else {
                 notification((data.message.error) ? data.message.error : data.message, 'warn');
-                if (data.message == 'Token signature expired') {
-                    window.location.reload();
-                }
 			}
 			setNprogressLoader("done");
         },
         error: function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
+            if (errorThrown == 'Token Expired') {
+                set_token(API_TOKEN, '');
+                window.location.reload();
+            }
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
