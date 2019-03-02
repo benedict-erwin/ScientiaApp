@@ -1,0 +1,247 @@
+<!-- Breadcomb area Start-->
+<div class="breadcomb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcomb-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="notika-icon notika-app animated infinite flip"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Menu</h2>
+                                    <p>Add / Edit / Delete</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-3">
+                            <div class="breadcomb-report">
+                                <button id="tikClock" data-toggle="tooltip" data-placement="left" title="" class="btn">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Breadcomb area End-->
+<!-- Main area Start-->
+<div class="colr-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="color-wrap">
+                    <div class="color-hd">
+                        <div class="x_content">
+                            <div class="cssload-loader">Please Wait</div>
+                            <div id="dtableDiv" style="display:none;">
+                                <div class="row margin-bt-20">
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="nk-int-mk sl-dp-mn">
+                                            <h2>Filter Group Menu</h2>
+                                        </div>
+                                        <span style="margin-left: 10px;">
+                                            <i class="fa fa-spinner fa-spin"></i> Please wait...
+                                        </span>
+                                        <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                            <select id="fm_groupmenu" name="fm_groupmenu" class="chosen m_groupmenu">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="nk-int-mk sl-dp-mn">
+                                            <h2>Filter Tipe</h2>
+                                        </div>
+                                        <span style="margin-left: 10px;">
+                                            <i class="fa fa-spinner fa-spin"></i> Please wait...
+                                        </span>
+                                        <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                            <select id="fm_tipe" name="fm_tipe" class="chosen fm_tipe">
+                                                <option value="">SHOW ALL</option>
+                                                <option value="GET">Top Menu</option>
+                                                <option value="POST">API Action</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="nk-int-mk sl-dp-mn">
+                                            <h2>Filter Akses</h2>
+                                        </div>
+                                        <span style="margin-left: 10px;">
+                                            <i class="fa fa-spinner fa-spin"></i> Please wait...
+                                        </span>
+                                        <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                            <select id="fm_akses" name="fm_akses" class="chosen fm_akses">
+                                                <option value="">SHOW ALL</option>
+                                                <option value="0">Private</option>
+                                                <option value="1">Public</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="datatable-responsive"
+                                    class="table table-striped table-bordered table-hover dt-responsive wrap"
+                                    cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>ID_MENU</th>
+                                            <th width="2%" class="text-center">NO</th>
+                                            <th>ID_GROUPMENU</th>
+                                            <th width="22%">NAMA</th>
+                                            <th>ICON</th>
+                                            <th width="15%">URL</th>
+                                            <th width="15%">CONTROLLER</th>
+                                            <th width="10%">TIPE</th>
+                                            <th width="8%">STATUS</th>
+                                            <th width="8%">AKSES</th>
+                                            <th width="5%">URUT</th>
+                                            <th width="15%">ACTION</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main area End-->
+<!-- #region modal -->
+<div class="modal fade formEditorModal" data-backdrop="static" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header form-group-15">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Menu</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formEditor" data-parsley-validate class="form-horizontal form-label-left">
+                    <div class="form-group-15">
+                        <label>Group Menu <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <span style="margin-left: 10px;"><i class="fa fa-spinner fa-spin"></i> Please wait...</span>
+                            <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                <select id="id_groupmenu" name="id_groupmenu" class="chosen id_groupmenu"
+                                    required="required" data-parsley-group="role"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Nama Menu <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <input type="text" class="form-control input-sm" type="text" name="nama" required="required"
+                                data-parsley-group="role" placeholder="Nama Menu">
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Menu URL <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <input type="text" name="url" required="required" class="form-control input-sm"
+                                data-parsley-group="role" placeholder="URL">
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Controller <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <input type="text" name="controller" required="required" class="form-control input-sm"
+                                data-parsley-group="role" placeholder="Controller">
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Tipe Menu <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <span style="margin-left: 10px;"><i class="fa fa-spinner fa-spin"></i> Please wait...</span>
+                            <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                <select id="tipe" name="tipe" class="chosen tipe" required="required"
+                                    data-parsley-group="role">
+                                    <option value="GET">Top Menu</option>
+                                    <option value="POST">API Action</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Akses <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <span style="margin-left: 10px;"><i class="fa fa-spinner fa-spin"></i> Please wait...</span>
+                            <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                <select id="public" name="public" class="chosen public" required="required"
+                                    data-parsley-group="role">
+                                    <option value="0">Private</option>
+                                    <option value="1">Public</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Status <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <div class="toggle-select-act fm-cmp-mg">
+                                <div class="nk-toggle-switch">
+                                    <input id="aktif" name="aktif" type="checkbox" hidden="hidden" value="0">
+                                    <label for="aktif" class="ts-helper"></label>
+                                    <label class="lbSwitch">DISABLED</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group-15">
+                        <label>Urut <span class="required">*</span></label>
+                        <div class="nk-int-st">
+                            <input type="number" class="form-control input-sm" name="urut" placeholder="Urut" data-parsley-group="role"
+                                required="required">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn_save btn btn-default notika-btn-default waves-effect"
+                    data-loading-text="Loading...">
+                    <i class="fa fa-save"></i> Save
+                </button>
+                <button type="button" class="btn_cancel btn btn-danger notika-btn-danger waves-effect"
+                    data-dismiss="modal">
+                    <i class="fa fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion modal -->
+<!-- #region modal2 -->
+<div class="modal fade formEditorModal2" data-backdrop="static" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header form-group-15">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Menu Permission Assignment</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formEditor2" data-parsley-validate class="form-horizontal form-label-left">
+                    <div class="form-group-15">
+                        <label>Permission Group<span class="required">*</span></label>
+                        <div id="cb_jabatan" class="nk-int-st"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn_perm btn btn-default notika-btn-default waves-effect"
+                    data-loading-text="Loading...">
+                    <i class="fa fa-save"></i> Save
+                </button>
+                <button type="button" class="btn_cancel btn btn-danger notika-btn-danger waves-effect"
+                    data-dismiss="modal">
+                    <i class="fa fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion modal2 -->

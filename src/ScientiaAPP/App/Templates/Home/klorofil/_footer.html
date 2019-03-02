@@ -1,0 +1,91 @@
+<!-- Form modal -->
+<div class="modal fade formModalEditProfile" data-backdrop="static" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">
+                  <i class="fa fa-user"></i> Edit Profile
+              </h4>
+          </div>
+          <div class="modal-body">
+              <form id="formModalEditProfile" data-parsley-validate class="form-horizontal form-label-left">
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nama">
+                          Nama
+                          <span class="required">*</span>
+                      </label>
+                      <div class="col-md-8 col-sm-8 col-xs-12">
+                          <input type="text" name="fp_nama" required="required" class="form-control col-md-7 col-xs-12" data-parsley-group="role">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">
+                          Email
+                          <span class="required">*</span>
+                      </label>
+                      <div class="col-md-8 col-sm-8 col-xs-12">
+                          <input type="text" name="fp_email" required="required" class="form-control col-md-7 col-xs-12" data-parsley-group="role">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telpon">
+                          Telepon
+                          <span class="required">*</span>
+                      </label>
+                      <div class="col-md-8 col-sm-8 col-xs-12">
+                          <input type="number" name="fp_telpon" required="required" class="form-control col-md-7 col-xs-12" data-parsley-group="role">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="username">
+                          Username
+                      </label>
+                      <div class="col-md-8 col-sm-8 col-xs-12">
+                          <input type="text" name="fp_username" readonly disabled class="form-control col-md-7 col-xs-12">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">
+                          Password
+                          <span class="required">*</span>
+                      </label>
+                      <div class="col-md-8 col-sm-8 col-xs-12">
+                          <div class="input-group">
+                              <input id="fp_password" name="fp_password" type="password" class="form-control" placeholder="password">
+                              <span class="input-group-btn">
+                                  <button id="show_password" class="btn btn-secondary" type="button">
+                                      <span class="glyphicon glyphicon-eye-open"></span>
+                                  </button>
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="ln_solid"></div>
+                  <div class="form-group">
+                      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                          <button type="button" class="btn_cancel btn btn-danger" data-dismiss="modal">
+                              <i class="fa fa-times"></i> Close
+                          </button>
+                          <button type="button" class="btn_save_profile btn_act btn btn-primary" data-loading-text="Loading...">
+                              <i class="fa fa-save"></i> Save
+                          </button>
+                      </div>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- /modals -->
+
+<div class="clearfix"></div>
+<footer>
+  <div class="container-fluid">
+    <p class="copyright">&copy; 2018 <a href="#" target="_blank">Benedict E. Pranata</a>. All Rights Reserved.</p>
+  </div>
+</footer>
+</div>
+<!-- END WRAPPER -->
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!-- StyleSheet include -->
+<!-- Datatables -->
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/DataTables/datatables.min.css" />
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/DataTables/CheckBox/dataTables.checkboxes.css" />
+<!-- Alertifyjs CSS -->
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/alertifyjs/css/alertify.min.css" />
+<!-- Alertifyjs Default theme -->
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/alertifyjs/css/themes/default.min.css" />
+<!-- Switchery -->
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/switchery/dist/switchery.min.css" />
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ base_url }}assets/vendor/select2/dist/css/select2.min.css" />
+
+<!-- JavaScript include -->
+<!-- Datatables -->
+<script type="text/javascript" src="{{ base_url }}assets/vendor/DataTables/datatables.min.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/vendor/DataTables/CheckBox/dataTables.checkboxes.min.js"></script>
+<!-- Alertify -->
+<script type="text/javascript" src="{{ base_url }}assets/vendor/alertifyjs/alertify.min.js"></script>
+<!-- parsleyJS -->
+<script type="text/javascript" src="{{ base_url }}assets/vendor/parsleyjs/dist/parsley.min.js"></script>
+<!-- Switchery -->
+<script type="text/javascript" src="{{ base_url }}assets/vendor/switchery/dist/switchery.min.js"></script>
+<!-- Select2 -->
+<script type="text/javascript" src="{{ base_url }}assets/vendor/select2/dist/js/select2.full.min.js"></script>
+<!-- PageJS -->
+{% if mode == 'develop' %}
+<script type="text/javascript" src="{{ base_url }}assets/scripts/page/{{page}}.js?v={{jsver}}"></script>
+{% elseif mode == 'production' %}
+<script type="text/javascript" src="{{ base_url }}assets/scripts/page/{{page}}.min.js"></script>
+{% endif %}

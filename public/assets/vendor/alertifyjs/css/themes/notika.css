@@ -1,0 +1,99 @@
+/**
+ * alertifyjs 1.11.0 http://alertifyjs.com
+ * AlertifyJS is a javascript framework for developing pretty browser dialogs and notifications.
+ * Copyright 2017 Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) 
+ * Licensed under GPL 3 <https://opensource.org/licenses/gpl-3.0>*/
+.alertify .ajs-dialog {
+  background-color: white;
+  -webkit-box-shadow: 0px 15px 20px 0px rgba(0, 0, 0, 0.25);
+          box-shadow: 0px 15px 20px 0px rgba(0, 0, 0, 0.25);
+}
+.alertify .ajs-header {
+  color: black;
+  font-weight: bold;
+  background: #fff;
+}
+.alertify button.ajs-close {
+    position: absolute;
+    right: -45px;
+    top: -25px;
+    background: #00c292;
+    opacity: 1;
+    color: #fff;
+    height: 26px;
+    width: 25px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: 700;
+    outline: none;
+    padding: 0px;
+    background-image: none !important;
+}
+
+.alertify button.ajs-close::after{
+    content: "×";
+}
+
+.alertify button.ajs-close:hover{
+    color: red;
+    opacity: 1;
+}
+
+.alertify .ajs-body {
+  color: black;
+}
+.alertify .ajs-body .ajs-content .ajs-input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin: 4px;
+  border: 1px solid #CCC;
+}
+.alertify .ajs-body .ajs-content {
+    padding: 0;
+}
+.alertify .ajs-body .ajs-content p {
+  margin: 0;
+}
+.alertify .ajs-footer {
+  border-top: #fff 1px solid;
+}
+.alertify .ajs-footer .ajs-buttons .ajs-button {
+  background-color: transparent;
+  color: #000;
+  border: 0;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.alertify .ajs-footer .ajs-buttons .ajs-button.ajs-cancel, .alertify .ajs-footer .ajs-buttons .ajs-button.ajs-ok {
+    background-color: #00c292 !important;
+    outline: none !important;
+    color: #fff;
+    border-radius: 3px !important;
+}
+.alertify .ajs-footer .ajs-buttons .ajs-button.ajs-cancel:focus, .alertify .ajs-footer .ajs-buttons .ajs-button.ajs-ok:focus{
+    border: 2px solid #159ff1;
+    color: #1662dc;
+}
+
+.alertify-notifier .ajs-message {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
+  text-align: center;
+  border: solid 1px #ddd;
+}
+.alertify-notifier .ajs-message.ajs-success {
+  color: #fff;
+  background: rgba(91, 189, 114, 0.95);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+}
+.alertify-notifier .ajs-message.ajs-error {
+  color: #fff;
+  background: rgba(217, 92, 92, 0.95);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+}
+.alertify-notifier .ajs-message.ajs-warning {
+  background: rgba(252, 248, 215, 0.95);
+  border-color: #999;
+}

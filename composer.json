@@ -1,0 +1,31 @@
+{
+    "name": "benedict_erwin/scientiaapp",
+    "description": "scientiaapp",
+    "license": "MIT",
+    "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/cyb3rwin/GUMP"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Benedict E. Pranata",
+            "email": "benedict.erwin@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "config": {
+        "cache-files-ttl": 0
+    },
+    "require": {
+        "slim/slim": "^3.0",
+        "monolog/monolog": "^1.23",
+	    "wixel/gump": "dev-master",
+        "phpfastcache/phpfastcache": "^6.1",
+        "slim/twig-view": "^2.3",
+        "lcobucci/jwt": "^3.2",
+        "catfan/Medoo": "^1.5"
+    }
+}
