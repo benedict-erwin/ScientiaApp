@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="{{ base_url }}assets/notika/icon/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ base_url }}assets/notika/icon/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url }}assets/notika/icon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="{{ base_url }}assets/notika/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ base_url }}assets/notika/icon/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url }}assets/notika/icon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="{{ base_url }}assets/notika/icon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ base_url }}assets/notika/icon/favicon-16x16.png">
@@ -33,17 +33,20 @@
     <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.css" />
     <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.buttons.css" />
     <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.nonblock.css" />
+    {% if mode == 'develop' %}
+    <link rel="stylesheet" href="{{ base_url }}assets/fonts/fonts-ssp.css" />
+    {% elseif mode == 'production' %}
+    <!-- GOOGLE FONTS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" />
+    {% endif %}
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="{{ base_url }}assets/notika/css/login.css" />
 
     <!-- JavaScript -->
     <script src="{{ base_url }}assets/vendor/jquery/jquery.min.js"></script>
     {% if mode == 'develop' %}
-    <!-- GOOGLE FONTS -->
-    <link rel="stylesheet" href="{{ base_url }}assets/fonts/fonts-ssp.css" />
     <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" />
     <script src="{{ base_url }}assets/scripts/base/sc_function.min.js"></script>
     {% endif %}
     <script>
@@ -70,18 +73,22 @@
                         <div class="content">
                             <div class="header">
                                 <div style="display:inline-grid;" class="logo text-center">
-                                    <img style="margin:0 auto 0 auto;" src="{{ base_url }}assets/notika/img/logo/login.png" alt="CBT Logo" width="64" height="64">
+                                    <img style="margin:0 auto 0 auto;"
+                                        src="{{ base_url }}assets/notika/img/logo/login.png" alt="CBT Logo" width="64"
+                                        height="64">
                                     <span style="font-size:16pt;font-weight:bold;margin-top:10px;">SimAset</span>
                                 </div>
                             </div>
                             <form class="form-auth-small" action="index.php">
                                 <div class="form-group">
                                     <label for="tx_username" class="control-label sr-only">Username</label>
-                                    <input type="text" name="tx_username" class="form-control" id="tx_username" placeholder="Username">
+                                    <input type="text" name="tx_username" class="form-control" id="tx_username"
+                                        placeholder="Username">
                                 </div>
                                 <div class="form-group">
                                     <label for="tx_password" class="control-label sr-only">Password</label>
-                                    <input name="tx_password" type="password" class="form-control" id="tx_password" placeholder="Password">
+                                    <input name="tx_password" type="password" class="form-control" id="tx_password"
+                                        placeholder="Password">
                                 </div>
 
                                 <button id="bt_login" type="button" class="btn btn-primary btn-lg btn-block">
@@ -114,4 +121,5 @@
 {% elseif mode == 'production'%}
 <script src="{{ base_url }}assets/scripts/page/login.min.js"></script>
 {% endif %}
+
 </html>
