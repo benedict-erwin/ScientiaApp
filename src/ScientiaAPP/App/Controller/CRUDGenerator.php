@@ -193,7 +193,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
             /* Variable for generate backend */
             $groupmenu = $this->dbpdo->get('m_groupmenu', ['nama', 'icon'], ['id_groupmenu' => $safe['m_groupmenu']]);
-            $urutGroup = $this->dbpdo->count('m_groupmenu', ['id_groupmenu' => $safe['m_groupmenu'], 'tipe' => 'GET']);
+            $urutGroup = $this->dbpdo->count('m_menu', ['id_groupmenu' => $safe['m_groupmenu'], 'tipe' => 'GET']);
             $data['className'] = $safe['controller'];
             $data['tableName'] = $safe['get_tables'];
             $data['columnsSelect'] = empty($cselect) ? null : trim($cselect, ', ');
