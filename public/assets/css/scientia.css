@@ -58,6 +58,17 @@
 }
 
 /* Datatables CSS */
+
+/* Fix DataTables pageLength on modal */
+div.dt-button-background {
+    z-index: 0 !important;
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
+    top: 35px;
+    left: 20px;
+}
+
 #datatable-responsive > thead > tr > th.sorting_disabled.select-checkbox.dt-checkboxes-cell.dt-checkboxes-select-all > input[type="checkbox"]{
     margin: auto;
     cursor: pointer;
@@ -330,11 +341,6 @@ button.close:hover{
 		height: 22px;
 		width: 11px;
 	}
-}
-
-/* Fix DataTables pageLength on modal */
-div.dt-button-background {
-    z-index: 0 !important;
 }
 
 /* Badge style */
