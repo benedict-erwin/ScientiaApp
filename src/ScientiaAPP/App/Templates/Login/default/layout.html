@@ -35,19 +35,20 @@
     <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.nonblock.css" />
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="{{ base_url }}assets/notika/css/login.css" />
-    <!-- GOOGLE FONTS -->
-    <link rel="stylesheet" href="{{ base_url }}assets/fonts/font.css" />
-    
+
     <!-- JavaScript -->
     <script src="{{ base_url }}assets/vendor/jquery/jquery.min.js"></script>
     {% if mode == 'develop' %}
+    <!-- GOOGLE FONTS -->
+    <link rel="stylesheet" href="{{ base_url }}assets/fonts/fonts-ssp.css" />
     <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" />
     <script src="{{ base_url }}assets/scripts/base/sc_function.min.js"></script>
     {% endif %}
     <script>
         var SiteRoot = "{{ base_url }}";
-        var API_TOKEN = '124b3d35d2c1942d5af887738fe2837b';
+        var API_TOKEN = "{{ api_token }}";
         if (getKen = get_token(API_TOKEN)) {
             if (getKen.length > 5) {
                 window.location.replace('./home');
