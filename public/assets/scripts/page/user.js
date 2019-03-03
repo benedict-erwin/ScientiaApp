@@ -132,13 +132,14 @@ $(document).ready(function() {
 			},
 			"dataSrc": function(json) {
                 /* stop_loader */
-                $(".cssload-loader").hide();
-                $("#dtableDiv").fadeIn("slow");
-                checkAuth();
-                $("#tx_dtSpiner").text('Reload');
-                $("#dtSpiner").addClass('pause-spinner');
-                $("a.btn.btn-default.btn-sm").removeClass('disabled');
-                setNprogressLoader("done");
+                checkAuth(function () {
+                    $(".cssload-loader").hide();
+                    $("#dtableDiv").fadeIn("slow");
+                    $("#tx_dtSpiner").text('Reload');
+                    $("#dtSpiner").addClass('pause-spinner');
+                    $("a.btn.btn-default.btn-sm").removeClass('disabled');
+                    setNprogressLoader("done");
+                });
 
 				/* return variable */
 				var return_data = [];
