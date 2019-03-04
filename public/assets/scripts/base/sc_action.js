@@ -172,8 +172,10 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
  * @param {*} sel
  * @param {string} opt_value
  * @param {string} opt_text
+ * @param {string} opt_add
+ * @param {string} txt_not_found
  */
-function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text) {
+function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add, txt_not_found) {
     opt.closest(':has(span i)').find('span').css('display', '');
     opt.closest('div').css('display', 'none');
     opt.chosen("destroy");
@@ -192,10 +194,16 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text) {
                         opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('SHOW ALL'));
                     }
                     $(result.message.data).each(function (index, el) {
-                        if (sel == el[opt_value]) {
-                            opt.append($("<option></option>").attr({ 'value': el[opt_value], 'selected': 'selected' }).text(el[opt_text]));
+                        let text;
+                        if (!opt_add) {
+                            text = el[opt_text];
                         } else {
-                            opt.append($("<option></option>").attr("value", el[opt_value]).text(el[opt_text]));
+                            text = el[opt_text] + ' - ' + el[opt_add]
+                        }
+                        if (sel == el[opt_value]) {
+                            opt.append($("<option></option>").attr({ 'value': el[opt_value], 'selected': 'selected' }).text(text));
+                        } else {
+                            opt.append($("<option></option>").attr("value", el[opt_value]).text(text));
                         }
                     });
                     opt.closest(':has(span i)').find('span').css('display', 'none');
@@ -204,11 +212,11 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text) {
                         width: "100%",
                         search_contains: true,
                         allow_single_deselect: !0,
-                        no_results_text: "Oops, nothing found!"
+                        no_results_text: (!txt_not_found) ? "Oops, nothing found!" : txt_not_found
                     }).trigger("chosen:updated");
                 } else {
                     opt.find('option').remove();
-                    opt.append($("<option></option>").attr("value", '00').text("NO DATA FOUND"));
+                    opt.append($("<option></option>").attr("value", '00').text("Oops, nothing found!"));
                 }
             } else {
                 notification((result.message.error) ? result.message.error : result.message, 'warn');
@@ -256,4 +264,66 @@ function switchStatus(selector, status) {
     if (status != $(selector).val()) {
         $(selector).click();
     }
+}
+
+/**
+ * Combobox / Select options searching
+ * @param {string} apiUrl
+ * @param {*} opt
+ * @param {object} post_data
+ * @param {*} sel
+ * @param {string} opt_value
+ * @param {string} opt_text
+ * @param {string} opt_add
+ */
+function findSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add) {
+    $.ajax({
+        "type": 'POST',
+        "headers": { JWT: get_token(API_TOKEN) },
+        "url": apiUrl,
+        "delay": 250,
+        "data": post_data,
+        "dataType": 'json',
+        "success": function (result, textStatus, jqXHR) {
+            set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
+            if (result.success === true) {
+                opt.find('option').remove();
+                if (result.message.data != undefined && result.message.data.length > 0) {
+                    $(result.message.data).each(function (index, el) {
+                        let text;
+                        if (!opt_add) {
+                            text = el[opt_text];
+                        } else {
+                            text = el[opt_text] + ' - ' + el[opt_add]
+                        }
+                        if (sel == el[opt_value]) {
+                            opt.append($("<option></option>").attr({ 'value': el[opt_value], 'selected': 'selected' }).text(text));
+                        } else {
+                            opt.append($("<option></option>").attr("value", el[opt_value]).text(text));
+                        }
+                    });
+                } else {
+                    opt.find('option').remove();
+                    opt.append($("<option></option>").attr("value", '00').text("Oops, nothing found!"));
+                }
+
+                opt.chosen({
+                    width: "100%",
+                    search_contains: true,
+                    allow_single_deselect: !0,
+                    no_results_text: "searching..."
+                }).trigger("chosen:updated");
+                opt.closest('div').find('input').val(post_data["search[value]"]);;
+            } else {
+                notification((result.message.error) ? result.message.error : result.message, 'warn');
+            }
+        },
+        "error": function (jqXHR, textStatus, errorThrown) {
+            notification(errorThrown, 'error');
+            redirectLogin(jqXHR);
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
 }
