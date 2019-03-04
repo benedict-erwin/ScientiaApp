@@ -93,7 +93,7 @@ class DataTables extends \App\Controller\BaseController
 
         if (array_key_exists('opsional', $safe)) {
             $x = 0;
-            foreach ($safe['opsional'][0] as $key => $nilai) {
+            foreach ($safe['opsional'] as $key => $nilai) {
                 if ($nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
@@ -131,7 +131,7 @@ class DataTables extends \App\Controller\BaseController
                         }
                     }
 
-                    if (count(array_filter($safe['opsional'][0])) - 1 == $x) {
+                    if (count(array_filter($safe['opsional'])) - 1 == $x) {
                         $sql .= " ) "; //close bracket
                     }
                     $x++;
@@ -206,7 +206,7 @@ class DataTables extends \App\Controller\BaseController
 
         /* Opsional */
         if (array_key_exists('opsional', $safe)) {
-            foreach ($safe['opsional'][0] as $key => $nilai) {
+            foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.')!==false) {
@@ -236,7 +236,7 @@ class DataTables extends \App\Controller\BaseController
             $arrRep = ["'".$search_value."'", $length, $start];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe)) {
-                foreach ($safe['opsional'][0] as $key => $nilai) {
+                foreach ($safe['opsional'] as $key => $nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
                     $kol = implode(".", array_map(function ($a) {
@@ -281,7 +281,7 @@ class DataTables extends \App\Controller\BaseController
 
         /* Opsional */
         if (array_key_exists('opsional', $safe)) {
-            foreach ($safe['opsional'][0] as $key => $nilai) {
+            foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.')!==false) {
@@ -305,7 +305,7 @@ class DataTables extends \App\Controller\BaseController
             $arrRep = ["'".$search_value."'"];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe)) {
-                foreach ($safe['opsional'][0] as $key => $nilai) {
+                foreach ($safe['opsional'] as $key => $nilai) {
                     if (!empty($nilai)) {
                         $kolom = ':' . $key;
                         $sql = str_replace($kolom, $nilai, $sql);
@@ -390,9 +390,9 @@ class DataTables extends \App\Controller\BaseController
      * @param array $where
      * @return void
      */
-    protected function deleteBy(string $table, array $where = [])
+    protected function deleteBy(array $where = [])
     {
-        $result = $this->dbpdo->delete($table, $where);
+        $result = $this->dbpdo->delete($this->TABLE, $where);
         if ($result->rowCount() > 0) {
             return true;
         } else {

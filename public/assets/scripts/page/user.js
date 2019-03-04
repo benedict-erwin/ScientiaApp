@@ -126,9 +126,9 @@ $(document).ready(function() {
                 $("#dtSpiner").removeClass('pause-spinner');
 
 				/* Post Data */
-                data.opsional = [{
+                data.opsional = {
                     'idjabatan': $("#fm_jabatan").val(),
-                }];
+                };
 			},
 			"dataSrc": function(json) {
                 /* stop_loader */

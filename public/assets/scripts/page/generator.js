@@ -106,7 +106,7 @@ $(document).ready(function () {
 
                 /* Post Data */
                 data.action = 'read_menu';
-                data.opsional = [{ 'id_groupmenu': $("select[name=fm_groupmenu]").val() }];
+                data.opsional = { 'id_groupmenu': $("select[name=fm_groupmenu]").val() };
             },
             "dataSrc": function (json) {
                 /* stop_loader */

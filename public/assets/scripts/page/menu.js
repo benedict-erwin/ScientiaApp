@@ -118,11 +118,11 @@ $(document).ready(function () {
 
                 /* Post Data */
                 data.action = 'read';
-                data.opsional = [{
+                data.opsional = {
                     'id_groupmenu': $("select[name=fm_groupmenu]").val(),
                     'tipe': $("select[name=fm_tipe]").val(),
                     'public': $("select[name=fm_akses]").val(),
-                }];
+                };
             },
             "dataSrc": function (json) {
                 /* stop_loader */

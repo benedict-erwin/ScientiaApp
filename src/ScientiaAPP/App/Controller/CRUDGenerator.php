@@ -1268,12 +1268,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $optIdx = 0;
             $optCtr = count($postOpt) - 1;
             $js .= "\n\t\t\t\t/* Post Data */";
-            $js .= "\n\t\t\t\tdata.opsional = [{";
+            $js .= "\n\t\t\t\tdata.opsional = {";
             foreach ($postOpt as $opsional) {
                 $js .= "\n\t\t\t\t\t" . ($optCtr == $optIdx ? trim($opsional, ',') : $opsional);
                 $optIdx++;
             }
-            $js .= "\n\t\t\t\t}];\n";
+            $js .= "\n\t\t\t\t};\n";
         }
         //end combobox
 
