@@ -1328,6 +1328,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         //end json reordering
 
         //start column definition
+        $js .= "\n\t\t\"deferRender\": true,";
         $js .= "\n\t\t\"columnDefs\": [";
         $js .= "\n\t\t\t{";
         $js .= "\n\t\t\t\t\"targets\": 0,";

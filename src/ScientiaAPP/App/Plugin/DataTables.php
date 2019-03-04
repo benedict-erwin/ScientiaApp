@@ -420,9 +420,10 @@ class DataTables extends \App\Controller\BaseController
     /* Override SQL Message */
     public function overrideSQLMsg(String $msg = null)
     {
+        $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['error' => $msg]);
         $msgLower = strtolower($msg);
         $find = [
-            "integrity constraint violation" => "Perubahan/penghapusan tidak diizinkan, data masih digunakan",
+            "cannot delete or update a parent row: a foreign key constraint fails" => "Perubahan/penghapusan tidak diizinkan, data masih digunakan",
             "duplicate entry" => "Data ganda, terdapat duplikasi data di database",
         ];
 

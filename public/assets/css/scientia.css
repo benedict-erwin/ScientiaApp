@@ -414,18 +414,6 @@ span.ic_notif {
   background: #f1f3f5;
 }
 
-/* ScrollBar */
-::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 10px;
-  background: #f1f3f5;
-  border-left: 1px solid darken(#f1f3f5, 10%);
-}
-
-::-webkit-scrollbar-thumb {
-  background: darken(#f1f3f5, 20%);
-}
-
 /* Change nprogress color & size */
 #nprogress .bar {
   height:5px;
