@@ -424,7 +424,7 @@ class DataTables extends \App\Controller\BaseController
         $msgLower = strtolower($msg);
         $find = [
             "cannot delete or update a parent row: a foreign key constraint fails" => "Perubahan/penghapusan tidak diizinkan, data masih digunakan",
-            "duplicate entry" => "Data ganda, terdapat duplikasi data di database",
+            "integrity constraint violation: 1062 duplicate entry" => "Data/kode primer telah ada dalam database, silahkan coba dengan data/kode lain",
         ];
 
         foreach ($find as $key => $value) {
