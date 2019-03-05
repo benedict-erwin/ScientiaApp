@@ -327,3 +327,73 @@ function findSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add) {
         }
     });
 }
+
+/**
+ * Ajax Save | Update
+ * @param {string} saveUpdate
+ * @param {string} apiUrl
+ * @param {number} pKey
+ * @param {string} form
+ * @callback callback
+ */
+function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
+    let urLink = '';
+    let formData = new FormData($(form)[0]);
+    $('.btn_save').button('loading');
+    $('.btn_save').prop('disabled', true);
+    $(document.body).css({ 'cursor': 'wait' });
+
+
+    /* Check button text */
+    if (saveUpdate == 'save') {
+        urLink = apiUrl + '_create';
+    } else if (saveUpdate == 'update') {
+        urLink = apiUrl + '_update';
+        formData.append('pKey', pKey);
+    } else {
+        urLink = apiUrl;
+    }
+
+    if ($(form).parsley().validate({ force: true, group: 'role' })) {
+        $.ajax({
+            "type": 'POST',
+            "headers": { JWT: get_token(API_TOKEN) },
+            "url": urLink,
+            "data": formData,
+            "processData": false,
+            "contentType": false,
+            "success": function (result, textStatus, jqXHR) {
+                set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
+                if (result.success === true) {
+                    $(".btReload").click();
+                    notification(result.message, 'success');
+                } else {
+                    notification(result.error, 'warn', 3, result.message);
+                }
+                $(window).scrollTop(0);
+                $('.formEditorModal').modal('hide');
+                $('.btn_save').button('reset');
+                $(document.body).css({ 'cursor': 'default' });
+                $('.btn_save').prop('disabled', false);
+
+                /* Execute callback if exist */
+                typeof callback === 'function' && callback();
+            },
+            "error": function (jqXHR, textStatus, errorThrown) {
+                $('.formEditorModal').modal('hide');
+                $('.btn_save').button('reset');
+                $('.btn_save').prop('disabled', false);
+                $(document.body).css({ 'cursor': 'default' });
+                notification(errorThrown, 'error');
+                redirectLogin(jqXHR);
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    } else {
+        $('.btn_save').button('reset');
+        $(document.body).css({ 'cursor': 'default' });
+        $('.btn_save').prop('disabled', false);
+    }
+}
