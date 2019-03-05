@@ -1031,24 +1031,25 @@ class CRUDGenerator extends \App\Plugin\DataTables
         foreach ($data['describe'] as $desc) {
             /* input name */
             $nama = strtolower($desc['Field']);
+            $label = ucwords(str_replace("_", " ", $nama));
             $isNull = (strtoupper(trim($desc['Null'])) == 'NO') ? "required=\"required\"" : "";
             $spanReq = (strtoupper(trim($desc['Null'])) == 'NO') ? "<span class=\"required\">*</span>" : "";
 
             /* Set input type */
             if (Stringer::is_like(['char'], $desc['Type'])) {
-                $tipe = "<input type=\"text\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . ucwords($nama) . "\" data-parsley-group=\"role\" " . $isNull . ">";
+                $tipe = "<input type=\"text\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['int', 'decimal', 'float'], $desc['Type'])) {
-                $tipe = "<input type=\"number\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . ucwords($nama) . "\" data-parsley-group=\"role\" " . $isNull . ">";
+                $tipe = "<input type=\"number\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['date'], $desc['Type'])) {
-                $tipe = "<input type=\"date\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . ucwords($nama) . "\" data-parsley-group=\"role\" " . $isNull . ">";
+                $tipe = "<input type=\"date\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['text'], $desc['Type'])) {
-                $tipe = "<textarea class=\"form-control auto-size\" rows=\"2\" placeholder=\"Input " . ucwords($nama) . " here...\" name=\"" . $nama . "\" " . $isNull . "></textarea>";
+                $tipe = "<textarea class=\"form-control auto-size\" rows=\"2\" placeholder=\"Input " . $label . " here...\" name=\"" . $nama . "\" " . $isNull . "></textarea>";
             }
 
             /* Skip if PrimaryKey */
             if ($desc['Key'] != 'PRI') {
                 $html .= "\n\t\t\t\t\t<div class=\"form-group-15\">";
-                $html .= "\n\t\t\t\t\t\t<label>" . ucwords(str_replace("_", " ", $nama)) . " " . $spanReq . "</label>";
+                $html .= "\n\t\t\t\t\t\t<label>" . $label . $spanReq . "</label>";
                 $html .= "\n\t\t\t\t\t\t<div class=\"nk-int-st\">";
                 $html .= "\n\t\t\t\t\t\t\t" . $tipe;
                 $html .= "\n\t\t\t\t\t\t</div>";
