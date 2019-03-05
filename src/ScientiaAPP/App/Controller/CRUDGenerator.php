@@ -994,7 +994,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 $html .= "\n\t\t\t\t\t\t\t\t\t\t\t<th width=\"10%\">" . $cols . "</th>";
             }
         }
-        $html .= "\n\t\t\t\t\t\t\t\t\t\t\t<th width=\"10%\">ACTION</th>";
+        $html .= "\n\t\t\t\t\t\t\t\t\t\t\t<th width=\"12%\">ACTION</th>";
         $html .= "\n\t\t\t\t\t\t\t\t\t\t</tr>";
 
         $html .= "\n\t\t\t\t\t\t\t\t\t</thead>";
