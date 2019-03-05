@@ -88,7 +88,7 @@ class M_config extends \App\Plugin\DataTables
 			try {
 				/* Send to DB */
 				if ($this->saveDb($this->safe) !== false) {
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read");
+					$this->InstanceCache->deleteItemsByTag($this->sign ."_M_config_read_" . $this->user_data['ID_JABATAN']);
 					//remove old chace
 					return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 				}else{
@@ -132,7 +132,7 @@ class M_config extends \App\Plugin\DataTables
 						"data" => $data
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_config_read");
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
 					$this->InstanceCache->save($CachedString);
 				} else {
 					/* Get data from Cache */
@@ -160,7 +160,7 @@ class M_config extends \App\Plugin\DataTables
 				/* Send to DB */
 				if ($this->updateDb($this->safe, $where)) {
 					//remove old chace
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read");
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
 					return $this->jsonSuccess('Perubahan data berhasil');
 				}else{
 					throw new \Exception('Perubahan gagal dilakukan!');
@@ -179,7 +179,7 @@ class M_config extends \App\Plugin\DataTables
 				/* Send to DB */
 				if ($this->deleteDb($this->safe['pKey'])) {
 					//remove old chace
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read");
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
 					return $this->jsonSuccess('Data berhasil dihapus');
 				}else{
 					throw new \Exception('Penghapusan gagal dilakukan!');

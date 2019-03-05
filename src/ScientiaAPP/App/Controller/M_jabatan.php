@@ -106,7 +106,7 @@ class M_jabatan extends \App\Plugin\DataTables
 						$this->InstanceCache->deleteItemsByTags([
                             $this->sign . '_getMenus',
                             $this->sign . '_router',
-                            $this->sign . '_M_jabatan_read'
+                            $this->sign . '_M_jabatan_read_' . $this->user_data['ID_JABATAN']
                         ]);
 						return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 					} catch (\Exception $e) {
@@ -153,7 +153,7 @@ class M_jabatan extends \App\Plugin\DataTables
 						"recordsFiltered" => $this->count_filtered($this->safe)
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_jabatan_read');
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign .'_M_jabatan_read_' . $this->user_data[' ID_JABATAN ']);
 					$this->InstanceCache->save($CachedString);
 				} else {
 					$output = $CachedString->get();
@@ -183,7 +183,7 @@ class M_jabatan extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_jabatan_read'
+                        $this->sign . '_M_jabatan_read_' . $this->user_data['ID_JABATAN']
                     ]);
 					return $this->jsonSuccess('Perubahan data berhasil');
 				} else {
@@ -200,13 +200,15 @@ class M_jabatan extends \App\Plugin\DataTables
 	{
 		if ($this->safe) {
 			try {
-				/* Delete from DB */
-				if ($this->deleteBy('j_menu', ['idjabatan' => $this->safe['pKey']])) {
+                /* Delete from DB */
+                $this->set_TABLE('j_menu');
+				if ($this->deleteBy(['idjabatan' => $this->safe['pKey']])) {
+                    $this->set_TABLE('m_jabatan');
 					$this->deleteDb($this->safe['pKey']);
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_jabatan_read'
+                        $this->sign . '_M_jabatan_read_' . $this->user_data['ID_JABATAN']
                     ]);
 					return $this->jsonSuccess('Data berhasil dihapus');
 				} else {

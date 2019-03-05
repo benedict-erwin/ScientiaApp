@@ -90,7 +90,7 @@ class M_user extends \App\Plugin\DataTables
                 /* Send to DB */
                 $this->safe['password'] = $this->kripto->secure_passwd($this->safe['username'], $this->safe['password'], true);
 				if ($this->saveDb($this->safe) !== false) {
-                    $this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read");
+                    $this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read_" . $this->user_data['ID_JABATAN']);
 					return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 				}else{
 					throw new \Exception('Penyimpanan gagal dilakukan!');
@@ -131,7 +131,7 @@ class M_user extends \App\Plugin\DataTables
 						"recordsFiltered" => $this->count_filtered($this->safe)
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_user_read');
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_user_read_' . $this->user_data['ID_JABATAN']);
 					$this->InstanceCache->save($CachedString);
 				} else {
 					$output = $CachedString->get();
@@ -160,7 +160,7 @@ class M_user extends \App\Plugin\DataTables
 
 				/* Send to DB */
 				if ($this->updateDb($this->safe, $where)) {
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read");
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read_" . $this->user_data['ID_JABATAN']);
 					return $this->jsonSuccess('Perubahan data berhasil');
 				} else {
 					throw new \Exception('Perubahan gagal dilakukan!');
@@ -178,7 +178,7 @@ class M_user extends \App\Plugin\DataTables
 			try {
 				/* Delete from DB */
 				if ($this->deleteDb($this->safe['pKey'])) {
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read");
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_user_read_" . $this->user_data['ID_JABATAN']);
 					return $this->jsonSuccess('Data berhasil dihapus');
 				} else {
 					throw new \Exception('Penghapusan gagal dilakukan!');

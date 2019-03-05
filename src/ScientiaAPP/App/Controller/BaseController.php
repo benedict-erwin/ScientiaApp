@@ -372,7 +372,6 @@ class BaseController
     {
         try {
             /* Vars */
-            $path = ($this->uri_path) ? '/'.$this->uri_path:'/home';
             $idjabatan = ($idjabatan) ? $idjabatan:$this->user_data['ID_JABATAN'];
             $iduser = ($iduser) ? $iduser:$this->user_data['ID_USER'];
 
@@ -386,8 +385,9 @@ class BaseController
 
             /* Flush userSession & other cache */
             $this->InstanceCache->deleteItemsByTags([
-                $this->sign . '_getAuthMenu',
-                $this->sign . '_getPermission',
+                $this->sign . '_getAuthMenu_' . $idjabatan,
+                $this->sign . '_getMenus_' . $idjabatan,
+                $this->sign . '_getPermission_' . $idjabatan,
                 $this->sign . '_router',
                 $this->sign . '_userSession_' . $iduser,
             ]);

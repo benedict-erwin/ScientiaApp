@@ -109,7 +109,7 @@ class M_menu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_menu_read',
+                        $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
                     return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
@@ -154,7 +154,7 @@ class M_menu extends \App\Plugin\DataTables
                         "data" => $data
                     ];
 
-                    $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_menu_read");
+                    $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_menu_read_" . $this->user_data['ID_JABATAN']);
                     $this->InstanceCache->save($CachedString);
                 } else {
                     /* Get data from Cache */
@@ -186,7 +186,7 @@ class M_menu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_menu_read',
+                        $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
 					return $this->jsonSuccess('Perubahan data berhasil');
@@ -210,7 +210,7 @@ class M_menu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_menu_read',
+                        $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
 					return $this->jsonSuccess('Data berhasil dihapus');
@@ -267,7 +267,7 @@ class M_menu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_menu_read',
+                        $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
                     $this->dbpdo->pdo->commit();

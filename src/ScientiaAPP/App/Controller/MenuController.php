@@ -111,7 +111,7 @@ class MenuController extends \App\Controller\BaseController
                     $GROUPMENU[$r['id_groupmenu']]['MENU_LIST'][$x]['ORDER'] = $r['order_m'];
                     $x++;
                 }
-                $CachedString->set($GROUPMENU)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getMenus');
+                $CachedString->set($GROUPMENU)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getMenus_' . $this->user_data['ID_JABATAN']);
                 $this->InstanceCache->save($CachedString);
             } else {
                 $GROUPMENU = $CachedString->get();
@@ -183,7 +183,7 @@ class MenuController extends \App\Controller\BaseController
                         $query->bindParam(':url', $path, \PDO::PARAM_STR);
                         $query->execute();
                         $result = $query->fetch();
-                        $CachedString->set($result)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getAuthMenu');
+                        $CachedString->set($result)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getAuthMenu_' . $this->user_data['ID_JABATAN']);
                         $this->InstanceCache->save($CachedString);
                     } else {
                         $result = $CachedString->get();
@@ -239,7 +239,7 @@ class MenuController extends \App\Controller\BaseController
                     $data[] = end($cnt);
                 }
 
-                $CachedString->set($data)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getPermission');
+                $CachedString->set($data)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getPermission_' . $this->user_data['ID_JABATAN']);
                 $this->InstanceCache->save($CachedString);
             }else {
                 $data = $CachedString->get();

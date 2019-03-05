@@ -102,7 +102,7 @@ class M_groupmenu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read'
+                        $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
 					return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 				}else{
@@ -146,7 +146,7 @@ class M_groupmenu extends \App\Plugin\DataTables
 						"data" => $data
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_groupmenu_read");
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_groupmenu_read_" . $this->user_data['ID_JABATAN']);
 					$this->InstanceCache->save($CachedString);
 				} else {
 					/* Get data from Cache */
@@ -178,7 +178,7 @@ class M_groupmenu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read'
+                        $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
 					return $this->jsonSuccess('Perubahan data berhasil');
 				}else{
@@ -201,7 +201,7 @@ class M_groupmenu extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read'
+                        $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
 					return $this->jsonSuccess('Data berhasil dihapus');
 				}else{
