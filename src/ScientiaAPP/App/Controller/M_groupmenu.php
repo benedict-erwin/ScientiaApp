@@ -100,7 +100,7 @@ class M_groupmenu extends \App\Plugin\DataTables
 				if ($this->saveDb($this->safe) !== false) {
                     //remove old chace
                     $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus',
+                        $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
@@ -176,7 +176,7 @@ class M_groupmenu extends \App\Plugin\DataTables
 				if ($this->updateDb($this->safe, $where)) {
                     //remove old chace
                     $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus',
+                        $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
@@ -199,7 +199,7 @@ class M_groupmenu extends \App\Plugin\DataTables
 				if ($this->deleteDb($this->safe['pKey'])) {
 					//remove old chace
                     $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus',
+                        $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_groupmenu_read_' . $this->user_data['ID_JABATAN']
                     ]);
