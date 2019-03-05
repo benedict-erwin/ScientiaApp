@@ -36,7 +36,7 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                     $(".btReload").click();
                     notification(result.message, 'success');
                 } else {
-                    notification(result.error, 'warn', 2, result.message);
+                    notification(result.error, 'warn', 3, result.message);
                 }
                 $(window).scrollTop(0);
                 $('.formEditorModal').modal('hide');
@@ -89,7 +89,7 @@ function deleteSingle(apiUrl, data, callback) {
                     $(".btReload").click();
                     notification(result.message, 'success');
                 } else {
-                    notification(result.error, 'warn', 2, result.message);
+                    notification(result.error, 'warn', 3, result.message);
                 }
                 $(window).scrollTop(0);
 
@@ -139,7 +139,7 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
                         $(".btReload").click();
                         notification(result.message, 'success');
                     } else {
-                        notification(result.error, 'warn', 2, result.message);
+                        notification(result.error, 'warn', 3, result.message);
                     }
                     rows_selected.length = table.column(0).checkboxes.deselect();
                     $(window).scrollTop(0);
@@ -219,7 +219,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
                     opt.append($("<option></option>").attr("value", '00').text("Oops, nothing found!"));
                 }
             } else {
-                notification((result.message.error) ? result.message.error : result.message, 'warn');
+                notification(result.error, 'warn', 3, result.message);
             }
         },
         "error": function (jqXHR, textStatus, errorThrown) {
@@ -315,7 +315,7 @@ function findSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add) {
                 }).trigger("chosen:updated");
                 opt.closest('div').find('input').val(post_data["search[value]"]);;
             } else {
-                notification((result.message.error) ? result.message.error : result.message, 'warn');
+                notification(result.error, 'warn', 3, result.message);
             }
         },
         "error": function (jqXHR, textStatus, errorThrown) {
