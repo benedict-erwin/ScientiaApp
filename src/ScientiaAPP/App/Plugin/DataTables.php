@@ -91,7 +91,7 @@ class DataTables extends \App\Controller\BaseController
             $sql = "SELECT " . $backtick . " FROM " . "`".$this->TABLE."`";
         }
 
-        if (array_key_exists('opsional', $safe)) {
+        if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             $x = 0;
             foreach ($safe['opsional'] as $key => $nilai) {
                 if ($nilai) {
@@ -205,7 +205,7 @@ class DataTables extends \App\Controller\BaseController
         $query = $this->dbpdo->pdo->prepare($sql);
 
         /* Opsional */
-        if (array_key_exists('opsional', $safe)) {
+        if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
@@ -235,7 +235,7 @@ class DataTables extends \App\Controller\BaseController
             $arrFind = [':search_value', ':length', ':start'];
             $arrRep = ["'".$search_value."'", $length, $start];
             $sql = str_replace($arrFind, $arrRep, $sql);
-            if (array_key_exists('opsional', $safe)) {
+            if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
                 foreach ($safe['opsional'] as $key => $nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
@@ -280,7 +280,7 @@ class DataTables extends \App\Controller\BaseController
         $query = $this->dbpdo->pdo->prepare($sql);
 
         /* Opsional */
-        if (array_key_exists('opsional', $safe)) {
+        if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
@@ -304,7 +304,7 @@ class DataTables extends \App\Controller\BaseController
             $arrFind = [':search_value'];
             $arrRep = ["'".$search_value."'"];
             $sql = str_replace($arrFind, $arrRep, $sql);
-            if (array_key_exists('opsional', $safe)) {
+            if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
                 foreach ($safe['opsional'] as $key => $nilai) {
                     if (!empty($nilai)) {
                         $kolom = ':' . $key;
