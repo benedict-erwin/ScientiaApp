@@ -432,3 +432,7 @@ span.ic_notif {
 .margin-bt-20 {
   margin-bottom: 20px;
 }
+
+ul.notika-main-menu-dropdown > li > a:hover{
+    font-weight: bold;
+}
