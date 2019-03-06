@@ -419,9 +419,9 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 /* Commit transaction & Refresh Router  */
                 $this->dbpdo->pdo->commit();
                 $this->InstanceCache->deleteItemsByTags([
-                    $this->sign . '_getMenus',
+                    $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                     $this->sign . '_router',
-                    $this->sign . '_M_menu_read',
+                    $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
                     $this->sign . '_CRUDGenerator_read_menu',
                     $this->sign . '_describe_table',
                     $this->sign . '_tableForeignKeys',
