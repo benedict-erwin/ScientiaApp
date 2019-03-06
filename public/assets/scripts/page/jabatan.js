@@ -22,6 +22,7 @@ $(document).ready(function () {
 
     /* Datatables handler */
     table = $("#datatable-responsive").DataTable({
+        autoWidth: false,
         "language": {
             "searchPlaceholder": 'Enter untuk mencari',
             "zeroRecords": "Maaf, pencarian Anda tidak ditemukan",

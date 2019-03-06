@@ -40,6 +40,7 @@ $(document).ready(function () {
 
     /* Datatables handler */
     table = $("#datatable-responsive").DataTable({
+        autoWidth: false,
         language: {
             "zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
             "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
