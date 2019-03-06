@@ -1171,6 +1171,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
         $js .= "\n\t/* Datatables handler */";
         $js .= "\n\ttable = \$(\"#datatable-responsive\").DataTable({";
+        $js .= "\n\t\tautoWidth: false,";
         $js .= "\n\t\tlanguage: {";
         $js .= "\n\t\t\t\"zeroRecords\": \"Maaf, pencarian Anda tidak ditemukan\",";
         $js .= "\n\t\t\t\"info\": \"Menampilkan _START_ - _END_ dari _TOTAL_ data\",";
