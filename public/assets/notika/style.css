@@ -2754,7 +2754,7 @@ hr {
 /*----------------------------------------*/
 /*  35.  Form Element CSS
 /*----------------------------------------*/
-.nk-int-st input[type="text"], .nk-int-st textarea, .nk-int-st [type="number"], .nk-int-st [type="password"], .nk-int-st [type="email"], .nk-int-st [type="tel"]{
+.nk-int-st input[type="text"], .nk-int-st textarea, .nk-int-st [type="number"], .nk-int-st [type="password"], .nk-int-st [type="email"], .nk-int-st [type="tel"], .nk-int-st [type="date"]{
 	box-shadow: none;
     border-top: 0px solid #ccc;
     border-left: 0px solid #ccc;
