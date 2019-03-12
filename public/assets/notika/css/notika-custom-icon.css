@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'notika-icon';
-  src:  url('fonts/notika-icon.eot?qzfrsz');
-  src:  url('fonts/notika-icon.eot?qzfrsz#iefix') format('embedded-opentype'),
-    url('fonts/notika-icon.ttf?qzfrsz') format('truetype'),
-    url('fonts/notika-icon.woff?qzfrsz') format('woff'),
-    url('fonts/notika-icon.svg?qzfrsz#notika-icon') format('svg');
+  src:  url('../fonts/notika-icon.eot?qzfrsz');
+  src:  url('../fonts/notika-icon.eot?qzfrsz#iefix') format('embedded-opentype'),
+    url('../fonts/notika-icon.ttf?qzfrsz') format('truetype'),
+    url('../fonts/notika-icon.woff?qzfrsz') format('woff'),
+    url('../fonts/notika-icon.svg?qzfrsz#notika-icon') format('svg');
   font-weight: normal;
   font-style: normal;
 }

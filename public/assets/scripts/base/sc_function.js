@@ -238,7 +238,7 @@ function focusLastChar(id) {
 
 /* Function var_dump like PHP */
 function var_dump() {
-    /*    discuss at: http://phpjs.org/functions/var_dump/ */
+    /* discuss at: http://phpjs.org/functions/var_dump/ */
     /* original by: Brett Zamir (http://brett-zamir.me )*/
 
     var output = '',
@@ -503,6 +503,30 @@ function getMetaContent(metaName) {
     return '';
 }
 
+/* Function Print Element
+ * https://gist.github.com/benedict-erwin/75298a97e6b30242c6a5010e31191a28
+ */
+function printElement(elem) {
+    let domClone = elem.cloneNode(true);
+
+    let $printSection = document.getElementById("printSection");
+
+    if (!$printSection) {
+        let $printSection = document.createElement("div");
+        $printSection.id = "printSection";
+        document.body.appendChild($printSection);
+    }
+
+    let WindowObject = window.open('', '_blank');
+    WindowObject.document.body.appendChild(domClone);
+    WindowObject.print();
+    WindowObject.close();
+
+    /* $printSection.innerHTML = "";
+    $printSection.appendChild(domClone);
+    window.print(); */
+}
+
 /* Switch to fullscreen */
 function toggleFullScreen(elem) {
     /* The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) { */
@@ -610,7 +634,7 @@ function redirectLogin(jqXHR) {
 function dtReload(table, time) {
     var time = (isNaN(time)) ? 100 : time;
     setTimeout(function () {
-        table.ajax.reload(null, false); //keep pagination
+        table.ajax.reload(null, false); /* keep pagination */
         table.column(0).checkboxes.deselect();
     }, time);
 }

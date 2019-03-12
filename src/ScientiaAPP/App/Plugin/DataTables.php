@@ -21,6 +21,7 @@ class DataTables extends \App\Controller\BaseController
     protected $COLUMN_SEARCH = [];
     protected $ORDER = [];
     protected $CASE_SENSITIVE = false;
+    protected $AND_OR = "AND";
 
     /* Set property SQL */
     protected function set_SQL($sql='')
@@ -78,6 +79,14 @@ class DataTables extends \App\Controller\BaseController
         return $this;
     }
 
+    /* Set property AND_OR */
+    protected function set_AND_OR($and_or)
+    {
+        $this->AND_OR = $and_or;
+        return $this;
+    }
+
+
     /* Function prepare query for DataTables */
     private function _get_datatables_query(array $safe)
     {
@@ -111,7 +120,7 @@ class DataTables extends \App\Controller\BaseController
                     if ($x===0) { //first loop
                         if (!empty($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
-                                $sql .= " AND ";
+                                $sql .= " {$this->AND_OR} ";
                             } else {
                                 $sql .= " WHERE ";
                             }
@@ -122,7 +131,7 @@ class DataTables extends \App\Controller\BaseController
                     } else {
                         if (!empty($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
-                                $sql .= " AND ";
+                                $sql .= " {$this->AND_OR} ";
                             } else {
                                 $sql .= " WHERE ";
                             }
@@ -146,7 +155,7 @@ class DataTables extends \App\Controller\BaseController
             if ($safe['search']['value']) {
                 if ($i===0) { //first loop
                     if (strpos(strtoupper($sql), 'WHERE') !== false) {
-                        $sql .= " AND ";
+                        $sql .= " {$this->AND_OR} ";
                     } else {
                         $sql .= " WHERE ";
                     }
@@ -398,7 +407,7 @@ class DataTables extends \App\Controller\BaseController
         } else {
             /* Logger */
             if ($this->container->get('settings')['mode'] != 'production') {
-                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->log());
+                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->error());
             }
             return false;
         }

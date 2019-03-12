@@ -45,7 +45,7 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                 $('.btn_save').prop('disabled', false);
 
                 /* Execute callback if exist */
-                typeof callback === 'function' && callback();
+                typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
                 $('.formEditorModal').modal('hide');
@@ -91,10 +91,10 @@ function deleteSingle(apiUrl, data, callback) {
                 } else {
                     notification(result.error, 'warn', 3, result.message);
                 }
-                $(window).scrollTop(0);
+                //$(window).scrollTop(0);
 
                 /* Execute callback if exist */
-                typeof callback === 'function' && callback();
+                typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
                 notification(errorThrown, 'error');
@@ -142,10 +142,10 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
                         notification(result.error, 'warn', 3, result.message);
                     }
                     rows_selected.length = table.column(0).checkboxes.deselect();
-                    $(window).scrollTop(0);
+                    //$(window).scrollTop(0);
 
                     /* Execute callback if exist */
-                    typeof callback === 'function' && callback();
+                    typeof callback === 'function' && callback(result);
                 },
                 "error": function (jqXHR, textStatus, errorThrown) {
                     rows_selected.length = table.column(0).checkboxes.deselect();
@@ -191,7 +191,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
                 opt.find('option').remove();
                 if (result.message.data != undefined && result.message.data.length > 0) {
                     if (!sel) {
-                        opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('SHOW ALL'));
+                        opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('Tentukan Pilihan'));
                     }
                     $(result.message.data).each(function (index, el) {
                         let text;
@@ -216,7 +216,15 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
                     }).trigger("chosen:updated");
                 } else {
                     opt.find('option').remove();
-                    opt.append($("<option></option>").attr("value", '00').text("Oops, nothing found!"));
+                    opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('Tentukan Pilihan'));
+                    opt.closest(':has(span i)').find('span').css('display', 'none');
+                    opt.closest('div').css('display', '');
+                    opt.chosen({
+                        width: "100%",
+                        search_contains: true,
+                        allow_single_deselect: !0,
+                        no_results_text: (!txt_not_found) ? "Oops, nothing found!" : txt_not_found
+                    }).trigger("chosen:updated");
                 }
             } else {
                 notification(result.error, 'warn', 3, result.message);
@@ -237,7 +245,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
  * @param {*} selector
  * @param {*} value
  */
-function initChoosen(selector, value=null) {
+function initChoosen(selector, value=null, placeholder_text=null) {
     let opt = $(selector);
     opt.closest(':has(span i)').find('span').css('display', '');
     opt.closest('div').css('display', 'none');
@@ -251,7 +259,8 @@ function initChoosen(selector, value=null) {
         width: "100%",
         search_contains: true,
         allow_single_deselect: !0,
-        no_results_text: "Oops, nothing found!"
+        no_results_text: "Oops, nothing found!",
+        placeholder_text: placeholder_text || "Tentukan Pilihan"
     }).trigger("chosen:updated");
 }
 
@@ -370,14 +379,14 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
                 } else {
                     notification(result.error, 'warn', 3, result.message);
                 }
-                $(window).scrollTop(0);
+                //$(window).scrollTop(0);
                 $('.formEditorModal').modal('hide');
                 $('.btn_save').button('reset');
                 $(document.body).css({ 'cursor': 'default' });
                 $('.btn_save').prop('disabled', false);
 
                 /* Execute callback if exist */
-                typeof callback === 'function' && callback();
+                typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
                 $('.formEditorModal').modal('hide');
