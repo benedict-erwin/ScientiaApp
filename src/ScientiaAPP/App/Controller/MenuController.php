@@ -221,12 +221,12 @@ class MenuController extends \App\Controller\BaseController
                 $sql = "SELECT a.idjabatan, a.deskripsi, c.idjabatan id_jabatan, c.controller
                         FROM m_jabatan a
                         LEFT JOIN (
-                            SELECT b.id_menu, b.idjabatan, m.controller
+                            SELECT b.id_menu, b.idjabatan, m.controller, m.aktif
                             FROM j_menu b
                             LEFT JOIN m_menu m
                                 ON b.id_menu=m.id_menu
                         ) c ON a.idjabatan=c.idjabatan
-                        WHERE c.controller LIKE :controller AND a.idjabatan=:idjabatan
+                        WHERE c.controller LIKE :controller AND a.idjabatan=:idjabatan AND c.aktif=1
                         ORDER BY a.idjabatan";
 
                 $query = $this->dbpdo->pdo->prepare($sql);

@@ -761,24 +761,20 @@ function checkAuth(callback) {
 
                 /* Update */
                 if (perm.indexOf('update') != -1) {
-                    $('#btEdit').css('display', '');
-                    $('#btEdit').prop('disabled', false);
+                    $('.act-edit').css('display', '');
+                    $('.act-edit').prop('disabled', false);
                 } else {
-                    $('#btEdit').css('display', 'none');
-                    $('#btEdit').prop('disabled', true);
+                    $('.act-edit').css('display', 'none');
+                    $('.act-edit').prop('disabled', true);
                 }
 
                 /* Delete */
                 if (perm.indexOf('delete') != -1) {
-                    $('#btDel').css('display', '');
-                    $('#btDel').prop('disabled', false);
-                    $('.btDels').css('display', '');
-                    $('.btDels').prop('disabled', false);
+                    $('.act-delete').css('display', '');
+                    $('.act-delete').prop('disabled', false);
                 } else {
-                    $('#btDel').css('display', 'none');
-                    $('#btDel').prop('disabled', true);
-                    $('.btDels').css('display', 'none');
-                    $('.btDels').prop('disabled', true);
+                    $('.act-delete').css('display', 'none');
+                    $('.act-delete').prop('disabled', true);
                 }
             }
             /* Execute callback if exist */
