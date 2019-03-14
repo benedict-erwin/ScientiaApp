@@ -110,6 +110,8 @@ class M_menu extends \App\Plugin\DataTables
                         $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getPermission_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getAuthMenu_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
                     return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
@@ -187,6 +189,8 @@ class M_menu extends \App\Plugin\DataTables
                         $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getPermission_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getAuthMenu_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
 					return $this->jsonSuccess('Perubahan data berhasil');
@@ -211,6 +215,8 @@ class M_menu extends \App\Plugin\DataTables
                         $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getPermission_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getAuthMenu_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
 					return $this->jsonSuccess('Data berhasil dihapus');
@@ -268,6 +274,8 @@ class M_menu extends \App\Plugin\DataTables
                         $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_router',
                         $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getPermission_' . $this->user_data['ID_JABATAN'],
+                        $this->sign . '_getAuthMenu_' . $this->user_data['ID_JABATAN'],
                         $this->sign . '_CRUDGenerator_read_menu'
                     ]);
                     $this->dbpdo->pdo->commit();
