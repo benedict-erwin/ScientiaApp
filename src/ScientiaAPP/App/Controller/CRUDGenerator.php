@@ -784,7 +784,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t/* Send to DB */";
             $php .= "\n\t\t\t\tif (\$this->saveDb(\$this->safe) !== false) {";
             $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\" . \$this->user_data['ID_JABATAN']);";
+            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
             $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);";
             $php .= "\n\t\t\t\t}else{";
             $php .= "\n\t\t\t\t\tthrow new \\Exception('Penyimpanan gagal dilakukan!');";
@@ -808,7 +808,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t\$search = (isset(\$this->safe['search']['value']) ? \$this->safe['search']['value']:null);";
             $php .= "\n\t\t\t\t\$length = (isset(\$this->safe['length']) ? \$this->safe['length']:null);";
             $php .= "\n\t\t\t\t\$start = (isset(\$this->safe['start']) ? \$this->safe['start']:null);";
-            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$start . \$length . \$opsional . \$search);";
+            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$this->user_data['ID_JABATAN'] . \$start . \$length . \$opsional . \$search);";
             $php .= "\n\t\t\t\t\$CachedString = \$this->InstanceCache->getItem(\$ckey);\n";
             $php .= "\n\t\t\t\t/* If not in Cache */";
             $php .= "\n\t\t\t\tif(is_null(\$CachedString->get())){";
@@ -826,7 +826,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t\t\t\"recordsFiltered\" => \$this->count_filtered(\$this->safe),";
             $php .= "\n\t\t\t\t\t\t\"data\" => \$data";
             $php .= "\n\t\t\t\t\t];\n";
-            $php .= "\n\t\t\t\t\t\$CachedString->set(\$output)->expiresAfter(\$this->CacheExp)->addTag(\$this->sign . \"_" . $data["className"] ."_read_\" . \$this->user_data['ID_JABATAN']);";
+            $php .= "\n\t\t\t\t\t\$CachedString->set(\$output)->expiresAfter(\$this->CacheExp)->addTag(\$this->sign . \"_" . $data["className"] ."_read_\");";
             $php .= "\n\t\t\t\t\t\$this->InstanceCache->save(\$CachedString);";
             $php .= "\n\t\t\t\t} else {";
             $php .= "\n\t\t\t\t\t/* Get data from Cache */";
@@ -854,7 +854,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t/* Send to DB */";
             $php .= "\n\t\t\t\tif (\$this->updateDb(\$this->safe, \$where)) {";
             $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\" . \$this->user_data['ID_JABATAN']);";
+            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
             $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Perubahan data berhasil');";
             $php .= "\n\t\t\t\t}else{";
             $php .= "\n\t\t\t\t\tthrow new \\Exception('Perubahan gagal dilakukan!');";
@@ -876,7 +876,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t/* Send to DB */";
             $php .= "\n\t\t\t\tif (\$this->deleteDb(\$this->safe['pKey'])) {";
             $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\" . \$this->user_data['ID_JABATAN']);";
+            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
             $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil dihapus');";
             $php .= "\n\t\t\t\t}else{";
             $php .= "\n\t\t\t\t\tthrow new \\Exception('Penghapusan gagal dilakukan!');";

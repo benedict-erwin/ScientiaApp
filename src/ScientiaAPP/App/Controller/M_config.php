@@ -88,7 +88,7 @@ class M_config extends \App\Plugin\DataTables
 			try {
 				/* Send to DB */
 				if ($this->saveDb($this->safe) !== false) {
-					$this->InstanceCache->deleteItemsByTag($this->sign ."_M_config_read_" . $this->user_data['ID_JABATAN']);
+					$this->InstanceCache->deleteItemsByTag($this->sign ."_M_config_read_");
 					//remove old chace
 					return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 				}else{
@@ -111,7 +111,7 @@ class M_config extends \App\Plugin\DataTables
                 $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
                 $length = (isset($this->safe['length']) ? $this->safe['length']:null);
                 $start = (isset($this->safe['start']) ? $this->safe['start']:null);
-				$ckey = hash("md5", "M_config" . $start . $length . $opsional . $search);
+				$ckey = hash("md5", "M_config" . $this->user_data['ID_JABATAN'] . $start . $length . $opsional . $search);
 				$CachedString = $this->InstanceCache->getItem($ckey);
 
 				/* If not in Cache */
@@ -132,7 +132,7 @@ class M_config extends \App\Plugin\DataTables
 						"data" => $data
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_config_read_");
 					$this->InstanceCache->save($CachedString);
 				} else {
 					/* Get data from Cache */
@@ -160,7 +160,7 @@ class M_config extends \App\Plugin\DataTables
 				/* Send to DB */
 				if ($this->updateDb($this->safe, $where)) {
 					//remove old chace
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_");
 					return $this->jsonSuccess('Perubahan data berhasil');
 				}else{
 					throw new \Exception('Perubahan gagal dilakukan!');
@@ -179,7 +179,7 @@ class M_config extends \App\Plugin\DataTables
 				/* Send to DB */
 				if ($this->deleteDb($this->safe['pKey'])) {
 					//remove old chace
-					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_" . $this->user_data['ID_JABATAN']);
+					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_");
 					return $this->jsonSuccess('Data berhasil dihapus');
 				}else{
 					throw new \Exception('Penghapusan gagal dilakukan!');

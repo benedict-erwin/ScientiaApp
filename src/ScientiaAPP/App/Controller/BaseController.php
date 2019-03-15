@@ -98,7 +98,7 @@ class BaseController
         $CachedString = $this->InstanceCache->getItem($ckey);
         if (is_null($CachedString->get())) {
             $jtid = $ckey;
-            $CachedString->set($jtid)->expiresAfter($this->jwtExp)->addTag($this->sign . "_userSession_". $userdata['ID_USER']);
+            $CachedString->set($jtid)->expiresAfter($this->jwtExp)->addTag($this->sign . "_userSession_");
             $this->InstanceCache->save($CachedString);
         } else {
             $jtid = $CachedString->get();
@@ -281,7 +281,7 @@ class BaseController
                 ],
                 ["m_user.iduser" => $id_user]
             );
-            $CachedString->set($userdata)->expiresAfter(28800)->addTag($this->sign . "_UserDetail"); //8jam
+            $CachedString->set($userdata)->expiresAfter($this->jwtExp)->addTag($this->sign . "_UserDetail");
             $this->InstanceCache->save($CachedString);
         } else {
             $userdata = $CachedString->get();
@@ -385,11 +385,12 @@ class BaseController
 
             /* Flush userSession & other cache */
             $this->InstanceCache->deleteItemsByTags([
-                $this->sign . '_getAuthMenu_' . $idjabatan,
-                $this->sign . '_getMenus_' . $idjabatan,
-                $this->sign . '_getPermission_' . $idjabatan,
+                $this->sign . '_getAuthMenu_',
+                $this->sign . '_getMenus_',
+                $this->sign . '_getPermission_',
                 $this->sign . '_router',
-                $this->sign . '_userSession_' . $iduser,
+                $this->sign . '_userSession_',
+                $this->sign . '_UserDetail',
             ]);
 
             return true;
