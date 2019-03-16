@@ -419,9 +419,9 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 /* Commit transaction & Refresh Router  */
                 $this->dbpdo->pdo->commit();
                 $this->InstanceCache->deleteItemsByTags([
-                    $this->sign . '_getMenus_' . $this->user_data['ID_JABATAN'],
+                    $this->sign . '_getMenus_',
                     $this->sign . '_router',
-                    $this->sign . '_M_menu_read_' . $this->user_data['ID_JABATAN'],
+                    $this->sign . '_M_menu_read_',
                     $this->sign . '_CRUDGenerator_read_menu',
                     $this->sign . '_describe_table',
                     $this->sign . '_tableForeignKeys',
@@ -1092,7 +1092,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $changeSelect = [];
 
             foreach ($data['relation']['relation'] as $col) {
-                $isChar = (empty( $col['IS_CHAR']) ? $col['REFERENCED_COLUMN_NAME'] : $col['IS_CHAR']);
+                $isChar = (empty($col['IS_CHAR']) ? $col['REFERENCED_COLUMN_NAME'] : $col['IS_CHAR']);
                 $jsPopulate .= "\n/* Get " . $col['REFERENCED_TABLE_NAME'] . " */";
                 $jsPopulate .= "\nfunction get" . $col['REFERENCED_TABLE_NAME'] . "(obj, sel = null) {";
                 $jsPopulate .= "\n\tlet opt = \$(obj);";
