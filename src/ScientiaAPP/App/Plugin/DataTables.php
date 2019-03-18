@@ -5,6 +5,7 @@
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018
+ * @updated    on Mon Mar 18 2019
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  **/
 
@@ -24,49 +25,49 @@ class DataTables extends \App\Controller\BaseController
     protected $AND_OR = "AND";
 
     /* Set property SQL */
-    protected function set_SQL($sql='')
+    protected function set_SQL($sql = '')
     {
         $this->SQL = $sql;
         return $this;
     }
 
     /* Set property TABLE */
-    protected function set_TABLE($table='')
+    protected function set_TABLE($table = '')
     {
         $this->TABLE = $table;
         return $this;
     }
 
     /* Set property PKEY */
-    protected function set_PKEY($pkey='')
+    protected function set_PKEY($pkey = '')
     {
         $this->PKEY = $pkey;
         return $this;
     }
 
     /* Set property COLUMNS */
-    protected function set_COLUMNS($columns=array())
+    protected function set_COLUMNS($columns = array())
     {
         $this->COLUMNS = $columns;
         return $this;
     }
 
     /* Set property COLUMN_ORDER */
-    protected function set_COLUMN_ORDER($column_order=array())
+    protected function set_COLUMN_ORDER($column_order = array())
     {
         $this->COLUMN_ORDER = $column_order;
         return $this;
     }
 
     /* Set property COLUMN_SEARCH */
-    protected function set_COLUMN_SEARCH($column_search=array())
+    protected function set_COLUMN_SEARCH($column_search = array())
     {
         $this->COLUMN_SEARCH = $column_search;
         return $this;
     }
 
     /* Set property ORDER */
-    protected function set_ORDER($order=array())
+    protected function set_ORDER($order = array())
     {
         $this->ORDER = $order;
         return $this;
@@ -95,9 +96,9 @@ class DataTables extends \App\Controller\BaseController
             $sql = $this->SQL;
         } else {
             $backtick = empty($this->COLUMNS) ? "*" : implode(", ", array_map(function ($a) {
-                return "`".$a."`";
+                return "`" . $a . "`";
             }, $this->COLUMNS));
-            $sql = "SELECT " . $backtick . " FROM " . "`".$this->TABLE."`";
+            $sql = "SELECT " . $backtick . " FROM " . "`" . $this->TABLE . "`";
         }
 
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
@@ -106,18 +107,20 @@ class DataTables extends \App\Controller\BaseController
                 if ($nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
-                    $kol = implode(".", array_map(function ($a) {
-                            return "`".$a."`";
+                    $kol = implode(
+                        ".",
+                        array_map(function ($a) {
+                            return "`" . $a . "`";
                         }, explode('.', preg_replace('/[^a-zA-Z_.]*/', '', $key)))
                     );
 
                     /* Explode get table column */
-                    if (strpos($key, '.')!==false) {
+                    if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
                         $binder = end($xp);
                     }
 
-                    if ($x===0) { //first loop
+                    if ($x === 0) { //first loop
                         if (!empty($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
                                 $sql .= " {$this->AND_OR} ";
@@ -150,10 +153,11 @@ class DataTables extends \App\Controller\BaseController
 
         //Loop column search
         $i = 0;
-        $binary = ($this->CASE_SENSITIVE) ? "BINARY":"";
+        $binary = ($this->CASE_SENSITIVE) ? "BINARY" : "";
         foreach ($this->COLUMN_SEARCH as $item) {
+            $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
             if ($safe['search']['value']) {
-                if ($i===0) { //first loop
+                if ($i === 0) { //first loop
                     if (strpos(strtoupper($sql), 'WHERE') !== false) {
                         $sql .= " {$this->AND_OR} ";
                     } else {
@@ -177,10 +181,10 @@ class DataTables extends \App\Controller\BaseController
             $column = key($this->ORDER);
             $direction = $this->ORDER[key($this->ORDER)];
             $sql .= " ORDER BY $column $direction";
-        }else {
-            $kolum = (int) $safe['order']['0']['column'];
-            $ord = (empty($this->COLUMN_ORDER[$kolum])) ? 1:$this->COLUMN_ORDER[$kolum];
-            $sort = (strtoupper($safe['order']['0']['dir']) === "ASC") ? " ASC":" DESC";
+        } else {
+            $kolum = (int)$safe['order']['0']['column'];
+            $ord = (empty($this->COLUMN_ORDER[$kolum])) ? 1 : $this->COLUMN_ORDER[$kolum];
+            $sort = (strtoupper($safe['order']['0']['dir']) === "ASC") ? " ASC" : " DESC";
             $sql .= " ORDER BY " . $ord . $sort;
         }
 
@@ -206,6 +210,7 @@ class DataTables extends \App\Controller\BaseController
         }
 
         /* Param Variables */
+        $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
         $search_value = "%" . strtoupper($safe['search']['value']) . "%";
         $length = (int)$safe['length'];
         $start = (int)$safe['start'];
@@ -218,7 +223,7 @@ class DataTables extends \App\Controller\BaseController
             foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
-                    if (strpos($key, '.')!==false) {
+                    if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
                         $binder = end($xp);
                     }
@@ -242,19 +247,21 @@ class DataTables extends \App\Controller\BaseController
         if ($this->container->get('settings')['mode'] != 'production') {
             $this->logger->addInfo(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: BEFORE :: ' . preg_replace('/\v(?:[\v\h]+)/', ' ', $sql));
             $arrFind = [':search_value', ':length', ':start'];
-            $arrRep = ["'".$search_value."'", $length, $start];
+            $arrRep = ["'" . $search_value . "'", $length, $start];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
                 foreach ($safe['opsional'] as $key => $nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
-                    $kol = implode(".", array_map(function ($a) {
-                            return "`".$a."`";
+                    $kol = implode(
+                        ".",
+                        array_map(function ($a) {
+                            return "`" . $a . "`";
                         }, explode('.', preg_replace('/[^a-zA-Z_.]*/', '', $key)))
                     );
 
                     /* Explode get table column */
-                    if (strpos($key, '.')!==false) {
+                    if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
                         $binder = end($xp);
                     }
@@ -283,6 +290,7 @@ class DataTables extends \App\Controller\BaseController
         $sql = $this->_get_datatables_query($safe);
 
         /* Param Variables */
+        $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
         $search_value = "%" . strtoupper($safe['search']['value']) . "%";
 
         /* bindParam & execute */
@@ -293,7 +301,7 @@ class DataTables extends \App\Controller\BaseController
             foreach ($safe['opsional'] as $key => $nilai) {
                 if (!empty($nilai)) {
                     $binder = $key;
-                    if (strpos($key, '.')!==false) {
+                    if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
                         $binder = end($xp);
                     }
@@ -311,7 +319,7 @@ class DataTables extends \App\Controller\BaseController
         if ($this->container->get('settings')['mode'] != 'production') {
             $this->logger->addInfo(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: BEFORE :: ' . preg_replace('/\v(?:[\v\h]+)/', ' ', $sql));
             $arrFind = [':search_value'];
-            $arrRep = ["'".$search_value."'"];
+            $arrRep = ["'" . $search_value . "'"];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
                 foreach ($safe['opsional'] as $key => $nilai) {
@@ -333,7 +341,7 @@ class DataTables extends \App\Controller\BaseController
     }
 
     /* Function Count All record in table */
-    protected function count_all($safe='')
+    protected function count_all($safe = '')
     {
         /* Get AllData */
         $data = $this->dbpdo->select($this->TABLE, "*");
@@ -347,7 +355,7 @@ class DataTables extends \App\Controller\BaseController
     }
 
     /* Function Insert */
-    protected function saveDb($data=[])
+    protected function saveDb($data = [])
     {
         $result = $this->dbpdo->insert($this->TABLE, $data);
         if ($result->rowCount() > 0) {
@@ -362,7 +370,7 @@ class DataTables extends \App\Controller\BaseController
     }
 
     /* Function Update */
-    protected function updateDb($data=[], $where=[])
+    protected function updateDb($data = [], $where = [])
     {
         $result = $this->dbpdo->update($this->TABLE, $data, $where);
         if ($result->rowCount() > 0) {
@@ -379,7 +387,7 @@ class DataTables extends \App\Controller\BaseController
     /* Function Delete by PK */
     protected function deleteDb($pkey)
     {
-        $pkey = is_array($pkey) ? $pkey:[$pkey];
+        $pkey = is_array($pkey) ? $pkey : [$pkey];
         $result = $this->dbpdo->delete($this->TABLE, [$this->PKEY => $pkey]);
         if ($result->rowCount() > 0) {
             return true;
@@ -414,7 +422,7 @@ class DataTables extends \App\Controller\BaseController
     }
 
     /* Get Data */
-    protected function getData($col = [], $where=[])
+    protected function getData($col = [], $where = [])
     {
         return $this->dbpdo->get($this->TABLE, $col, $where);
     }
@@ -422,8 +430,9 @@ class DataTables extends \App\Controller\BaseController
     /**
      * Get Data By ID (Primary Key)
      */
-    protected function getDataById($id, $column=null){
-        return $this->dbpdo->get($this->TABLE, (($column) ? $column:'*'), [$this->PKEY => $id]);
+    protected function getDataById($id, $column = null)
+    {
+        return $this->dbpdo->get($this->TABLE, (($column) ? $column : '*'), [$this->PKEY => $id]);
     }
 
     /* Override SQL Message */
@@ -444,5 +453,4 @@ class DataTables extends \App\Controller\BaseController
 
         return $msg;
     }
-
 }
