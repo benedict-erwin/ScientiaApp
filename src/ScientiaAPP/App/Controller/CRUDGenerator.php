@@ -1227,7 +1227,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         /* Create */
         $js .= "\n\t\t\t{";
         $js .= "\n\t\t\t\ttext: \"<i class='fa fa-plus-circle'></i>\",";
-        $js .= "\n\t\t\t\tclassName: \"btn-sm btn-primary btn_add\",";
+        $js .= "\n\t\t\t\tclassName: \"btn-sm btn-primary btn_add hidden\",";
         $js .= "\n\t\t\t\ttitleAttr: \"Create New\",";
         $js .= "\n\t\t\t\taction: function() {";
         $js .= "\n\t\t\t\t\tbtn_add();";
@@ -1238,7 +1238,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         /* Delete */
         $js .= "\n\t\t\t{";
         $js .= "\n\t\t\t\ttext: \"<i class='fa fa-trash'></i>\",";
-        $js .= "\n\t\t\t\tclassName: \"btn-sm btn-danger btDels act-delete\",";
+        $js .= "\n\t\t\t\tclassName: \"btn-sm btn-danger btDels act-delete hidden\",";
         $js .= "\n\t\t\t\ttitleAttr: \"Multiple Delete\",";
         $js .= "\n\t\t\t},";
         //-->
@@ -1351,8 +1351,8 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\t\"className\": \"dt-center\",";
         $js .= "\n\t\t\t\t\"data\": null,";
         $js .= "\n\t\t\t\t\"defaultContent\":";
-        $js .= "\n\t\t\t\t\t'<span class=\"button-icon-btn button-icon-btn-cl sm-res-mg-t-30\"><button title=\"Edit\" id=\"btEdit\" class=\"btn-act act-edit btn btn-warning warning-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs\" type=\"button\"><i class=\"notika-icon notika-draft\"></i></button></span>' +";
-        $js .= "\n\t\t\t\t\t'<span class=\"button-icon-btn button-icon-btn-cl sm-res-mg-t-30\"><button title=\"Delete\" id=\"btDel\" class=\"btn-act act-delete btn btn-danger danger-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs\" type=\"button\"><i class=\"notika-icon notika-close\"></i></button></span>'";
+        $js .= "\n\t\t\t\t\t'<span class=\"button-icon-btn button-icon-btn-cl sm-res-mg-t-30\"><button title=\"Edit\" id=\"btEdit\" class=\"hidden btn-act act-edit btn btn-warning warning-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs\" type=\"button\"><i class=\"notika-icon notika-draft\"></i></button></span>' +";
+        $js .= "\n\t\t\t\t\t'<span class=\"button-icon-btn button-icon-btn-cl sm-res-mg-t-30\"><button title=\"Delete\" id=\"btDel\" class=\"hidden btn-act act-delete btn btn-danger danger-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs\" type=\"button\"><i class=\"notika-icon notika-close\"></i></button></span>'";
         $js .= "\n\t\t\t}";
         $js .= "\n\t\t],";
         $js .= "\n\t\t\"select\": {";

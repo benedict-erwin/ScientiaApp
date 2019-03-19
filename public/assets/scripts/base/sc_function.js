@@ -743,10 +743,10 @@ function checkAuth(callback) {
 
                 /* Create */
                 if (perm.indexOf('create') != -1) {
-                    $('.btn_add').css('display', '');
+                    $('.btn_add').removeClass('hidden');
                     $('.btn_add').prop('disabled', false);
                 } else {
-                    $('.btn_add').css('display', 'none');
+                    $('.btn_add').addClass('hidden');
                     $('.btn_add').prop('disabled', true);
                 }
 
@@ -761,19 +761,19 @@ function checkAuth(callback) {
 
                 /* Update */
                 if (perm.indexOf('update') != -1) {
-                    $('.act-edit').css('display', '');
+                    $('.act-edit').removeClass('hidden');
                     $('.act-edit').prop('disabled', false);
                 } else {
-                    $('.act-edit').css('display', 'none');
+                    $('.act-edit').addClass('hidden');
                     $('.act-edit').prop('disabled', true);
                 }
 
                 /* Delete */
                 if (perm.indexOf('delete') != -1) {
-                    $('.act-delete').css('display', '');
+                    $('.act-delete').removeClass('hidden');
                     $('.act-delete').prop('disabled', false);
                 } else {
-                    $('.act-delete').css('display', 'none');
+                    $('.act-delete').addClass('hidden');
                     $('.act-delete').prop('disabled', true);
                 }
             }
