@@ -15,7 +15,7 @@ use App\Lib\Ipaddress;
 
 class LoginController extends \App\Controller\BaseController
 {
-    
+
     /**
      * Call Parent Constructor
      *
@@ -69,7 +69,7 @@ class LoginController extends \App\Controller\BaseController
      * Login Verification
      *
      * @param array $userpass
-     * @return json 
+     * @return json
      */
     private function verify(array $userpass = [])
     {
@@ -94,11 +94,11 @@ class LoginController extends \App\Controller\BaseController
 
                     /* Update last login */
                     $this->dbpdo->update(
-                        'm_user', 
+                        'm_user',
                         [
                             'lastlogin' => Medoo::raw('NOW()'),
                             'ip_address' => $ip->get_ip_address()
-                        ], 
+                        ],
                         ['iduser' => $userdata['iduser']]
                     );
 
@@ -106,7 +106,7 @@ class LoginController extends \App\Controller\BaseController
                     $userdata['ID_USER'] = $userdata['iduser'];
                     $userdata['USERNAME'] = $userdata['username'];
                     $token = (string) $this->getTokenJWT($userdata);
-                    
+
                     /* Return success message */
                     return $this->jsonSuccess("Welcome " . ucfirst($userdata['username']) . " 🙂", ['username' => $userdata['username']], $token, 202);
                 } else {
@@ -122,13 +122,13 @@ class LoginController extends \App\Controller\BaseController
 
     /**
      * Destroy JWT Session and Clear user cache
-     * 
+     *
      * @return json
      */
     public function logout()
     {
         try {
-            $this->clearMenuCache();
+            $this->clearUserCache();
             $this->rmEmptyCache();
             return $this->jsonSuccess("Thanks " . ucfirst($this->user_data['USERNAME']) . ", see You again 🙂");
         } catch (\Exception $e) {

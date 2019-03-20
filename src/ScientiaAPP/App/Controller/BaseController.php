@@ -368,7 +368,7 @@ class BaseController
     }
 
     /* Clear Cache */
-    protected function clearMenuCache($idjabatan=null, $iduser=null)
+    protected function clearUserCache($idjabatan=null, $iduser=null)
     {
         try {
             /* Vars */
