@@ -104,7 +104,7 @@ class DataTables extends \App\Controller\BaseController
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             $x = 0;
             foreach ($safe['opsional'] as $key => $nilai) {
-                if ($nilai) {
+                if ($nilai || is_numeric($nilai)) {
                     /* Clean key for safe sql */
                     $binder = $key;
                     $kol = implode(
@@ -121,7 +121,7 @@ class DataTables extends \App\Controller\BaseController
                     }
 
                     if ($x === 0) { //first loop
-                        if (!empty($nilai)) {
+                        if ($nilai || is_numeric($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
                                 $sql .= " {$this->AND_OR} ";
                             } else {
@@ -132,7 +132,7 @@ class DataTables extends \App\Controller\BaseController
                             $sql .= $kol . " = :" . $binder;
                         }
                     } else {
-                        if (!empty($nilai)) {
+                        if ($nilai || is_numeric($nilai)) {
                             if (strpos(strtoupper($sql), 'WHERE') !== false) {
                                 $sql .= " {$this->AND_OR} ";
                             } else {
@@ -143,7 +143,7 @@ class DataTables extends \App\Controller\BaseController
                         }
                     }
 
-                    if (count(array_filter($safe['opsional'])) - 1 == $x) {
+                    if (count(array_filter($safe['opsional'], 'strlen')) - 1 == $x) {
                         $sql .= " ) "; //close bracket
                     }
                     $x++;
@@ -178,9 +178,13 @@ class DataTables extends \App\Controller\BaseController
 
         //Set Ordering
         if (!empty($this->ORDER)) {
-            $column = key($this->ORDER);
-            $direction = $this->ORDER[key($this->ORDER)];
-            $sql .= " ORDER BY $column $direction";
+            $ord = str_replace('=', ' ', http_build_query($this->ORDER, '', ', '));
+            $ord = utf8_decode(urldecode($ord));
+            $sql .= " ORDER BY {$ord}";
+
+            // $column = key($this->ORDER);
+            // $direction = $this->ORDER[key($this->ORDER)];
+            // $sql .= " ORDER BY $column $direction";
         } else {
             $kolum = (int)$safe['order']['0']['column'];
             $ord = (empty($this->COLUMN_ORDER[$kolum])) ? 1 : $this->COLUMN_ORDER[$kolum];
@@ -221,7 +225,7 @@ class DataTables extends \App\Controller\BaseController
         /* Opsional */
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             foreach ($safe['opsional'] as $key => $nilai) {
-                if (!empty($nilai)) {
+                if ($nilai || is_numeric($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
@@ -267,7 +271,7 @@ class DataTables extends \App\Controller\BaseController
                     }
 
                     /* Replace param with value */
-                    if (!empty($nilai)) {
+                    if ($nilai || is_numeric($nilai)) {
                         $kolom = ':' . $binder;
                         $sql = str_replace($kolom, $nilai, $sql);
                     }
@@ -299,7 +303,7 @@ class DataTables extends \App\Controller\BaseController
         /* Opsional */
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             foreach ($safe['opsional'] as $key => $nilai) {
-                if (!empty($nilai)) {
+                if ($nilai || is_numeric($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.') !== false) {
                         $xp = explode('.', $key);
@@ -323,7 +327,7 @@ class DataTables extends \App\Controller\BaseController
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
                 foreach ($safe['opsional'] as $key => $nilai) {
-                    if (!empty($nilai)) {
+                    if ($nilai || is_numeric($nilai)) {
                         $kolom = ':' . $key;
                         $sql = str_replace($kolom, $nilai, $sql);
                     }
