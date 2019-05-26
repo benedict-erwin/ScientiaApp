@@ -98,7 +98,9 @@ $(document).ready(function() {
 			"type": 'post',
 			"headers": { JWT: get_token(API_TOKEN) },
 			"data": function(data, settings){
-				/* start_loader */
+                /* start_loader */
+                $(".cssload-loader").hide();
+                $("#dtableDiv").fadeIn("slow");
 				$("a.btn.btn-default.btn-sm").addClass('disabled');
 				$("#tx_dtSpiner").text('Please wait...');
 				$("#dtSpiner").removeClass('pause-spinner');
@@ -106,8 +108,6 @@ $(document).ready(function() {
 			"dataSrc": function(json) {
 				/* stop_loader */
                 checkAuth(function () {
-                    $(".cssload-loader").hide();
-                    $("#dtableDiv").fadeIn("slow");
                     $("#tx_dtSpiner").text('Reload');
                     $("#dtSpiner").addClass('pause-spinner');
                     $("a.btn.btn-default.btn-sm").removeClass('disabled');

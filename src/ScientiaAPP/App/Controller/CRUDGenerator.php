@@ -1261,6 +1261,8 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\"headers\": { JWT: get_token(API_TOKEN) },";
         $js .= "\n\t\t\t\"data\": function(data, settings){";
         $js .= "\n\t\t\t\t/* start_loader */";
+        $js .= "\n\t\t\t\t\$(\".cssload-loader\").hide();";
+        $js .= "\n\t\t\t\t\$(\"#dtableDiv\").fadeIn(\"slow\");";
         $js .= "\n\t\t\t\t\$(\"a.btn.btn-default.btn-sm\").addClass('disabled');";
         $js .= "\n\t\t\t\t\$(\"#tx_dtSpiner\").text('Please wait...');";
         $js .= "\n\t\t\t\t\$(\"#dtSpiner\").removeClass('pause-spinner');\n";
@@ -1283,8 +1285,6 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\"dataSrc\": function(json) {";
         $js .= "\n\t\t\t\t/* stop_loader */";
         $js .= "\n\t\t\t\tcheckAuth(function(){";
-        $js .= "\n\t\t\t\t\t\$(\".cssload-loader\").hide();";
-        $js .= "\n\t\t\t\t\t\$(\"#dtableDiv\").fadeIn(\"slow\");";
         $js .= "\n\t\t\t\t\t\$(\"#tx_dtSpiner\").text('Reload');";
         $js .= "\n\t\t\t\t\t\$(\"#dtSpiner\").addClass('pause-spinner');";
         $js .= "\n\t\t\t\t\t\$(\"a.btn.btn-default.btn-sm\").removeClass('disabled');";
