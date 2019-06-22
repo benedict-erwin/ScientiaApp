@@ -124,7 +124,7 @@ $(document).ready(function () {
                 data.opsional = {
                     'id_groupmenu': $("select[name=fm_groupmenu]").val(),
                     'tipe': $("select[name=fm_tipe]").val(),
-                    'public': $("select[name=fm_akses]").val(),
+                    'is_public': $("select[name=fm_akses]").val(),
                 };
             },
             "dataSrc": function (json) {
@@ -182,7 +182,7 @@ $(document).ready(function () {
                 "className": "dt-center",
                 "data": null,
                 "defaultContent":
-                    '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Assign" id="btAssign" class="btn-act btn btn-success success-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-menus"></i></button></span>' +
+                    '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Assign" id="btAssign" class="hidden act-setPermission btn-act btn btn-success success-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-menus"></i></button></span>' +
                     '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Edit" id="btEdit" class="hidden btn-act act-edit btn btn-warning warning-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-draft"></i></button></span>' +
                     '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Delete" id="btDel" class="hidden btn-act act-delete btn btn-danger danger-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-close"></i></button></span>'
             },
@@ -240,7 +240,7 @@ $(document).ready(function () {
         initChoosen('.public', data[9]);
         $("input[name=urut]").val(data[10]);
         $('.btn_save').html('<i class="fa fa-save"></i> Update');
-        $('.modal-title').html('Edit Menu');
+        $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('Edit Menu');
         $('.formEditorModal').modal();
     });
 
@@ -400,7 +400,7 @@ function btn_add() {
     initChoosen('.tipe');
     initChoosen('.public');
     $('.btn_save').html('<i class="fa fa-save"></i> Save');
-    $('.modal-title').html('New Menu');
+    $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('New Menu');
     $('.formEditorModal form')[0].reset();
     $('.formEditorModal').modal();
     switchStatus('input[name=aktif]', 0);

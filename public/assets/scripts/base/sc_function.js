@@ -741,6 +741,8 @@ function checkAuth(callback) {
                 /* Set Permission */
                 var perm = data.message;
 
+                /** Permission List **/
+
                 /* Create */
                 if (perm.indexOf('create') != -1) {
                     $('.btn_add').removeClass('hidden');
@@ -775,6 +777,15 @@ function checkAuth(callback) {
                 } else {
                     $('.act-delete').addClass('hidden');
                     $('.act-delete').prop('disabled', true);
+                }
+
+                /* setPermission */
+                if (perm.indexOf('setPermission') != -1) {
+                    $('.act-setPermission').removeClass('hidden');
+                    $('.act-setPermission').prop('disabled', false);
+                } else {
+                    $('.act-setPermission').addClass('hidden');
+                    $('.act-setPermission').prop('disabled', true);
                 }
             }
             /* Execute callback if exist */
