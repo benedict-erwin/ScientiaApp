@@ -44,7 +44,7 @@ $(document).ready(function() {
                             window.location.replace('./home');
                         }, 1000);
                     } else {
-                        notification((data.message.error) ? data.message.error : data.message, 'warn');
+                        notification((data.message.error) ? data.message : data.error, 'warn');
                         $('#tx_spin').html('LOGIN');
                         $(this.element).prop('disabled', false);
                         klik = true;
