@@ -2,7 +2,8 @@
 <html lang="en" class="fullscreen-bg">
 
 <head>
-    <title>Login | ScientiaAPP</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Login | {{ app_name }} {{ app_version }}</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
@@ -76,19 +77,19 @@
                                     <img style="margin:0 auto 0 auto;"
                                         src="{{ base_url }}assets/notika/img/logo/login.png" alt="CBT Logo" width="64"
                                         height="64">
-                                    <span style="font-size:16pt;font-weight:bold;margin-top:10px;">SimAset</span>
+                                    <span style="font-size:16pt;font-weight:bold;margin-top:10px;">{{ app_name }} {{ app_version }}</span>
                                 </div>
                             </div>
                             <form class="form-auth-small" action="index.php">
                                 <div class="form-group">
                                     <label for="tx_username" class="control-label sr-only">Username</label>
                                     <input type="text" name="tx_username" class="form-control" id="tx_username"
-                                        placeholder="Username">
+                                        autocomplete="username" placeholder="Username">
                                 </div>
                                 <div class="form-group">
                                     <label for="tx_password" class="control-label sr-only">Password</label>
                                     <input name="tx_password" type="password" class="form-control" id="tx_password"
-                                        placeholder="Password">
+                                        autocomplete="current-password" placeholder="Password">
                                 </div>
 
                                 <button id="bt_login" type="button" class="btn btn-primary btn-lg btn-block">

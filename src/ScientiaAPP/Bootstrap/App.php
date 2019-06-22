@@ -39,9 +39,11 @@ try {
 /* Configuration Parameter */
 $config = [
     'settings' => [
+        'app_version' => $conf['APPVER'], // set develop or production
+        'app_name' => $conf['APPNAME'], // set develop or production
+        'api_token' => $conf['API_TOKEN'], // set develop or production
         'mode' => $conf['MODE'], // set develop or production
         'base_url' => $conf['BASE_URL'],
-        'api_token' => $conf['API_TOKEN'],
         'jsversion' => ($conf['MODE']=='develop') ? date('Ymdhis'):date('Ym'), // force to reload JS
         'displayErrorDetails' => ($conf['MODE']=='develop') ? true:false, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
@@ -74,15 +76,25 @@ spl_autoload_register(function ($class) {
 });
 
 /* Autoload in our controllers into the container */
-foreach (new DirectoryIterator(APP_PATH.'/Controller') as $fileInfo) {
-    if ($fileInfo->isDot()) {
-        continue;
-    }
-    $class = 'App\\Controller\\'.str_replace('.php', '', $fileInfo->getFilename());
+foreach (new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Controller') as $fileInfo) {
+    if (is_dir($fileInfo)) continue;
+    if (strpos(strtolower($fileInfo), '.php') === FALSE) continue;
+    $class = 'App\\Controller\\' . str_replace('.php', '', $fileInfo->getFilename());
     $container[$class] = function ($c) use ($class) {
         return new $class();
     };
 }
+
+// old autoload controller - not recursive
+// foreach (new DirectoryIterator(APP_PATH.'/Controller') as $fileInfo) {
+//     if ($fileInfo->isDot()) {
+//         continue;
+//     }
+//     $class = 'App\\Controller\\'.str_replace('.php', '', $fileInfo->getFilename());
+//     $container[$class] = function ($c) use ($class) {
+//         return new $class();
+//     };
+// }
 
 /* Database Configuration */
 $container['database'] = function ($container) {
@@ -170,4 +182,6 @@ $container['view'] = function ($container) {
 /* Add twig Global variable */
 $container->get('view')->getEnvironment()->addGlobal('mode', $container->get('settings')['mode']);
 $container->get('view')->getEnvironment()->addGlobal('base_url', $container->get('settings')['base_url']);
+$container->get('view')->getEnvironment()->addGlobal('app_name', $container->get('settings')['app_name']);
+$container->get('view')->getEnvironment()->addGlobal('app_version', $container->get('settings')['app_version']);
 $container->get('view')->getEnvironment()->addGlobal('api_token', $container->get('settings')['api_token']);
