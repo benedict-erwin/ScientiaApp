@@ -34,7 +34,7 @@ class M_menu extends \App\Plugin\DataTables
             'tipe',
             'aktif',
             'urut',
-            'public'
+            'is_public'
         ]);
         $this->set_COLUMN_SEARCH([
             'nama',

@@ -1,5 +1,5 @@
 /* Variables */;
-var apiUrl = SiteRoot + 'c_jabatan';
+var apiUrl = SiteRoot + 'c_role';
 var tbl = '#datatable-responsive tbody';
 var pKey = '';
 var table;
@@ -52,7 +52,7 @@ $(document).ready(function () {
                 download: "open",
                 orientation: 'portrait', /* portrait | landscape */
                 pageSize: "LEGAL",
-                title: "List of Jabatan",
+                title: "List of role",
                 exportOptions: {
                     /* Show column */
                     columns: [1, 2, 3] /* [1, 2, 3] => selected column only */
@@ -124,7 +124,7 @@ $(document).ready(function () {
                     /* ReOrdering json result */
                     for (var i = 0; i < json.message.data.length; i++) {
                         return_data.push({
-                            0: json.message.data[i].idjabatan,
+                            0: json.message.data[i].idrole,
                             1: json.message.data[i].no,
                             2: json.message.data[i].nama,
                             3: json.message.data[i].deskripsi,
