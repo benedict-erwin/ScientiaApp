@@ -780,7 +780,7 @@ function checkAuth(callback) {
                 }
 
                 /* setPermission */
-                if (perm.indexOf('setPermission') != -1) {
+                if (perm.indexOf('setPermission') != -1 && perm.indexOf('jabatanMenu') != -1) {
                     $('.act-setPermission').removeClass('hidden');
                     $('.act-setPermission').prop('disabled', false);
                 } else {
