@@ -63,6 +63,8 @@ sleep(1);
 echo "[v] - JWT Token Signature : {$token}" . PHP_EOL;
 $php = "<?php\n";
 $php .= "\$conf=[\n";
+$php .= "\t'APPVER'=>'v1.0', //application version\n";
+$php .= "\t'APPNAME'=>'ScientiaAPP', //application name\n";
 $php .= "\t'MODE'=>'develop', //develop or production\n";
 $php .= "\t'BASE_URL' => '{$site_url}', //URL with trailing slash: https://local.host/\n";
 $php .= "\t'DB_HOST' => '{$db_hostname}',\n";
