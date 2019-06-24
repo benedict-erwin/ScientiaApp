@@ -13,7 +13,7 @@ namespace App\Controller;
 use Medoo\Medoo;
 use App\Lib\Ipaddress;
 
-class LoginController extends \App\Controller\BaseController
+class LoginController extends \App\Controller\PrivateController
 {
 
     /**

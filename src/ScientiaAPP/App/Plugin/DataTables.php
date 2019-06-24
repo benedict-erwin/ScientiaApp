@@ -11,7 +11,7 @@
 
 namespace App\Plugin;
 
-class DataTables extends \App\Controller\BaseController
+class DataTables extends \App\Controller\PrivateController
 {
     /* Declare Property */
     protected $SQL;

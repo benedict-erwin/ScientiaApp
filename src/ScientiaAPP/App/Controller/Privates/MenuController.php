@@ -8,9 +8,9 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  */
 
-namespace App\Controller;
+namespace App\Controller\Privates;
 
-class MenuController extends \App\Controller\BaseController
+class MenuController extends \App\Controller\PrivateController
 {
     public function index()
     {

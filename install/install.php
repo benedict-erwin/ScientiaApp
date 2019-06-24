@@ -76,6 +76,7 @@ $php .= "\t// 'REDIS_PORT' => 6379,\n";
 $php .= "\t// 'REDIS_PASS' => null,\n";
 $php .= "\t// 'REDIS_DB' => null,\n";
 $php .= "\t'API_TOKEN' => '{$jsToken}',\n";
+$php .= "\t'API_PATH' => 'api',\n";
 $php .= "\t'SIGNATURE' => '{$token}'\n";
 $php .= "];\n";
 

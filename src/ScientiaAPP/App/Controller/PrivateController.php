@@ -18,7 +18,7 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use App\Lib\Encrypter;
 use App\Lib\Ipaddress;
 
-class BaseController
+class PrivateController
 {
     protected $container;
     protected $dbpdo;

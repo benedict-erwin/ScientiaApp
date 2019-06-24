@@ -39,10 +39,11 @@ try {
 /* Configuration Parameter */
 $config = [
     'settings' => [
-        'app_version' => $conf['APPVER'], // set develop or production
-        'app_name' => $conf['APPNAME'], // set develop or production
-        'api_token' => $conf['API_TOKEN'], // set develop or production
-        'mode' => $conf['MODE'], // set develop or production
+        'app_version' => $conf['APPVER'],
+        'app_name' => $conf['APPNAME'],
+        'api_token' => $conf['API_TOKEN'],
+        'api_path' => $conf['API_PATH'],
+        'mode' => $conf['MODE'],
         'base_url' => $conf['BASE_URL'],
         'jsversion' => ($conf['MODE']=='develop') ? date('Ymdhis'):date('Ym'), // force to reload JS
         'displayErrorDetails' => ($conf['MODE']=='develop') ? true:false, // set to false in production
@@ -50,7 +51,7 @@ $config = [
         // Monolog settings
         'logger' => [
             'name' => 'ScientiaAPP',
-            'path' =>    APP_PATH . '/Log/app.log',
+            'path' => APP_PATH . '/Log/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
         'dbnya' => [
@@ -66,21 +67,32 @@ $config = [
 $app = new \Slim\App($config);
 $container = $app->getContainer();
 
+/* Monolog Logger setup */
+$container['logger'] = function ($container) {
+    $settings = $container->get('settings')['logger'];
+    $logger = new Monolog\Logger($settings['name']);
+    $streamHandler = new Monolog\Handler\StreamHandler($settings['path']);
+    $logger->pushHandler($streamHandler);
+    return $logger;
+};
+
 /* Make the custom App autoloader */
-spl_autoload_register(function ($class) {
-    $classFile = APP_PATH.'/../'.str_replace('\\', '/', $class).'.php';
+spl_autoload_register(function ($class) use ($container){
+    $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
     if (!is_file($classFile)) {
-        throw new \Exception('Cannot load class: '.$class);
+        throw new \Exception('Invalid File! cannot load class: ' . $class);
     }
     require_once $classFile;
 });
 
 /* Autoload in our controllers into the container */
-foreach (new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Controller') as $fileInfo) {
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Controller')) as $fileInfo) {
     if (is_dir($fileInfo)) continue;
     if (strpos(strtolower($fileInfo), '.php') === FALSE) continue;
-    $class = 'App\\Controller\\' . str_replace('.php', '', $fileInfo->getFilename());
-    $container[$class] = function ($c) use ($class) {
+    $file = str_replace(APP_PATH . '/Controller/', '', $fileInfo);
+    $file = str_replace('/', '\\', $file);
+    $class = 'App\\Controller\\' . str_replace('.php', '', $file);
+    $container[$class] = function ($container) use ($class) {
         return new $class();
     };
 }
@@ -157,15 +169,6 @@ $container['notAllowedHandler'] = function ($container) {
     };
 };
 
-/* Monolog Logger setup */
-$container['logger'] = function ($container) {
-    $settings = $container->get('settings')['logger'];
-    $logger = new Monolog\Logger($settings['name']);
-    $streamHandler = new Monolog\Handler\StreamHandler($settings['path']);
-    $logger->pushHandler($streamHandler);
-    return $logger;
-};
-
 /* Register component on container */
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig(APP_PATH . '/Templates', [
@@ -185,3 +188,4 @@ $container->get('view')->getEnvironment()->addGlobal('base_url', $container->get
 $container->get('view')->getEnvironment()->addGlobal('app_name', $container->get('settings')['app_name']);
 $container->get('view')->getEnvironment()->addGlobal('app_version', $container->get('settings')['app_version']);
 $container->get('view')->getEnvironment()->addGlobal('api_token', $container->get('settings')['api_token']);
+$container->get('view')->getEnvironment()->addGlobal('api_path', $container->get('settings')['api_path']);

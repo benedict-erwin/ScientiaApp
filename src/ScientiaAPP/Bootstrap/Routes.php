@@ -35,29 +35,37 @@ $app->get('/{page}', function ($request, $response, $args) {
 ##> Load from DataBase
 try {
     $ckey = hash('md5', $container->get('settings')['dbnya']['SIGNATURE'] . '_backend_router');
+    $api_path = $container->get('settings')['api_path'];
     $CachedString = $IC->getItem($ckey);
     if (is_null($CachedString->get())) {
-        $sql = "SELECT 
-                    c.nama  nama_m,
-                    c.url,
-                    c.controller,
-                    c.id_groupmenu,
-                    d.nama  nama_g,
-                    c.icon  icon_m,
-                    d.icon  icon_g,
-                    c.aktif aktif_m,
-                    d.aktif aktif_g,
-                    c.tipe,
-                    c.urut order_m,
-                    d.urut order_g
-                FROM m_menu c
-                LEFT JOIN m_groupmenu d
-                    ON c.id_groupmenu = d.id_groupmenu 
-                WHERE d.aktif=1 AND c.aktif=1 
-                ORDER  BY d.urut ASC, c.urut ASC";
-        $query = $container->database->pdo->prepare($sql);
-        $query->execute();
-        $result = $query->fetchAll();
+        $result = $container->database->select('m_menu (menu)',
+            [
+                '[>]m_groupmenu (group)' => 'id_groupmenu'
+            ],
+            [
+                'menu.nama (nama_m)',
+                'menu.url',
+                'menu.controller',
+                'menu.id_groupmenu',
+                'group.nama (nama_g)',
+                'menu.icon (icon_m)',
+                'group.icon (icon_g)',
+                'menu.aktif (aktif_m)',
+                'group.aktif (aktif_g)',
+                'menu.tipe',
+                'menu.is_public',
+                'menu.urut (order_m)',
+                'group.urut (order_g)'
+            ],
+            [
+                'menu.aktif' => 1,
+                'group.aktif' => 1,
+                'ORDER' => [
+                    'group.urut' => 'ASC',
+                    'menu.urut' => 'ASC'
+                ]
+            ]
+        );
         $CachedString->set($result)->expiresAfter(28800)->addTag($container->get('settings')['dbnya']['SIGNATURE'] . '_router'); //8jam
         $IC->save($CachedString);
     }else {
@@ -66,7 +74,8 @@ try {
     foreach ($result as $res) {
         $url = strtolower($res['url']);
         $method = strtolower($res['tipe']);
-        $controller = $res['controller'];
+        $exp = explode(':', $res['controller']);
+        $controller = (!in_array($exp[0], ['PrivateController', 'PublicController', 'LoginController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
         if ($method == 'post') {
             $app->post("$url", "\App\Controller\\$controller");
         }
