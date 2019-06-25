@@ -40,7 +40,7 @@ $app->get('/scientia/{page}', function ($request, $response, $args) use ($contai
 /** REST API **/
 ##> Load from DataBase
 try {
-    $ckey = hash('md5', $container->get('settings')['dbnya']['SIGNATURE'] . '_backend_router');
+    $ckey = hash('md5', $container->get('settings')['dbnya']['SIGNATURE'] . '_restapi_router');
     $api_path = $container->get('settings')['api_path'];
     $CachedString = $IC->getItem($ckey);
     if (is_null($CachedString->get())) {
@@ -58,7 +58,7 @@ try {
                 'group.icon (icon_g)',
                 'menu.aktif (aktif_m)',
                 'group.aktif (aktif_g)',
-                'menu.tipes',
+                'menu.tipe',
                 'menu.is_public',
                 'menu.urut (order_m)',
                 'group.urut (order_g)'

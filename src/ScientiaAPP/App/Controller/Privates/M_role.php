@@ -10,7 +10,7 @@
 
 namespace App\Controller\Privates;
 
-class M_jabatan extends \App\Plugin\DataTables
+class M_role extends \App\Plugin\DataTables
 {
 	/* Declare variable */
 	private $safe;
@@ -22,11 +22,11 @@ class M_jabatan extends \App\Plugin\DataTables
 		parent::__construct($container);
 
         /* Set DataTables Variables */
-		$this->set_TABLE('m_jabatan');
-		$this->set_PKEY('idjabatan');
-		$this->set_COLUMNS(['idjabatan', 'nama', 'deskripsi']);
+		$this->set_TABLE('m_role');
+		$this->set_PKEY('idrole');
+		$this->set_COLUMNS(['idrole', 'nama', 'deskripsi']);
 		$this->set_COLUMN_SEARCH(['nama', 'deskripsi']);
-		$this->set_ORDER(['idjabatan' => 'DESC']);
+		$this->set_ORDER(['idrole' => 'DESC']);
 
 		/* Sanitize Param */
 		$this->sanitizer($this->param);
@@ -45,7 +45,7 @@ class M_jabatan extends \App\Plugin\DataTables
 			"draw" => "numeric",
 			"start" => "numeric",
 			"length" => "numeric",
-			"idjabatan" => "numeric"
+			"idrole" => "numeric"
 		]);
 
 		$gump->filter_rules([
@@ -88,17 +88,17 @@ class M_jabatan extends \App\Plugin\DataTables
 				$data['deskripsi'] = $this->safe['deskripsi'];
 
 				/* Save and get last_insert_id */
-				$idjabatan = $this->saveDb($data);
+				$idrole = $this->saveDb($data);
 
 				/* Insert to j_menu */
-				if ($idjabatan !== false) {
+				if ($idrole !== false) {
 					/* Start transaction */
 					$this->dbpdo->pdo->beginTransaction();
 					try {
 						/* Select default access */
 						$jmenu = $this->dbpdo->select('m_menu', 'id_menu', ['url' => ['/clogin', '/clogout', '/cauth', '/cmenu']]);
 						foreach ($jmenu as $menu) {
-							$this->dbpdo->insert('j_menu', ['id_menu' => $menu, 'idjabatan' => $idjabatan]);
+							$this->dbpdo->insert('j_menu', ['id_menu' => $menu, 'idrole' => $idrole]);
 						}
 
 						/* Commit transaction & delete old cache */
@@ -106,7 +106,7 @@ class M_jabatan extends \App\Plugin\DataTables
 						$this->InstanceCache->deleteItemsByTags([
                             $this->sign . '_getMenus',
                             $this->sign . '_router',
-                            $this->sign . '_M_jabatan_read_'
+                            $this->sign . '_M_role_read_'
                         ]);
 						return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
 					} catch (\Exception $e) {
@@ -134,7 +134,7 @@ class M_jabatan extends \App\Plugin\DataTables
                 $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
                 $length = (isset($this->safe['length']) ? $this->safe['length']:null);
                 $start = (isset($this->safe['start']) ? $this->safe['start']:null);
-				$ckey = hash("md5", "M_jabatan" . $this->user_data['ID_JABATAN'] . $start . $length . $opsional . $search);
+				$ckey = hash("md5", "M_role" . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
 				$CachedString = $this->InstanceCache->getItem($ckey);
 				if (is_null($CachedString->get())) {
                     /* Execute DataTables */
@@ -153,7 +153,7 @@ class M_jabatan extends \App\Plugin\DataTables
 						"recordsFiltered" => $this->count_filtered($this->safe)
 					];
 
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign .'_M_jabatan_read_');
+					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign .'_M_role_read_');
 					$this->InstanceCache->save($CachedString);
 				} else {
 					$output = $CachedString->get();
@@ -183,7 +183,7 @@ class M_jabatan extends \App\Plugin\DataTables
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_jabatan_read_'
+                        $this->sign . '_M_role_read_'
                     ]);
 					return $this->jsonSuccess('Perubahan data berhasil');
 				} else {
@@ -202,13 +202,13 @@ class M_jabatan extends \App\Plugin\DataTables
 			try {
                 /* Delete from DB */
                 $this->set_TABLE('j_menu');
-				if ($this->deleteBy(['idjabatan' => $this->safe['pKey']])) {
-                    $this->set_TABLE('m_jabatan');
+				if ($this->deleteBy(['idrole' => $this->safe['pKey']])) {
+                    $this->set_TABLE('M_role');
 					$this->deleteDb($this->safe['pKey']);
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus',
                         $this->sign . '_router',
-                        $this->sign . '_M_jabatan_read_'
+                        $this->sign . '_M_role_read_'
                     ]);
 					return $this->jsonSuccess('Data berhasil dihapus');
 				} else {

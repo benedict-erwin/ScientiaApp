@@ -33,29 +33,29 @@ class MenuController extends \App\Controller\PrivateController
 
                 throw new \Exception($err);
             } else {
-                return $this->getMenus($this->user_data['ID_JABATAN'], $safe['reload']);
+                return $this->getMenus($this->user_data['ID_ROLE'], $safe['reload']);
             }
         } catch (\Exception $e) {
             return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);
         }
     }
 
-    private function getMenus($idjabatan=NULL, $reload=false)
+    private function getMenus($idrole=NULL, $reload=false)
     {
         try {
             $GROUPMENU = array();
             if ($reload==1) {
                 $this->InstanceCache->deleteItemsByTags([
                     $this->sign . '_getMenus',
-                    $this->sign . '_router',
+                    $this->sign . '_restapi_router',
                     $this->sign . '_M_menu_read',
                     $this->sign . '_CRUDGenerator_read_menu'
                 ]);
             }
-            $ckey = hash('md5', $this->sign . '_cmenu_' . $idjabatan);
+            $ckey = hash('md5', $this->sign . '_cmenu_' . $idrole);
             $CachedString = $this->InstanceCache->getItem($ckey);
             if (is_null($CachedString->get())) {
-                $sql = "SELECT a.idjabatan,
+                $sql = "SELECT a.idrole,
                             b.nama,
                             a.id_menu,
                             c.nama    nama_m,
@@ -72,13 +72,13 @@ class MenuController extends \App\Controller\PrivateController
                             c.urut order_m,
                             d.urut order_g
                         FROM j_menu a
-                            LEFT JOIN m_jabatan b
-                                ON a.idjabatan = b.idjabatan
+                            LEFT JOIN m_role b
+                                ON a.idrole = b.idrole
                             LEFT JOIN m_menu c
                                 ON a.id_menu = c.id_menu
                             LEFT JOIN m_groupmenu d
                                 ON c.id_groupmenu = d.id_groupmenu
-                        WHERE b.idjabatan=:idjabatan
+                        WHERE b.idrole=:idrole
                             AND c.tipe=:tipe
                             AND d.aktif=1
                             AND c.aktif=1
@@ -86,7 +86,7 @@ class MenuController extends \App\Controller\PrivateController
 
                 $tipe = 'GET';
                 $query = $this->dbpdo->pdo->prepare($sql);
-                $query->bindParam(':idjabatan', $idjabatan, \PDO::PARAM_STR);
+                $query->bindParam(':idrole', $idrole, \PDO::PARAM_STR);
                 $query->bindParam(':tipe', $tipe, \PDO::PARAM_STR);
                 $query->execute();
                 $result = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -147,7 +147,7 @@ class MenuController extends \App\Controller\PrivateController
                     $ckey = md5($this->sign . '_cauth_' . $this->user_data['ID_USER'] . $safe['path']);
                     $CachedString = $this->InstanceCache->getItem($ckey);
                     if (is_null($CachedString->get())) {
-                        $sql = "SELECT a.idjabatan,
+                        $sql = "SELECT a.idrole,
                                     b.nama,
                                     a.id_menu,
                                     c.nama    nama_m,
@@ -163,13 +163,13 @@ class MenuController extends \App\Controller\PrivateController
                                     c.urut order_m,
                                     d.urut order_g
                                 FROM j_menu a
-                                LEFT JOIN m_jabatan b
-                                    ON a.idjabatan = b.idjabatan
+                                LEFT JOIN m_role b
+                                    ON a.idrole = b.idrole
                                 LEFT JOIN m_menu c
                                     ON a.id_menu = c.id_menu
                                 LEFT JOIN m_groupmenu d
                                     ON c.id_groupmenu = d.id_groupmenu
-                                WHERE b.idjabatan=:idjabatan AND c.url=:url
+                                WHERE b.idrole=:idrole AND c.url=:url
                                 ORDER BY d.urut ASC, c.urut ASC";
 
                         /* log sql */
@@ -179,7 +179,7 @@ class MenuController extends \App\Controller\PrivateController
 
                         $path = ($safe['path']=='/') ? '/home':$safe['path'];
                         $query = $this->dbpdo->pdo->prepare($sql);
-                        $query->bindParam(':idjabatan', $this->user_data['ID_JABATAN'], \PDO::PARAM_STR);
+                        $query->bindParam(':idrole', $this->user_data['ID_ROLE'], \PDO::PARAM_STR);
                         $query->bindParam(':url', $path, \PDO::PARAM_STR);
                         $query->execute();
                         $result = $query->fetch();
@@ -190,7 +190,7 @@ class MenuController extends \App\Controller\PrivateController
                     }
 
                     if ($result) {
-                        $cn = $this->getPermission($safe['path'], $this->user_data['ID_JABATAN']);
+                        $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
                         return $this->jsonSuccess($cn);
                     }else {
                         throw new \Exception("User not authorized!");
@@ -205,10 +205,10 @@ class MenuController extends \App\Controller\PrivateController
         }
     }
 
-    private function getPermission(string $url = null, int $idjabatan=null)
+    private function getPermission(string $url = null, int $idrole=null)
     {
         try {
-            $ckey = md5($this->sign . '_perm_' . $url . $idjabatan);
+            $ckey = md5($this->sign . '_perm_' . $url . $idrole);
             $CachedString = $this->InstanceCache->getItem($ckey);
             if (is_null($CachedString->get())) {
                 //Controller
@@ -218,20 +218,20 @@ class MenuController extends \App\Controller\PrivateController
                 $controller = trim($controller[0]) . ':%';
 
                 //Permission
-                $sql = "SELECT a.idjabatan, a.deskripsi, c.idjabatan id_jabatan, c.controller
-                        FROM m_jabatan a
+                $sql = "SELECT a.idrole, a.deskripsi, c.idrole, c.controller
+                        FROM m_role a
                         LEFT JOIN (
-                            SELECT b.id_menu, b.idjabatan, m.controller, m.aktif
+                            SELECT b.id_menu, b.idrole, m.controller, m.aktif
                             FROM j_menu b
                             LEFT JOIN m_menu m
                                 ON b.id_menu=m.id_menu
-                        ) c ON a.idjabatan=c.idjabatan
-                        WHERE c.controller LIKE :controller AND a.idjabatan=:idjabatan AND c.aktif=1
-                        ORDER BY a.idjabatan";
+                        ) c ON a.idrole=c.idrole
+                        WHERE c.controller LIKE :controller AND a.idrole=:idrole AND c.aktif=1
+                        ORDER BY a.idrole";
 
                 $query = $this->dbpdo->pdo->prepare($sql);
                 $query->bindParam(':controller', $controller, \PDO::PARAM_STR);
-                $query->bindParam(':idjabatan', $idjabatan, \PDO::PARAM_INT);
+                $query->bindParam(':idrole', $idrole, \PDO::PARAM_INT);
                 $query->execute();
                 $result = $query->fetchAll(\PDO::FETCH_ASSOC);
                 foreach ($result as $res) {

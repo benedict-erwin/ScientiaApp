@@ -291,8 +291,8 @@ function getJabatan() {
                         prs = (num == 0) ? ' data-parsley-mincheck="1" data-parsley-group="role"' : '';
                         cbx.append(
                             '<div class="form-check">' +
-                            '<input class="form-check-input" id="jabatan_' + el.idjabatan + '" type="checkbox" name="id_jabatan[]" ' + prs + ' value="' + el.idjabatan + '"> ' +
-                            '<label class="form-check-label for="jabatan_' + el.idjabatan + '"> ' + el.deskripsi + '</label>' +
+                            '<input class="form-check-input" id="jabatan_' + el.idrole + '" type="checkbox" name="id_jabatan[]" ' + prs + ' value="' + el.idrole + '"> ' +
+                            '<label class="form-check-label for="jabatan_' + el.idrole + '"> ' + el.deskripsi + '</label>' +
                             '</div>'
                         );
                         num++;

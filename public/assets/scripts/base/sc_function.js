@@ -709,7 +709,7 @@ function kickAss() {
             }
 
             setTimeout(function () {
-                window.location.replace('/login');
+                window.location.replace('login');
             }, 1000);
         },
         error: function (jqXHR, textStatus, errorThrown) {

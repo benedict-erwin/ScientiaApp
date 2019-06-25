@@ -274,7 +274,7 @@ $(document).ready(function() {
 
 /* Get GroupMenu */
 function getJabatan(obj, sel = null) {
-    let url = SiteRoot + 'c_jabatan_read';
+    let url = SiteRoot + 'c_role_read';
     let opt = $(obj);
     let post_data = {
         'draw': 1,

@@ -203,7 +203,7 @@ class PrivateController
             [ '[>]j_menu' => 'id_menu' ],
             'm_menu.controller',
             [
-                'j_menu.idjabatan' => $this->user_data['ID_JABATAN'],
+                'j_menu.idrole' => $this->user_data['ID_ROLE'],
                 'm_menu.url' => $urlink
             ]
         );
@@ -255,8 +255,8 @@ class PrivateController
         $this->user_data['NAME']     = $userdata['nama'];
         $this->user_data['EMAIL']    = strtolower($userdata['email']);
         $this->user_data['TELPON']   = $userdata['telpon'];
-        $this->user_data['ID_JABATAN'] = $userdata['idjabatan'];
-        $this->user_data['JABATAN']    = strtolower($userdata['jabatan']);
+        $this->user_data['ID_ROLE'] = $userdata['idrole'];
+        $this->user_data['ROLE']    = strtolower($userdata['role']);
 
         return $this->user_data;
     }
@@ -269,15 +269,15 @@ class PrivateController
         if (is_null($CachedString->get())) {
             $userdata = $this->dbpdo->get(
                 "m_user",
-                ["[>]m_jabatan" => "idjabatan"],
+                ["[>]m_role" => "idrole"],
                 [
                     "m_user.iduser",
                     "m_user.username",
                     "m_user.nama",
                     "m_user.email",
                     "m_user.telpon",
-                    "m_user.idjabatan",
-                    "m_jabatan.nama (jabatan)",
+                    "m_user.idrole",
+                    "m_role.nama (role)",
                 ],
                 ["m_user.iduser" => $id_user]
             );
@@ -368,15 +368,15 @@ class PrivateController
     }
 
     /* Clear Cache */
-    protected function clearUserCache($idjabatan=null, $iduser=null)
+    protected function clearUserCache($idrole=null, $iduser=null)
     {
         try {
             /* Vars */
-            $idjabatan = ($idjabatan) ? $idjabatan:$this->user_data['ID_JABATAN'];
+            $idrole = ($idrole) ? $idrole:$this->user_data['ID_ROLE'];
             $iduser = ($iduser) ? $iduser:$this->user_data['ID_USER'];
 
             /* getMenu */
-            $getMenu = hash('md5', $this->sign . '_cmenu_' . $idjabatan);
+            $getMenu = hash('md5', $this->sign . '_cmenu_' . $idrole);
             $this->InstanceCache->deleteItem($getMenu);
 
             /* iduser */

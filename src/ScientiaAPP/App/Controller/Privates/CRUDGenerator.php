@@ -116,12 +116,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 return $this->get_tables($safe);
                 break;
             case 'get_jabatan':
-                /* Set Table m_jabatan */
-                $this->set_TABLE('m_jabatan');
-                $this->set_PKEY('idjabatan');
-                $this->set_COLUMNS(['idjabatan', 'nama', 'deskripsi']);
+                /* Set Table m_role */
+                $this->set_TABLE('m_role');
+                $this->set_PKEY('idrole');
+                $this->set_COLUMNS(['idrole', 'nama', 'deskripsi']);
                 $this->set_COLUMN_SEARCH(['nama', 'deskripsi']);
-                $this->set_ORDER(['idjabatan' => 'DESC']);
+                $this->set_ORDER(['idrole' => 'DESC']);
 
                 return $this->getJabatan($safe);
                 break;
@@ -260,7 +260,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'j_menu',
                                 [
                                     'id_menu' => $idfirst,
-                                    'idjabatan' => $jbt
+                                    'idrole' => $jbt
                                 ]
                             );
                         }
@@ -289,7 +289,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'j_menu',
                                 [
                                     'id_menu' => $idfirst,
-                                    'idjabatan' => $jbt
+                                    'idrole' => $jbt
                                 ]
                             );
                         }
@@ -318,7 +318,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'j_menu',
                                 [
                                     'id_menu' => $idfirst,
-                                    'idjabatan' => $jbt
+                                    'idrole' => $jbt
                                 ]
                             );
                         }
@@ -347,7 +347,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'j_menu',
                                 [
                                     'id_menu' => $idfirst,
-                                    'idjabatan' => $jbt
+                                    'idrole' => $jbt
                                 ]
                             );
                         }
@@ -376,7 +376,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'j_menu',
                                 [
                                     'id_menu' => $idsecond,
-                                    'idjabatan' => $jbt
+                                    'idrole' => $jbt
                                 ]
                             );
                         }
@@ -579,7 +579,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                     $no++;
                     $row = [];
                     $row['no'] = $no;
-                    $row['idjabatan'] = $cols['idjabatan'];
+                    $row['idrole'] = $cols['idrole'];
                     $row['nama'] = $cols['nama'];
                     $row['deskripsi'] = $cols['deskripsi'];
                     $data[] = $row;
@@ -808,7 +808,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $php .= "\n\t\t\t\t\$search = (isset(\$this->safe['search']['value']) ? \$this->safe['search']['value']:null);";
             $php .= "\n\t\t\t\t\$length = (isset(\$this->safe['length']) ? \$this->safe['length']:null);";
             $php .= "\n\t\t\t\t\$start = (isset(\$this->safe['start']) ? \$this->safe['start']:null);";
-            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$this->user_data['ID_JABATAN'] . \$start . \$length . \$opsional . \$search);";
+            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$this->user_data['ID_ROLE'] . \$start . \$length . \$opsional . \$search);";
             $php .= "\n\t\t\t\t\$CachedString = \$this->InstanceCache->getItem(\$ckey);\n";
             $php .= "\n\t\t\t\t/* If not in Cache */";
             $php .= "\n\t\t\t\tif(is_null(\$CachedString->get())){";

@@ -135,7 +135,7 @@ class M_menu extends \App\Plugin\DataTables
                 $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
                 $length = (isset($this->safe['length']) ? $this->safe['length']:null);
                 $start = (isset($this->safe['start']) ? $this->safe['start']:null);
-                $ckey = hash("md5", "M_menu" . $this->user_data['ID_JABATAN'] . $start . $length . $opsional . $search);
+                $ckey = hash("md5", "M_menu" . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
                 $CachedString = $this->InstanceCache->getItem($ckey);
 
                 /* If not in Cache */
@@ -234,7 +234,7 @@ class M_menu extends \App\Plugin\DataTables
     {
         if ($this->safe){
 			try {
-                $sql = "SELECT a.idjabatan, a.deskripsi, c.idjabatan id_jabatan
+                $sql = "SELECT a.idjabatan, a.deskripsi, c.idjabatan ID_ROLE
 					FROM m_jabatan a
 					LEFT JOIN (
 						SELECT b.id_menu, b.idjabatan
@@ -263,8 +263,8 @@ class M_menu extends \App\Plugin\DataTables
                 try {
                     $idmenu = $this->safe['idmenu'];
                     $this->dbpdo->delete('j_menu', ['id_menu' => $idmenu]);
-                    if (array_key_exists('id_jabatan', $this->safe)) {
-                        foreach ( $this->safe['id_jabatan'] as $jbt) {
+                    if (array_key_exists('ID_ROLE', $this->safe)) {
+                        foreach ( $this->safe['ID_ROLE'] as $jbt) {
                             $this->dbpdo->insert('j_menu', ['id_menu' => $idmenu, 'idjabatan' => $jbt]);
                         }
                     }
