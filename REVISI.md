@@ -21,4 +21,6 @@
     - [ ] Menggunakan library Medoo
     - [ ] Contructor disiapkan untuk inisiasi object database
 
-
+### 5. ERROR CODE
+  - [ ] Definisikan error code:
+    - [ ] Buat definer untuk list erro code

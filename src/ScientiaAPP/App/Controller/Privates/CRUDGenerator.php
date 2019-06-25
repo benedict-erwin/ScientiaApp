@@ -1325,6 +1325,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\t\tnotification(json.error, 'warn', 2, json.message);";
         $js .= "\n\t\t\t\t\treturn return_data;";
         $js .= "\n\t\t\t\t}";
+        $js .= "\n\t\t\t},";
+        $js .= "\n\t\t\t\"error\": function (jqXHR, textStatus, errorThrown) {";
+        $js .= "\n\t\t\t\tnotification(jqXHR . responseJSON . error, 'error', 3, 'ERROR');";
+        $js .= "\n\t\t\t\tconsole.log(jqXHR);";
+        $js .= "\n\t\t\t\tconsole.log(textStatus);";
+        $js .= "\n\t\t\t\tconsole.log(errorThrown);";
         $js .= "\n\t\t\t}";
         $js .= "\n\t\t},";
         //end json reordering

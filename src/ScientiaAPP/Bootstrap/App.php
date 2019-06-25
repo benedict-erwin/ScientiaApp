@@ -41,6 +41,7 @@ $config = [
     'settings' => [
         'app_version' => $conf['APPVER'],
         'app_name' => $conf['APPNAME'],
+        'cms_template' => $conf['CMS_TEMPLATE'],
         'api_token' => $conf['API_TOKEN'],
         'api_path' => $conf['API_PATH'],
         'mode' => $conf['MODE'],
@@ -96,17 +97,6 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APP_PATH .
         return new $class();
     };
 }
-
-// old autoload controller - not recursive
-// foreach (new DirectoryIterator(APP_PATH.'/Controller') as $fileInfo) {
-//     if ($fileInfo->isDot()) {
-//         continue;
-//     }
-//     $class = 'App\\Controller\\'.str_replace('.php', '', $fileInfo->getFilename());
-//     $container[$class] = function ($c) use ($class) {
-//         return new $class();
-//     };
-// }
 
 /* Database Configuration */
 $container['database'] = function ($container) {

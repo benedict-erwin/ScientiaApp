@@ -169,8 +169,15 @@ $(document).ready(function () {
                     notification(json.error, 'warn', 2, json.message);
                     return return_data;
                 }
+            },
+            "error": function (jqXHR, textStatus, errorThrown) {
+                notification(jqXHR.responseJSON.error, 'error', 3, 'ERROR');
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
             }
         },
+        "deferRender": true,
         "columnDefs": [
             {
                 "targets": [0, 2, 4],

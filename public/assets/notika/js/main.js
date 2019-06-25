@@ -197,7 +197,7 @@ function loadMenu(reload) {
 	}
     $.ajax({
         type: 'POST',
-        url: 'cmenu',
+        url: SiteRoot + 'cmenu',
         data: post_data,
         dataType: 'json',
         headers: { JWT: get_token(API_TOKEN) },

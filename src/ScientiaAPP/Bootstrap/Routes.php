@@ -9,29 +9,35 @@
  */
 
 /** Front End **/
+##> Redirect
+$app->get('/', function ($request, $response, $args) {
+    echo '<meta http-equiv="refresh" content="0; url=scientia/" />';
+});
+
 ##> Login Page
-$app->get('/login', function ($request, $response, $args) {
-    $data['template'] = 'notika';
-    return $this->view->render($response, 'Login/default/layout.html', $data);
+$app->get('/scientia/login', function ($request, $response, $args) use ($container) {
+    $data['template'] = $container->get('settings')['cms_template'];
+    return $this->view->render($response, 'Login/default/layout.twig', $data);
 });
 
 ##> Default Page
-$app->get('/', function ($request, $response, $args) {
+$app->get('/scientia/', function ($request, $response, $args) use ($container) {
     $data['page'] = "home";
     $data['jsver'] = $this->get('settings')['jsversion'];
-    $data['template'] = 'notika';
+    $data['template'] = $container->get('settings')['cms_template'];
     return $this->view->render($response, 'Home/index.html', $data);
 });
+
 
 ## Dynamic Route load template
-$app->get('/{page}', function ($request, $response, $args) {
+$app->get('/scientia/{page}', function ($request, $response, $args) use ($container) {
     $data['page'] = $args['page'];
     $data['jsver'] = $this->get('settings')['jsversion'];
-    $data['template'] = 'notika';
+    $data['template'] = $container->get('settings')['cms_template'];
     return $this->view->render($response, 'Home/index.html', $data);
 });
 
-/** Back End **/
+/** REST API **/
 ##> Load from DataBase
 try {
     $ckey = hash('md5', $container->get('settings')['dbnya']['SIGNATURE'] . '_backend_router');
@@ -52,7 +58,7 @@ try {
                 'group.icon (icon_g)',
                 'menu.aktif (aktif_m)',
                 'group.aktif (aktif_g)',
-                'menu.tipe',
+                'menu.tipes',
                 'menu.is_public',
                 'menu.urut (order_m)',
                 'group.urut (order_g)'
@@ -77,13 +83,27 @@ try {
         $exp = explode(':', $res['controller']);
         $controller = (!in_array($exp[0], ['PrivateController', 'PublicController', 'LoginController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
         if ($method == 'post') {
-            $app->post("$url", "\App\Controller\\$controller");
+            $app->post($url, "\App\Controller\\$controller");
         }
     }
     $result = null;
     $res = null;
     $query = null;
 } catch (\PDOException $e) {
-    //Maybe a custom error page here
-    die($e->getMessage());
+    $code = 'SC501';
+    $container->logger->error('REST-API ROUTER ERROR :: ' . $e->getMessage(),
+        [
+            'code' => $code,
+            'sql' => $container->database->last()
+        ]
+    );
+
+    $msg = [
+        'success' => false,
+        'error' => "[$code] - Please contact your administrator for more support"
+    ];
+
+    header('Internal Server Error', true, 500);
+    print(json_encode($msg));
+    exit();
 }
