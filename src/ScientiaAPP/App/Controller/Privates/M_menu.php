@@ -234,14 +234,14 @@ class M_menu extends \App\Plugin\DataTables
     {
         if ($this->safe){
 			try {
-                $sql = "SELECT a.idjabatan, a.deskripsi, c.idjabatan ID_ROLE
-					FROM m_jabatan a
+                $sql = "SELECT a.idrole, a.deskripsi, c.idrole ID_ROLE
+					FROM m_role a
 					LEFT JOIN (
-						SELECT b.id_menu, b.idjabatan
+						SELECT b.id_menu, b.idrole
 						FROM j_menu b
 						WHERE b.id_menu=:idmenu
-					) c ON a.idjabatan=c.idjabatan
-					ORDER BY a.idjabatan DESC";
+					) c ON a.idrole=c.idrole
+					ORDER BY a.idrole DESC";
                 $query = $this->dbpdo->pdo->prepare($sql);
                 $query->bindParam(':idmenu', $this->safe['idmenu'], \PDO::PARAM_INT);
                 $query->execute();
@@ -265,7 +265,7 @@ class M_menu extends \App\Plugin\DataTables
                     $this->dbpdo->delete('j_menu', ['id_menu' => $idmenu]);
                     if (array_key_exists('ID_ROLE', $this->safe)) {
                         foreach ( $this->safe['ID_ROLE'] as $jbt) {
-                            $this->dbpdo->insert('j_menu', ['id_menu' => $idmenu, 'idjabatan' => $jbt]);
+                            $this->dbpdo->insert('j_menu', ['id_menu' => $idmenu, 'idrole' => $jbt]);
                         }
                     }
 

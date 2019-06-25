@@ -3,7 +3,7 @@
   - [ ] Dibedakan path untuk router api dengan front
     - [ ] API : /api/nama_api
     - [ ] FRONT:
-      - [ ] CMS: /scientia/nama_halaman
+      - [x] CMS: /scientia/nama_halaman
       - [ ] Web: /nama_halaman
 
 ### 2. Controller

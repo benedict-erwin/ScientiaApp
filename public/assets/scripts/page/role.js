@@ -100,9 +100,6 @@ $(document).ready(function () {
 				$("a.btn.btn-default.btn-sm").addClass('disabled');
 				$("#tx_dtSpiner").text('Please wait...');
                 $("#dtSpiner").removeClass('pause-spinner');
-
-                /* Post Data */
-                data.action = 'read_menu';
             },
             "dataSrc": function (json) {
                 /* stop_loader */

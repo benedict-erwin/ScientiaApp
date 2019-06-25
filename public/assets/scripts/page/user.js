@@ -130,7 +130,7 @@ $(document).ready(function() {
 
 				/* Post Data */
                 data.opsional = {
-                    'idjabatan': $("#fm_jabatan").val(),
+                    'idrole': $("#fm_jabatan").val(),
                 };
 			},
 			"dataSrc": function(json) {
@@ -158,7 +158,7 @@ $(document).ready(function() {
 							2: json.message.data[i].nama,
 							3: json.message.data[i].username,
 							4: json.message.data[i].email,
-							5: json.message.data[i].idjabatan,
+							5: json.message.data[i].idrole,
 							6: json.message.data[i].telpon,
 							7: json.message.data[i].lastlogin,
 						})

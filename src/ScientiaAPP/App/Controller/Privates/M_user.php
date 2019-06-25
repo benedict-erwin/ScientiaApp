@@ -24,7 +24,7 @@ class M_user extends \App\Plugin\DataTables
         /* Set DataTables Variables */
         $this->set_TABLE('m_user');
         $this->set_PKEY('iduser');
-        $this->set_COLUMNS(['iduser' , 'nama' , 'email' , 'idjabatan' , 'telpon' , 'lastlogin' , 'username']);
+        $this->set_COLUMNS(['iduser' , 'nama' , 'email' , 'idrole' , 'telpon' , 'lastlogin' , 'username']);
         $this->set_COLUMN_SEARCH(['nama' , 'email' , 'telpon' , 'username']);
         $this->set_COLUMN_ORDER(['iduser', null, 'nama' , 'email', 'telpon', null, 'username']);
 
@@ -47,7 +47,7 @@ class M_user extends \App\Plugin\DataTables
 			"length" => "numeric",
             "iduser" => "numeric",
             "email" => "valid_email",
-			"idjabatan" => "numeric"
+			"idrole" => "numeric"
 		]);
 
 		$gump->filter_rules([
@@ -55,7 +55,7 @@ class M_user extends \App\Plugin\DataTables
 			"start" => "sanitize_numbers",
 			"length" => "sanitize_numbers",
             "iduser" => "sanitize_numbers",
-            "idjabatan" => "sanitize_numbers",
+            "idrole" => "sanitize_numbers",
 			"nama" => "trim",
 			"email" => "trim|sanitize_email"
 		]);
