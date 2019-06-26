@@ -188,6 +188,13 @@ class M_config extends \App\Plugin\DataTables
 				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
 			}
 		}
-	}
+    }
+
+    public function deletes($request, $response, $args)
+    {
+        var_dump($this->safe['data']);
+        var_dump($args['id']);
+        die();
+    }
 
 }

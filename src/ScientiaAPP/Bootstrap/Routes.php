@@ -37,6 +37,9 @@ $app->get('/scientia/{page}', function ($request, $response, $args) use ($contai
     return $this->view->render($response, 'Home/index.html', $data);
 });
 
+$app->delete('/api/test/{id}', '\App\Controller\Privates\M_config:deletes');
+$app->delete('/api/multi', '\App\Controller\Privates\M_config:deletes');
+
 /** REST API **/
 ##> Load from DataBase
 try {
@@ -79,16 +82,39 @@ try {
     }
     foreach ($result as $res) {
         $url = strtolower($res['url']);
-        $method = strtolower($res['tipe']);
+        $method = strtoupper($res['tipe']);
         $exp = explode(':', $res['controller']);
         $controller = (!in_array($exp[0], ['PrivateController', 'PublicController', 'LoginController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
-        if ($method == 'post') {
+        if ($method == 'POST') {
             $app->post($url, "\App\Controller\\$controller");
         }
+
+        /*
+        $url = "/{$api_path}" . strtolower($res['url']);
+        switch ($method) {
+            case 'GET': # Get data by id
+                $app->{$method}("$url/{id}", "\App\Controller\\$controller");
+                break;
+            case 'POST': # Create, READ
+                $app->{$method}($url, "\App\Controller\\$controller");
+                break;
+            case 'PUT': # Update
+                $app->{$method}("$url/{id}", "\App\Controller\\$controller");
+                break;
+            case 'DELETE': # Delete, Batch Delete
+                $act = explode('/', $url);
+                $act = end($act);
+                $act = ($act == 'batch') ? '':'/{id}';
+                $app->{$method}("{$url}{$act}", "\App\Controller\\$controller");
+                break;
+            default:
+                continue;
+                break;
+        }
+        */
     }
     $result = null;
     $res = null;
-    $query = null;
 } catch (\PDOException $e) {
     $code = 'SC501';
     $container->logger->error('REST-API ROUTER ERROR :: ' . $e->getMessage(),

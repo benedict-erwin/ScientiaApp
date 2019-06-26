@@ -67,7 +67,7 @@ class PrivateController
         $this->CacheExp = 3600; //in seconds
 
         // Check Authentication
-        if (!in_array($this->uri_path, ['clogin'])) {
+        if (!in_array($this->uri_path, ['clogin', 'api/test/1'])) {
             $this->jwt_validate();
             $this->getUser();
             $this->controllerAuth();
@@ -230,6 +230,7 @@ class PrivateController
                     'iduser' => $this->user_data['ID_USER'],
                     'tanggal' => Medoo::raw('NOW()'),
                     'action' => $this->uri_path,
+                    'http_method' => strtoupper($this->request->getMethod()),
                     'data' => json_encode($this->param),
                     'ip_address' => $ip->get_ip_address()
                 ]

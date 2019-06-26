@@ -74,3 +74,16 @@ JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU
 {
   "reload": 1
 }
+
+
+##################################################################
+### Request     : Check Auth
+### Description : Melihat action yang diijinkan pada menu aktif
+DELETE http://192.168.33.10/benedict/github/ScientiaApp/public/api/test/1 HTTP/1.1
+X-Requested-With: XMLHttpRequest
+Content-Type: application/json
+JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9iZW5lZGljdFwvZ2l0aHViXC9TY2llbnRpYUFwcFwvcHVibGljXC8iLCJhdWQiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9iZW5lZGljdFwvZ2l0aHViXC9TY2llbnRpYUFwcFwvcHVibGljXC8iLCJqdGkiOiJhYjU0NTBkMjk2ODhmMDQyYjYzOWM1ODA3MGRjMWI0YiIsImlhdCI6MTU2MTQ2OTA3MiwibmJmIjoxNTYxNDY5MDcyLCJleHAiOjE1NjQwNjEwNzIsIklEX1VTRVIiOiJsZz09IiwiVVNFUk5BTUUiOiJiZW5lZGljdCJ9.D79kyi344wiut_j9zi1M4Rgp37BjNCdl9qnjx18AKak
+
+{
+  "ids": [212, 3, 4]
+}
