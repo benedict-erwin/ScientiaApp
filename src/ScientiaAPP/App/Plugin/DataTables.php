@@ -425,10 +425,10 @@ class DataTables extends \App\Controller\PrivateController
         }
     }
 
-    /* Get Data */
-    protected function getData($col = [], $where = [])
+    /* Get Single Data */
+    protected function getData($column = [], $where = [])
     {
-        return $this->dbpdo->get($this->TABLE, $col, $where);
+        return $this->dbpdo->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*' : $this->COLUMNS) : $column), $where);
     }
 
     /**
@@ -436,7 +436,7 @@ class DataTables extends \App\Controller\PrivateController
      */
     protected function getDataById($id, $column = null)
     {
-        return $this->dbpdo->get($this->TABLE, (($column) ? $column : '*'), [$this->PKEY => $id]);
+        return $this->dbpdo->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*': $this->COLUMNS):$column), [$this->PKEY => $id]);
     }
 
     /* Override SQL Message */
