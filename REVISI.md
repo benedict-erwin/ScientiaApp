@@ -1,7 +1,15 @@
 ### 1. Router
   - [ ] Router dibuat dinamis untuk semua method (POST, GET, DELETE, PUT)
+    - [ ] GET : /{id} - Get record by id (PrimaryKey)
+    - [ ] PUT : /{id} - Update record by id (PrimaryKey)
+    - [ ] POST
+      - [ ] Create : /create - Create new record, return new id [id => {new_id}]
+      - [ ] Read   : /read - Read records with or without filter
+    - [ ] DELETE
+      - [ ] Single : /{id} - Delete record by id (PrimaryKey)
+      - [ ] Batch  : /batch - Delete multiple records
   - [ ] Dibedakan path untuk router api dengan front
-    - [ ] API : /api/nama_api
+    - [ ] REST API : /api/nama_api
     - [ ] FRONT:
       - [x] CMS: /scientia/nama_halaman
       - [ ] Web: /nama_halaman
