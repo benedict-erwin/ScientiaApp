@@ -8,7 +8,7 @@
 * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
 */
 
-namespace App\Controller\Privates;
+namespace App\Controllers\Privates;
 
 class M_config extends \App\Plugin\DataTables
 {
@@ -24,7 +24,7 @@ class M_config extends \App\Plugin\DataTables
 		/* Set DataTables Variables */
 		$this->set_TABLE('m_config');
 		$this->set_PKEY('id_config');
-		$this->set_COLUMNS(['id_config' , 'name' , 'value' , 'description']);
+		$this->set_COLUMNS(['id_config' , 'name' , 'value' , 'description', 'scope']);
 		$this->set_COLUMN_SEARCH(['name' , 'value' , 'description']);
 		$this->set_ORDER(['id_config'=> 'DESC' ]);
 		$this->set_CASE_SENSITIVE(false);
@@ -154,8 +154,8 @@ class M_config extends \App\Plugin\DataTables
 		if ($this->safe){
 			try {
 				/* Prepare vars */
-				$where = [$this->PKEY => $this->safe['pKey']];
-                unset($this->safe['pKey']);
+				$where = [$this->PKEY => $this->safe['id']];
+                unset($this->safe['id']);
 
 				/* Send to DB */
 				if ($this->updateDb($this->safe, $where)) {
@@ -172,13 +172,25 @@ class M_config extends \App\Plugin\DataTables
 	}
 
 	/* Function Delete */
-	public function delete()
+	public function delete($request, $response, $args)
 	{
 		if ($this->safe){
 			try {
-				/* Send to DB */
-				if ($this->deleteDb($this->safe['pKey'])) {
-					//remove old chace
+                $id = null;
+                $path = explode('/', $request->getUri()->getPath());
+
+                /** Batch delete */
+                if(trim(end($path)) == 'batch'){
+                    if(!is_array($this->safe['id'])) throw new \Exception('ID tidak valid!');
+                    if(in_array(false, array_map('is_numeric', $this->safe['id']))) throw new \Exception('ID tidak valid!');
+                    $id = $this->safe['id'];
+                }else { /** Single delete */
+                    $id = $args['id'];
+                }
+
+                /* Send to DB */
+				if ($this->deleteDb($id)) {
+                    /** remove old chace */
 					$this->InstanceCache->deleteItemsByTag($this->sign . "_M_config_read_");
 					return $this->jsonSuccess('Data berhasil dihapus');
 				}else{
@@ -188,13 +200,6 @@ class M_config extends \App\Plugin\DataTables
 				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
 			}
 		}
-    }
-
-    public function deletes($request, $response, $args)
-    {
-        var_dump($this->safe['data']);
-        var_dump($args['id']);
-        die();
     }
 
 }

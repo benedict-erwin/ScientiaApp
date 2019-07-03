@@ -249,3 +249,7 @@ textarea {
 ul.notika-main-menu-dropdown>li>a:hover {
     font-weight: bold;
 }
+
+.klik-icon {
+    cursor: pointer;
+}

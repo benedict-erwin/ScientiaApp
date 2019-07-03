@@ -1,0 +1,114 @@
+<!-- Breadcomb area Start-->
+<div class="breadcomb-area">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="breadcomb-list">
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+							<div class="breadcomb-wp">
+								<div class="breadcomb-icon">
+									<i class="notika-icon notika-app animated infinite flip"></i>
+								</div>
+								<div class="breadcomb-ctn">
+									<h2>Config</h2>
+									<p>Add / Edit / Delete</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-3">
+							<div class="breadcomb-report">
+								<button id="tikClock" data-toggle="tooltip" data-placement="left" title="" class="btn">
+									<i class="fa fa-clock-o"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Breadcomb area End-->
+<!-- Main area Start-->
+<div class="colr-area">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="color-wrap">
+					<div class="color-hd">
+						<div class="x_content">
+							<div class="cssload-loader">Please Wait</div>
+							<div id="dtableDiv" style="display:none;">
+								<table id="datatable-responsive"
+									class="table table-striped table-bordered table-hover dt-responsive wrap"
+									cellspacing="0" width="100%">
+									<thead>
+										<tr>
+											<th width="1%"></th>
+											<th width="2%" class="text-center">NO</th>
+											<th width="10%">NAME</th>
+											<th width="10%">VALUE</th>
+											<th width="10%">DESCRIPTION</th>
+											<th width="10%">SCOPE</th>
+											<th width="12%" class="all">ACTION</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Main area End-->
+<!-- #region modal -->
+<div class="modal fade formEditorModal" data-backdrop="static" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modals-default">
+		<div class="modal-content">
+			<div class="modal-header form-group-15">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">New Config</h4>
+			</div>
+			<div class="modal-body">
+				<form id="formEditor" data-parsley-validate class="form-horizontal form-label-left">
+					<div class="form-group-15">
+						<label>Name<span class="required">*</span></label>
+						<div class="nk-int-st">
+							<input type="text" class="form-control input-sm" name="name" placeholder="Name" data-parsley-group="role" required="required">
+						</div>
+					</div>
+					<div class="form-group-15">
+						<label>Value<span class="required">*</span></label>
+						<div class="nk-int-st">
+							<textarea class="form-control auto-size" rows="2" placeholder="Input Value here..." name="value" required="required"></textarea>
+						</div>
+					</div>
+					<div class="form-group-15">
+						<label>Description</label>
+						<div class="nk-int-st">
+							<input type="text" class="form-control input-sm" name="description" placeholder="Description" data-parsley-group="role" >
+						</div>
+					</div>
+					<div class="form-group-15">
+						<label>Scope<span class="required">*</span></label>
+						<div class="nk-int-st">
+							<input type="number" class="form-control input-sm" name="scope" placeholder="Scope" data-parsley-group="role" required="required">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn_save btn btn-default notika-btn-default waves-effect" data-loading-text="Loading...">
+					<i class="fa fa-save"></i> Save
+				</button>
+				<button type="button" class="btn_cancel btn btn-danger notika-btn-danger waves-effect" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- #endregion modal -->

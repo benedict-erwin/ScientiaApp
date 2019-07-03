@@ -182,7 +182,7 @@ $(document).ready(function () {
     /* Button Save Action */
     $('.btn_save').on('click', function () {
         crudCheck();
-        saveOrUpdate('generate', apiUrl, null, '#formEditor', function () {
+        saveOrUpdate('generate', apiUrl, null, '.formEditorModal:#formEditor', function () {
             setTimeout(() => {
                 window.location.reload();
             }, 600);

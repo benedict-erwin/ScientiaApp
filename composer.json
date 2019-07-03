@@ -1,12 +1,12 @@
 {
     "name": "benedict_erwin/scientiaapp",
     "description": "scientiaapp",
-    "license": "MIT",
+    "license": "GPL-3.0",
     "type": "project",
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/cyb3rwin/GUMP"
+            "url": "https://github.com/benedict-erwin/GUMP"
         }
     ],
     "authors": [

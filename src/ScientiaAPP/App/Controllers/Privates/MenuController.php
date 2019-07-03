@@ -8,9 +8,9 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  */
 
-namespace App\Controller\Privates;
+namespace App\Controllers\Privates;
 
-class MenuController extends \App\Controller\PrivateController
+class MenuController extends \App\Controllers\PrivateController
 {
     public function index()
     {
@@ -84,7 +84,7 @@ class MenuController extends \App\Controller\PrivateController
                             AND c.aktif=1
                         ORDER BY d.urut ASC, c.urut ASC";
 
-                $tipe = 'GET';
+                $tipe = 'MENU';
                 $query = $this->dbpdo->pdo->prepare($sql);
                 $query->bindParam(':idrole', $idrole, \PDO::PARAM_STR);
                 $query->bindParam(':tipe', $tipe, \PDO::PARAM_STR);
@@ -142,63 +142,65 @@ class MenuController extends \App\Controller\PrivateController
                 }
                 throw new \Exception($err);
             } else {
-                try {
-                    $result = null;
-                    $ckey = md5($this->sign . '_cauth_' . $this->user_data['ID_USER'] . $safe['path']);
-                    $CachedString = $this->InstanceCache->getItem($ckey);
-                    if (is_null($CachedString->get())) {
-                        $sql = "SELECT a.idrole,
-                                    b.nama,
-                                    a.id_menu,
-                                    c.nama    nama_m,
-                                    c.url,
-                                    c.controller,
-                                    c.id_groupmenu,
-                                    d.nama nama_g,
-                                    c.icon icon_m,
-                                    d.icon icon_g,
-                                    c.aktif aktif_m,
-                                    d.aktif aktif_g,
-                                    c.tipe,
-                                    c.urut order_m,
-                                    d.urut order_g
-                                FROM j_menu a
-                                LEFT JOIN m_role b
-                                    ON a.idrole = b.idrole
-                                LEFT JOIN m_menu c
-                                    ON a.id_menu = c.id_menu
-                                LEFT JOIN m_groupmenu d
-                                    ON c.id_groupmenu = d.id_groupmenu
-                                WHERE b.idrole=:idrole AND c.url=:url
-                                ORDER BY d.urut ASC, c.urut ASC";
+                $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
+                return $this->jsonSuccess($cn);
+            //     try {
+            //         $result = null;
+            //         $ckey = md5($this->sign . '_cauth_' . $this->user_data['ID_USER'] . $safe['path']);
+            //         $CachedString = $this->InstanceCache->getItem($ckey);
+            //         if (is_null($CachedString->get())) {
+            //             $sql = "SELECT a.idrole,
+            //                         b.nama,
+            //                         a.id_menu,
+            //                         c.nama    nama_m,
+            //                         c.url,
+            //                         c.controller,
+            //                         c.id_groupmenu,
+            //                         d.nama nama_g,
+            //                         c.icon icon_m,
+            //                         d.icon icon_g,
+            //                         c.aktif aktif_m,
+            //                         d.aktif aktif_g,
+            //                         c.tipe,
+            //                         c.urut order_m,
+            //                         d.urut order_g
+            //                     FROM j_menu a
+            //                     LEFT JOIN m_role b
+            //                         ON a.idrole = b.idrole
+            //                     LEFT JOIN m_menu c
+            //                         ON a.id_menu = c.id_menu
+            //                     LEFT JOIN m_groupmenu d
+            //                         ON c.id_groupmenu = d.id_groupmenu
+            //                     WHERE b.idrole=:idrole AND c.url=:url
+            //                     ORDER BY d.urut ASC, c.urut ASC";
 
-                        /* log sql */
-                        if($this->container->get('settings')['mode'] != 'production'){
-                            $this->logger->addInfo(__CLASS__ . ' query :: ' . preg_replace('/\v(?:[\v\h]+)/', ' ', $sql));
-                        }
+            //             /* log sql */
+            //             if($this->container->get('settings')['mode'] != 'production'){
+            //                 $this->logger->addInfo(__CLASS__ . ' query :: ' . preg_replace('/\v(?:[\v\h]+)/', ' ', $sql));
+            //             }
 
-                        $path = ($safe['path']=='/') ? '/home':$safe['path'];
-                        $query = $this->dbpdo->pdo->prepare($sql);
-                        $query->bindParam(':idrole', $this->user_data['ID_ROLE'], \PDO::PARAM_STR);
-                        $query->bindParam(':url', $path, \PDO::PARAM_STR);
-                        $query->execute();
-                        $result = $query->fetch();
-                        $CachedString->set($result)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getAuthMenu_');
-                        $this->InstanceCache->save($CachedString);
-                    } else {
-                        $result = $CachedString->get();
-                    }
+            //             $path = ($safe['path']=='/') ? '/home':$safe['path'];
+            //             $query = $this->dbpdo->pdo->prepare($sql);
+            //             $query->bindParam(':idrole', $this->user_data['ID_ROLE'], \PDO::PARAM_STR);
+            //             $query->bindParam(':url', $path, \PDO::PARAM_STR);
+            //             $query->execute();
+            //             $result = $query->fetch();
+            //             $CachedString->set($result)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getAuthMenu_');
+            //             $this->InstanceCache->save($CachedString);
+            //         } else {
+            //             $result = $CachedString->get();
+            //         }
 
-                    if ($result) {
-                        $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
-                        return $this->jsonSuccess($cn);
-                    }else {
-                        throw new \Exception("User not authorized!");
-                    }
+            //         if ($result) {
+            //             $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
+            //             return $this->jsonSuccess($cn);
+            //         }else {
+            //             throw new \Exception("User not authorized!");
+            //         }
 
-                } catch (\PDOException $e) {
-                    throw new \Exception("User not authorized!");
-                }
+            //     } catch (\PDOException $e) {
+            //         throw new \Exception("User not authorized!");
+            //     }
             }
         } catch (\Exception $e) {
             return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);

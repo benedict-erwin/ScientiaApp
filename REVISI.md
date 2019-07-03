@@ -30,5 +30,19 @@
     - [ ] Contructor disiapkan untuk inisiasi object database
 
 ### 5. ERROR CODE
+  - [ ] Format error log :
+    ```php
+        $errMsg = [
+            'code' => 'ErrCode',
+            'error' => 'Error Definition',
+            'message' => 'Error Message',
+        ];
+    ```
   - [ ] Definisikan error code:
     - [ ] Buat definer untuk list erro code
+    - [ ] SC400 : AUTOLOAD REGISTER CANNOT LOAD SPECIFIED CLASS
+    - [ ] SC401 : REQUESTED URL NOT FOUND IN ROUTER
+    - [ ] SC500 : INTERNAL SERVER ERROR HANDLER
+    - [ ] SC501 : CACHE ERROR
+    - [ ] SC502 : REST-API ROUTER ERROR
+    - [ ] SC503 : HTTP METHOD NOT ALLOWED HANDLER

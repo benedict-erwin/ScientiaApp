@@ -8,7 +8,7 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  */
 
-namespace App\Controller;
+namespace App\Controllers;
 
 use Medoo\Medoo;
 use Lcobucci\JWT\Parser;
@@ -67,12 +67,10 @@ class PrivateController
         $this->CacheExp = 3600; //in seconds
 
         // Check Authentication
-        if (!in_array($this->uri_path, ['clogin', 'api/test/1'])) {
-            $this->jwt_validate();
-            $this->getUser();
-            $this->controllerAuth();
-            $this->auditLog();
-        }
+        $this->jwt_validate();
+        $this->getUser();
+        $this->controllerAuth();
+        $this->auditLog();
     }
 
 
@@ -147,9 +145,9 @@ class PrivateController
         }
 
         /* Generate new JWT */
-        if (!in_array($this->uri_path, ['clogin', 'clogout'])) {
-            $token = (string) $this->getTokenJWT();
-        }
+        $token = (string) $this->getTokenJWT();
+        // if (!in_array($this->uri_path, ['clogin', 'clogout'])) {
+        // }
 
         $response = $this->response->withHeader('Cache-Control', 'no-cache, must-revalidate');
         $response = $response->withAddedHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
@@ -198,6 +196,10 @@ class PrivateController
     public function controllerAuth()
     {
         $urlink = "/" . $this->uri_path;
+        $urlink = str_replace('/' . $this->container->get('settings')['api_path'] . '/', '/', $urlink);
+        $exp = explode('/', $urlink);
+        $exp = trim(end($exp));
+        $urlink = is_numeric($exp) ? str_replace("/{$exp}", '',$urlink):$urlink;
         $query = $this->dbpdo->get(
             'm_menu',
             [ '[>]j_menu' => 'id_menu' ],
@@ -210,6 +212,11 @@ class PrivateController
 
         /* Unauthorized! */
         if (!$query) {
+            /* Logger */
+            if ($this->container->get('settings')['mode'] != 'production') {
+                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->log());
+            }
+
             header('HTTP/1.1 403 Forbidden');
             header("Content-Type: application/json;charset=utf-8");
             die("{\"success\":false,\"message\":{\"error\":\"Unauthorized!\"}}");
@@ -220,9 +227,9 @@ class PrivateController
     }
 
     /* AuditLog Function */
-    private function auditLog($data = [])
+    private function auditLog()
     {
-        if (!in_array($this->uri_path, array('cauth'))) {
+        if (!in_array($this->uri_path, ['cauth', 'cmenu'])) {
             $ip = new Ipaddress();
             return $this->dbpdo->insert(
                 'l_auditlog',

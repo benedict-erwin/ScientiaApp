@@ -1,5 +1,5 @@
 /* Variables */;
-var apiUrl = SiteRoot + 'c_menu';
+var apiUrl = SiteRoot + 'menu';
 var tbl = "#datatable-responsive tbody";
 var pKey, table;
 var saveUpdate = "save";
@@ -108,7 +108,7 @@ $(document).ready(function () {
         "ordering": false,
         "serverSide": true,
         "ajax": {
-            "url": apiUrl + '_read',
+            "url": apiUrl + '/read',
             "type": 'post',
             "headers": { JWT: get_token(API_TOKEN) },
             "data": function (data, settings) {
@@ -227,7 +227,7 @@ $(document).ready(function () {
 
     /* Button Save Action */
     $('.btn_save').on('click', function () {
-        saveOrUpdate(saveUpdate, apiUrl, pKey, '#formEditor');
+        saveOrUpdate(saveUpdate, apiUrl, pKey, '.formEditorModal:#formEditor');
     });
 
     /* Button Edit Action */
@@ -322,7 +322,7 @@ $(document).ready(function () {
 
 /* Get GroupMenu */
 function getGroupmenu(obj, sel = null) {
-    let url = SiteRoot + 'c_groupmenu_read';
+    let url = SiteRoot + 'groupmenu/read';
     let opt = $(obj);
     let post_data = {
         'draw': 1,
@@ -360,11 +360,11 @@ function getJabatan(id) {
                     var num = 0; var prs;
                     $(result.message).each(function (index, el) {
                         prs = (num == 0) ? ' data-parsley-mincheck="1" data-parsley-group="role"' : '';
-                        cek = (el.id_jabatan) ? (el.id_jabatan == el.idjabatan ? 'checked' : '') : '';
+                        cek = (el.ID_ROLE) ? (el.ID_ROLE == el.idrole ? 'checked' : '') : '';
                         cbx.append(
                             '<div class="form-check">' +
-                            '<input class="form-check-input" id="jabatan_' + el.idjabatan + '" type="checkbox" name="id_jabatan[]" ' + ' value="' + el.idjabatan + '" ' + cek + '> ' +
-                            '<label class="form-check-label for="jabatan_' + el.idjabatan + '"> ' + el.deskripsi + '</label>' +
+                            '<input class="form-check-input" id="jabatan_' + el.idrole + '" type="checkbox" name="ID_ROLE[]" ' + ' value="' + el.idrole + '" ' + cek + '> ' +
+                            '<label class="form-check-label for="jabatan_' + el.idrole + '"> ' + el.deskripsi + '</label>' +
                             '</div>'
                         );
                         num++;
@@ -397,7 +397,6 @@ $('input[name=aktif]').on('change', function () {
         $('.lbSwitch').text('ENABLED');
     }
 });
-
 
 /* Button Create Action */
 function btn_add() {

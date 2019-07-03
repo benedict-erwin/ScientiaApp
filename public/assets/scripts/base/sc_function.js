@@ -695,8 +695,8 @@ function forceDownload(href) {
 function kickAss() {
     setNprogressLoader("start");
     $.ajax({
-        type: 'POST',
-        url: SiteRoot + 'clogout',
+        type: 'GET',
+        url: SiteRoot + 'clogout/1',
         dataType: 'json',
         headers: { JWT: get_token(API_TOKEN) },
         success: function (data, textStatus, jqXHR) {
@@ -714,7 +714,6 @@ function kickAss() {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             setNprogressLoader("done");
-            del_token(API_TOKEN);
             notification(errorThrown, 'error');
             redirectLogin(jqXHR);
             console.log(jqXHR);

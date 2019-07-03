@@ -7,25 +7,31 @@
  * @callback callback
  */
 function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
+    let cls = form.split(':');
+    let clModal = cls[0];
+    let clForm = cls[1];
     let urLink = '';
-    let formData = $(form).serializeArray();
+    let httpMethod = 'POST';
+    let formData = $(clForm).serializeArray();
     $('.btn_save').button('loading');
     $('.btn_save').prop('disabled', true);
     $(document.body).css({ 'cursor': 'wait' });
 
     /* Check button text */
     if (saveUpdate == 'save') {
-        urLink = apiUrl + '_create';
+        urLink = apiUrl + '/create';
+        httpMethod = 'POST';
     } else if (saveUpdate == 'update') {
-        urLink = apiUrl + '_update';
-        formData.push({ name: 'pKey', value: pKey });
+        urLink = apiUrl + '/' + pKey;
+        httpMethod = 'PUT';
     } else {
-        urLink = apiUrl;
+        httpMethod = 'GET';
+        urLink = apiUrl + '/forbidden';
     }
 
-    if ($(form).parsley().validate({ force: true, group: 'role' })) {
+    if ($(clForm).parsley().validate({ force: true, group: 'role' })) {
         $.ajax({
-            "type": 'POST',
+            "type": httpMethod,
             "headers": { JWT: get_token(API_TOKEN) },
             "url": urLink,
             "data": formData,
@@ -39,7 +45,7 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                     notification(result.error, 'warn', 3, result.message);
                 }
                 $(window).scrollTop(0);
-                $('.formEditorModal').modal('hide');
+                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $(document.body).css({ 'cursor': 'default' });
                 $('.btn_save').prop('disabled', false);
@@ -48,7 +54,82 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                 typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
-                $('.formEditorModal').modal('hide');
+                $(clModal).modal('hide');
+                $('.btn_save').button('reset');
+                $('.btn_save').prop('disabled', false);
+                $(document.body).css({ 'cursor': 'default' });
+                notification(errorThrown, 'error');
+                redirectLogin(jqXHR);
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    } else {
+        $('.btn_save').button('reset');
+        $(document.body).css({ 'cursor': 'default' });
+        $('.btn_save').prop('disabled', false);
+    }
+}
+
+/**
+ * Ajax Save | Update
+ * @param {string} saveUpdate
+ * @param {string} apiUrl
+ * @param {number} pKey
+ * @param {string} form
+ * @callback callback
+ */
+function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
+    let cls = form.split(':');
+    let clModal = cls[0];
+    let clForm = cls[1];
+    let urLink = '';
+    let httpMethod = 'POST';
+    let formData = new FormData($(clForm)[0]);
+    $('.btn_save').button('loading');
+    $('.btn_save').prop('disabled', true);
+    $(document.body).css({ 'cursor': 'wait' });
+
+    /* Check button text */
+    if (saveUpdate == 'save') {
+        urLink = apiUrl + '/create';
+        httpMethod = 'POST';
+    } else if (saveUpdate == 'update') {
+        urLink = apiUrl + '/' + pKey;
+        httpMethod = 'PUT';
+    } else {
+        httpMethod = 'GET';
+        urLink = apiUrl + '/forbidden';
+    }
+
+    if ($(clForm).parsley().validate({ force: true, group: 'role' })) {
+        $.ajax({
+            "type": httpMethod,
+            "headers": { JWT: get_token(API_TOKEN) },
+            "url": urLink,
+            "data": formData,
+            "processData": false,
+            "contentType": false,
+            "success": function (result, textStatus, jqXHR) {
+                set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
+                if (result.success === true) {
+                    $(".btReload").click();
+                    notification(result.message, 'success');
+                } else {
+                    notification(result.error, 'warn', 3, result.message);
+                }
+                //$(window).scrollTop(0);
+                $(clModal).modal('hide');
+                $('.btn_save').button('reset');
+                $(document.body).css({ 'cursor': 'default' });
+                $('.btn_save').prop('disabled', false);
+
+                /* Execute callback if exist */
+                typeof callback === 'function' && callback(result);
+            },
+            "error": function (jqXHR, textStatus, errorThrown) {
+                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $('.btn_save').prop('disabled', false);
                 $(document.body).css({ 'cursor': 'default' });
@@ -74,14 +155,12 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
  */
 function deleteSingle(apiUrl, data, callback) {
     let msg = 'Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
-    let post_data = { 'pKey': data[0] };
     alertify.confirm('PERINGATAN!', msg, function () {
         /* Ok */
         $.ajax({
-            "type": 'POST',
-            "url": apiUrl + '_delete',
+            "type": 'DELETE',
+            "url": apiUrl + '/' + data,
             "headers": { JWT: get_token(API_TOKEN) },
-            "data": post_data,
             "dataType": 'json',
             "success": function (result, textStatus, jqXHR) {
                 set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
@@ -91,7 +170,6 @@ function deleteSingle(apiUrl, data, callback) {
                 } else {
                     notification(result.error, 'warn', 3, result.message);
                 }
-                //$(window).scrollTop(0);
 
                 /* Execute callback if exist */
                 typeof callback === 'function' && callback(result);
@@ -124,12 +202,12 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
 
     if (rows.length > 0) {
         let msg = 'Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
-        let post_data = { 'pKey': rows };
+        let post_data = { 'id': rows };
         alertify.confirm('PERINGATAN!', msg, function () {
             /* Ok */
             $.ajax({
-                "type": 'POST',
-                "url": apiUrl + '_delete',
+                "type": 'DELETE',
+                "url": apiUrl + '/batch',
                 "headers": { JWT: get_token(API_TOKEN) },
                 "data": post_data,
                 "dataType": 'json',
@@ -191,7 +269,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
                 opt.find('option').remove();
                 if (result.message.data != undefined && result.message.data.length > 0) {
                     if (!sel) {
-                        opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('Tentukan Pilihan'));
+                        opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('-- Semua --'));
                     }
                     $(result.message.data).each(function (index, el) {
                         let text;
@@ -216,7 +294,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
                     }).trigger("chosen:updated");
                 } else {
                     opt.find('option').remove();
-                    opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('Tentukan Pilihan'));
+                    opt.append($("<option></option>").attr({ 'value': '', 'selected': 'selected' }).text('-- Semua --'));
                     opt.closest(':has(span i)').find('span').css('display', 'none');
                     opt.closest('div').css('display', '');
                     opt.chosen({
@@ -260,7 +338,7 @@ function initChoosen(selector, value=null, placeholder_text=null) {
         search_contains: true,
         allow_single_deselect: !0,
         no_results_text: "Oops, nothing found!",
-        placeholder_text: placeholder_text || "Tentukan Pilihan"
+        placeholder_text: placeholder_text || "-- Semua --"
     }).trigger("chosen:updated");
 }
 
@@ -335,74 +413,4 @@ function findSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add) {
             console.log(errorThrown);
         }
     });
-}
-
-/**
- * Ajax Save | Update
- * @param {string} saveUpdate
- * @param {string} apiUrl
- * @param {number} pKey
- * @param {string} form
- * @callback callback
- */
-function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
-    let urLink = '';
-    let formData = new FormData($(form)[0]);
-    $('.btn_save').button('loading');
-    $('.btn_save').prop('disabled', true);
-    $(document.body).css({ 'cursor': 'wait' });
-
-
-    /* Check button text */
-    if (saveUpdate == 'save') {
-        urLink = apiUrl + '_create';
-    } else if (saveUpdate == 'update') {
-        urLink = apiUrl + '_update';
-        formData.append('pKey', pKey);
-    } else {
-        urLink = apiUrl;
-    }
-
-    if ($(form).parsley().validate({ force: true, group: 'role' })) {
-        $.ajax({
-            "type": 'POST',
-            "headers": { JWT: get_token(API_TOKEN) },
-            "url": urLink,
-            "data": formData,
-            "processData": false,
-            "contentType": false,
-            "success": function (result, textStatus, jqXHR) {
-                set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
-                if (result.success === true) {
-                    $(".btReload").click();
-                    notification(result.message, 'success');
-                } else {
-                    notification(result.error, 'warn', 3, result.message);
-                }
-                //$(window).scrollTop(0);
-                $('.formEditorModal').modal('hide');
-                $('.btn_save').button('reset');
-                $(document.body).css({ 'cursor': 'default' });
-                $('.btn_save').prop('disabled', false);
-
-                /* Execute callback if exist */
-                typeof callback === 'function' && callback(result);
-            },
-            "error": function (jqXHR, textStatus, errorThrown) {
-                $('.formEditorModal').modal('hide');
-                $('.btn_save').button('reset');
-                $('.btn_save').prop('disabled', false);
-                $(document.body).css({ 'cursor': 'default' });
-                notification(errorThrown, 'error');
-                redirectLogin(jqXHR);
-                console.log(jqXHR);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
-        });
-    } else {
-        $('.btn_save').button('reset');
-        $(document.body).css({ 'cursor': 'default' });
-        $('.btn_save').prop('disabled', false);
-    }
 }

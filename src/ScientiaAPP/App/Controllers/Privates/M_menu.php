@@ -8,7 +8,7 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  */
 
-namespace App\Controller\Privates;
+namespace App\Controllers\Privates;
 
 class M_menu extends \App\Plugin\DataTables
 {
@@ -179,8 +179,8 @@ class M_menu extends \App\Plugin\DataTables
             try  {
                 $this->safe['aktif'] = (isset($this->safe['aktif'])) ? (($this->safe['aktif'] == 1) ? 1:0):0;
                 $this->safe['url'] = "/" . trim($this->safe['url'], "/");
-                $where = [$this->PKEY => $this->safe['pKey']];
-                unset($this->safe['pKey']);
+                $where = [$this->PKEY => $this->safe['id']];
+                unset($this->safe['id']);
 
                 /* Send to DB */
 				if ($this->updateDb($this->safe, $where)) {
@@ -204,12 +204,25 @@ class M_menu extends \App\Plugin\DataTables
     }
 
     /* Function Delete */
-    public function delete()
+    public function delete($request, $response, $args)
     {
         if ($this->safe){
 			try {
+                $id = null;
+                $path = explode('/', $request->getUri()->getPath());
+
+                /** Batch delete */
+                if (trim(end($path)) == 'batch') {
+                    if (!is_array($this->safe['id'])) throw new \Exception('ID tidak valid!');
+                    if (in_array(false, array_map('is_numeric', $this->safe['id']))) throw new \Exception('ID tidak valid!');
+                    $id = $this->safe['id'];
+                } else {
+                    /** Single delete */
+                    $id = $args['id'];
+                }
+
 				/* Send to DB */
-				if ($this->deleteDb($this->safe['pKey'])) {
+				if ($this->deleteDb($id)) {
                     //remove old chace
                     $this->InstanceCache->deleteItemsByTags([
                         $this->sign . '_getMenus_',

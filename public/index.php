@@ -15,6 +15,7 @@ define('APP_PATH', BASE_PATH . '/src/ScientiaAPP/App');
 /* Load autoload and app first - most important */
 require_once BASE_PATH . '/vendor/autoload.php';
 require_once BASE_PATH . '/src/ScientiaAPP/Bootstrap/App.php';
+require_once BASE_PATH . '/src/ScientiaAPP/Bootstrap/Routes.php';
 
 /* Set Error Reporting */
 if ($conf['MODE']=='develop') {
@@ -27,12 +28,6 @@ if ($conf['MODE']=='develop') {
     } else {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_USER_NOTICE);
     }
-}
-
-/* Auto require everything in BASE_PATH/Bootstrap */
-foreach (new DirectoryIterator(BASE_PATH . '/src/ScientiaAPP/Bootstrap') as $fileInfo) {
-    if($fileInfo->isDot()) continue;
-    require_once $fileInfo->getPathname();
 }
 
 /* Run Application */

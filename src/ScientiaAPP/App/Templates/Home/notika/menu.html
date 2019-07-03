@@ -8,7 +8,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                             <div class="breadcomb-wp">
                                 <div class="breadcomb-icon">
-                                    <i class="notika-icon notika-app animated infinite flip"></i>
+                                    <i class="notika-icon notika-icon notika-app animated infinite flip"></i>
                                 </div>
                                 <div class="breadcomb-ctn">
                                     <h2>Menu</h2>
@@ -41,7 +41,7 @@
                             <div class="cssload-loader">Please Wait</div>
                             <div id="dtableDiv" style="display:none;">
                                 <div class="row margin-bt-20">
-                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
                                         <div class="nk-int-mk sl-dp-mn">
                                             <h2>Filter Group Menu</h2>
                                         </div>
@@ -53,7 +53,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
                                         <div class="nk-int-mk sl-dp-mn">
                                             <h2>Filter Tipe</h2>
                                         </div>
@@ -63,12 +63,15 @@
                                         <div class="chosen-select-act fm-cmp-mg" style="display:none;">
                                             <select id="fm_tipe" name="fm_tipe" class="chosen fm_tipe">
                                                 <option value="">SHOW ALL</option>
-                                                <option value="GET">Top Menu</option>
-                                                <option value="POST">API Action</option>
+                                                <option value="MENU">APP MENU</option>
+                                                <option value="GET">API GET</option>
+                                                <option value="POST">API POST</option>
+                                                <option value="PUT">API PUT</option>
+                                                <option value="DELETE">API DELETE</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
                                         <div class="nk-int-mk sl-dp-mn">
                                             <h2>Filter Akses</h2>
                                         </div>
@@ -155,14 +158,17 @@
                         </div>
                     </div>
                     <div class="form-group-15">
-                        <label>Tipe Menu <span class="required">*</span></label>
+                        <label>Tipe <span class="required">*</span></label>
                         <div class="nk-int-st">
                             <span style="margin-left: 10px;"><i class="fa fa-spinner fa-spin"></i> Please wait...</span>
                             <div class="chosen-select-act fm-cmp-mg" style="display:none;">
                                 <select id="tipe" name="tipe" class="chosen tipe" required="required"
                                     data-parsley-group="role">
-                                    <option value="GET">Top Menu</option>
-                                    <option value="POST">API Action</option>
+                                    <option value="MENU">APP MENU</option>
+                                    <option value="GET">API GET</option>
+                                    <option value="POST">API POST</option>
+                                    <option value="PUT">API PUT</option>
+                                    <option value="DELETE">API DELETE</option>
                                 </select>
                             </div>
                         </div>

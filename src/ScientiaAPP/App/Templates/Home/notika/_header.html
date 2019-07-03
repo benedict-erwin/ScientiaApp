@@ -95,7 +95,7 @@
     <!-- jquery js -->
     <script src="{{ base_url }}assets/notika/js/vendor/jquery-1.12.4.min.js"></script>
     <script type="text/javascript">
-        var SiteRoot = "{{ base_url }}";
+        var SiteRoot = "{{ base_url ~ api_path }}/";
         var API_TOKEN = "{{ api_token }}";
         if (getKen = window.localStorage.getItem(API_TOKEN)) {
             if (getKen == 'null') {

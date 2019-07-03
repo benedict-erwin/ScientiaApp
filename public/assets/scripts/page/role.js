@@ -1,5 +1,5 @@
 /* Variables */;
-var apiUrl = SiteRoot + 'c_role';
+var apiUrl = SiteRoot + 'role';
 var tbl = '#datatable-responsive tbody';
 var pKey = '';
 var table;
@@ -90,7 +90,7 @@ $(document).ready(function () {
         "ordering": false,
         "serverSide": true,
         "ajax": {
-            "url": apiUrl + '_read',
+            "url": apiUrl + '/read',
             "type": 'post',
             "headers": { JWT: get_token(API_TOKEN) },
             "data": function (data, settings) {
@@ -183,7 +183,7 @@ $(document).ready(function () {
 
     /* Button Save Action */
     $('.btn_save').on('click', function () {
-        saveOrUpdate(saveUpdate, apiUrl, pKey, '#formEditor');
+        saveOrUpdate(saveUpdate, apiUrl, pKey, '.formEditorModal:#formEditor');
     });
 
     /* Button Edit Action */
@@ -203,7 +203,7 @@ $(document).ready(function () {
     /* Button Delete */
     $(tbl).on('click', '#btDel', function () {
         let data = (table.row($(this).closest('tr')).data() === undefined) ? table.row($(this).closest('li')).data() : table.row($(this).closest('tr')).data();
-        deleteSingle(apiUrl, data);
+        deleteSingle(apiUrl, data[0]);
     });
 
     /* Button Delete Multi */

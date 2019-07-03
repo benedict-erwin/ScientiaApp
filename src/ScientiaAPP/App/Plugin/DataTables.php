@@ -11,7 +11,7 @@
 
 namespace App\Plugin;
 
-class DataTables extends \App\Controller\PrivateController
+class DataTables extends \App\Controllers\PrivateController
 {
     /* Declare Property */
     protected $SQL;
@@ -391,7 +391,6 @@ class DataTables extends \App\Controller\PrivateController
     /* Function Delete by PK */
     protected function deleteDb($pkey)
     {
-        $pkey = is_array($pkey) ? $pkey : [$pkey];
         $result = $this->dbpdo->delete($this->TABLE, [$this->PKEY => $pkey]);
         if ($result->rowCount() > 0) {
             return true;
@@ -419,7 +418,7 @@ class DataTables extends \App\Controller\PrivateController
         } else {
             /* Logger */
             if ($this->container->get('settings')['mode'] != 'production') {
-                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->error());
+                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->log());
             }
             return false;
         }

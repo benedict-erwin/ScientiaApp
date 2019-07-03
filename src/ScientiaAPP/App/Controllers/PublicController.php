@@ -8,7 +8,7 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  */
 
-namespace App\Controller;
+namespace App\Controllers;
 
 class PublicController
 {
@@ -21,6 +21,7 @@ class PublicController
     protected $CacheExp;
     protected $param;
     protected $sign;
+    protected $jwtExp;
     protected $conf_data = array();
 
     /**
@@ -44,6 +45,12 @@ class PublicController
         $this->dbpdo = $container->database;
         $this->logger = $container->logger;
         $this->conf_data = $this->getConfig();
+
+        //JWT Expired time
+        $this->jwtExp = 24 * 3600 * 30; //30Days
+
+        //CacheExp
+        $this->CacheExp = 3600; //in seconds
     }
 
     /**
@@ -133,6 +140,13 @@ class PublicController
     {
         $code = (is_int($code)) ? $code : 200;
         return $this->jsonResponse(true, $message, $addl, $code);
+    }
+
+    /* isAjax */
+    public function isAjax()
+    {
+        return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
     }
 
     /* Destructor */

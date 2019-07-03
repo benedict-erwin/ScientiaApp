@@ -32,7 +32,7 @@ try {
 } catch (\Exception $e) {
     header("HTTP/1.0 500 Internal Server Error");
     header("Content-Type: application/json;charset=utf-8");
-    echo json_encode(['error' => 'Cache error ' . $e->getMessage()]);
+    echo json_encode(['code' => 'SC501', 'message' => 'Cache error ' . $e->getMessage()]);
     exit();
 }
 
@@ -81,19 +81,31 @@ $container['logger'] = function ($container) {
 spl_autoload_register(function ($class) use ($container){
     $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
     if (!is_file($classFile)) {
+        $container['logger']->error('App::spl_autoload_register', ['code' => 'SC400', 'message' => 'Invalid File! cannot load class: ' . $class]);
         throw new \Exception('Invalid File! cannot load class: ' . $class);
     }
     require_once $classFile;
 });
 
 /* Autoload in our controllers into the container */
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Controller')) as $fileInfo) {
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Controllers')) as $fileInfo) {
     if (is_dir($fileInfo)) continue;
     if (strpos(strtolower($fileInfo), '.php') === FALSE) continue;
-    $file = str_replace(APP_PATH . '/Controller/', '', $fileInfo);
+    $file = str_replace(APP_PATH . '/Controllers/', '', $fileInfo);
     $file = str_replace('/', '\\', $file);
-    $class = 'App\\Controller\\' . str_replace('.php', '', $file);
-    $container[$class] = function ($container) use ($class) {
+    $class = 'App\\Controllers\\' . str_replace('.php', '', $file);
+    $container[$class] = function () use ($class) {
+        return new $class();
+    };
+}
+
+/* Autoload in our models into the container */
+foreach (new DirectoryIterator(APP_PATH . '/Models') as $fileInfo) {
+    if ($fileInfo->isDot()) {
+        continue;
+    }
+    $class = 'App\\Models\\' . str_replace('.php', '', $fileInfo->getFilename());
+    $container[$class] = function ($c) use ($class) {
         return new $class();
     };
 }
@@ -118,7 +130,13 @@ $container['database'] = function ($container) {
 /* Not Found Handler - http 404 */
 $container['notFoundHandler'] = function ($container) {
     return function ($request, $response) use ($container) {
-        return $container['response']->withJson(['error' => 'Resource not valid'], 404);
+        if ($container->get('settings')['mode'] == 'production') {
+            return $container['view']->render($response, 'Home/404.twig')->withStatus(404);
+        } else {
+            // Use this for debugging purposes
+            $container['logger']->error('App::container::notFoundHandler', ['code' => 'SC401', 'message' => 'Resource not valid', 'path' => $request->getUri()->getPath()]);
+            return $container['response']->withJson(['error' => 'Resource not valid'], 404);
+        }
     };
 };
 
@@ -140,13 +158,13 @@ $container['errorHandler'] = function ($container) {
 
         if ($container->get('settings')['mode'] == 'production') {
             if (stripos($message, 'Unable to find template') !== false) {
-                return $container['view']->render($response, 'Home/404.html')->withStatus(404);
+                return $container['view']->render($response, 'Home/500.twig')->withStatus($code);
             } else {
                 return $container['response']->withJson(['success' => false], $code);
             }
         } else {
             // Use this for debugging purposes
-            $container['logger']->AddInfo($message.' in '.$exception->getFile().' - ('.$exception->getLine().', '.get_class($exception).')');
+            $container['logger']->error('App::container::errorHandler', ['error' => 'SC500', 'message' => $message.' in '.$exception->getFile().' - ('.$exception->getLine().', '.get_class($exception).')']);
             return $container['response']->withJson(['success' => false, 'error' => $message], $code);
         }
     };
@@ -155,6 +173,9 @@ $container['errorHandler'] = function ($container) {
 /* Not Allowed Handler */
 $container['notAllowedHandler'] = function ($container) {
     return function ($request, $response) use ($container) {
+        if ($container->get('settings')['mode'] == 'develop') {
+            $container['logger']->error('App::container::notAllowedHandler', ['code' => 'SC503', 'message' => 'HTTP METHOD NOT ALLOWED HANDLER']);
+        }
         return $container['response']->withJson(['error' => 'Method not allowed'], 405);
     };
 };

@@ -1,5 +1,5 @@
 /* Variables */;
-var apiUrl = SiteRoot + 'c_user';
+var apiUrl = SiteRoot + 'user';
 var tbl = "#datatable-responsive tbody";
 var pKey, table;
 var saveUpdate = "save";
@@ -117,7 +117,7 @@ $(document).ready(function() {
         "order": [[2, "asc"]],
 		"serverSide": true,
 		"ajax": {
-			"url": apiUrl + '_read',
+			"url": apiUrl + '/read',
 			"type": 'post',
 			"headers": { JWT: get_token(API_TOKEN) },
 			"data": function(data, settings){
@@ -233,7 +233,7 @@ $(document).ready(function() {
 
     /* Button Save Action */
     $('.btn_save').on('click', function () {
-        saveOrUpdate(saveUpdate, apiUrl, pKey, '#formEditor');
+        saveOrUpdate(saveUpdate, apiUrl, pKey, '.formEditorModal:#formEditor');
     });
 
     /* Button Edit Action */
@@ -274,7 +274,7 @@ $(document).ready(function() {
 
 /* Get GroupMenu */
 function getJabatan(obj, sel = null) {
-    let url = SiteRoot + 'c_role_read';
+    let url = SiteRoot + 'role/read';
     let opt = $(obj);
     let post_data = {
         'draw': 1,
@@ -282,7 +282,7 @@ function getJabatan(obj, sel = null) {
         'length': -1, /* All data */
         'search[value]': ''
     };
-    populateSelect(url, opt, post_data, sel, 'idjabatan', 'nama');
+    populateSelect(url, opt, post_data, sel, 'idrole', 'deskripsi');
 }
 
 

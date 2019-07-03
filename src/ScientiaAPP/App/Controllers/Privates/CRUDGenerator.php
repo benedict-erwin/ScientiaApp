@@ -9,7 +9,7 @@
  * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
  **/
 
-namespace App\Controller\Privates;
+namespace App\Controllers\Privates;
 
 use App\Lib\Stringer;
 
@@ -227,7 +227,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                         'Api ' . $data['menu'] . ' Delete',
                     ],
                     'id_groupmenu' => $data['id_groupmenu'],
-                    'tipe' => ['GET', 'POST']
+                    'tipe' => ['GET', 'PUT', 'POST', 'DELETE']
                 ]
             );
 
@@ -246,7 +246,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'nama' => 'Api ' . $data['menu'] . ' Create',
                                 'icon' => null,
                                 'controller' => $data['className'] . ':create',
-                                'url' => '/c_' . $data['url'] . '_create',
+                                'url' => '/' . $data['url'] . '/create',
                                 'tipe' => 'POST',
                                 'aktif' => 1,
                                 'urut' => 0
@@ -268,6 +268,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
                     /* Backend Read */
                     if (in_array('r', $safe['crud'], true)) {
+                        /* Read Data By ID */
                         $this->dbpdo->insert(
                             $this->TABLE,
                             [
@@ -275,14 +276,41 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'nama' => 'Api ' . $data['menu'] . ' Read',
                                 'icon' => null,
                                 'controller' => $data['className'] . ':read',
-                                'url' => '/c_' . $data['url'] . '_read',
+                                'url' => '/' . $data['url'],
+                                'tipe' => 'GET',
+                                'aktif' => 1,
+                                'urut' => 0
+                            ]
+                        );
+
+                        /* Permission Backend Read Data By ID */
+                        $idfirst = $this->dbpdo->id();
+                        foreach ($safe['id_jabatan'] as $jbt) {
+                            $this->dbpdo->insert(
+                                'j_menu',
+                                [
+                                    'id_menu' => $idfirst,
+                                    'idrole' => $jbt
+                                ]
+                            );
+                        }
+
+                        /* Read Data */
+                        $this->dbpdo->insert(
+                            $this->TABLE,
+                            [
+                                'id_groupmenu' => $data['id_groupmenu'],
+                                'nama' => 'Api ' . $data['menu'] . ' Read',
+                                'icon' => null,
+                                'controller' => $data['className'] . ':read',
+                                'url' => '/' . $data['url'] . '/read',
                                 'tipe' => 'POST',
                                 'aktif' => 1,
                                 'urut' => 0
                             ]
                         );
 
-                        /* Permission Backend Read */
+                        /* Permission Backend Read Data */
                         $idfirst = $this->dbpdo->id();
                         foreach ($safe['id_jabatan'] as $jbt) {
                             $this->dbpdo->insert(
@@ -304,8 +332,8 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'nama' => 'Api ' . $data['menu'] . ' Update',
                                 'icon' => null,
                                 'controller' => $data['className'] . ':update',
-                                'url' => '/c_' . $data['url'] . '_update',
-                                'tipe' => 'POST',
+                                'url' => '/' . $data['url'],
+                                'tipe' => 'PUT',
                                 'aktif' => 1,
                                 'urut' => 0
                             ]
@@ -326,6 +354,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
                     /* Backend Delete */
                     if (in_array('d', $safe['crud'], true)) {
+                        /* Single delete */
                         $this->dbpdo->insert(
                             $this->TABLE,
                             [
@@ -333,14 +362,41 @@ class CRUDGenerator extends \App\Plugin\DataTables
                                 'nama' => 'Api ' . $data['menu'] . ' Delete',
                                 'icon' => null,
                                 'controller' => $data['className'] . ':delete',
-                                'url' => '/c_' . $data['url'] . '_delete',
-                                'tipe' => 'POST',
+                                'url' => '/' . $data['url'],
+                                'tipe' => 'DELETE',
                                 'aktif' => 1,
                                 'urut' => 0
                             ]
                         );
 
-                        /* Permission Backend Delete */
+                        /* Permission Backend Single Delete */
+                        $idfirst = $this->dbpdo->id();
+                        foreach ($safe['id_jabatan'] as $jbt) {
+                            $this->dbpdo->insert(
+                                'j_menu',
+                                [
+                                    'id_menu' => $idfirst,
+                                    'idrole' => $jbt
+                                ]
+                            );
+                        }
+
+                        /* Batch delete */
+                        $this->dbpdo->insert(
+                            $this->TABLE,
+                            [
+                                'id_groupmenu' => $data['id_groupmenu'],
+                                'nama' => 'Api ' . $data['menu'] . ' Delete',
+                                'icon' => null,
+                                'controller' => $data['className'] . ':delete',
+                                'url' => '/' . $data['url'] . '/batch',
+                                'tipe' => 'DELETE',
+                                'aktif' => 1,
+                                'urut' => 0
+                            ]
+                        );
+
+                        /* Permission Backend Batch Delete */
                         $idfirst = $this->dbpdo->id();
                         foreach ($safe['id_jabatan'] as $jbt) {
                             $this->dbpdo->insert(
@@ -353,34 +409,34 @@ class CRUDGenerator extends \App\Plugin\DataTables
                         }
                     }
 
-                    if ($safe['generate'] == 'bf') {
-                        /* Frontend */
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => $data['menu'],
-                                'icon' => null,
-                                'controller' => $data['className'] . ':index',
-                                'url' => '/' . $data['url'],
-                                'tipe' => 'GET',
-                                'aktif' => 1,
-                                'urut' => $data['urutGroup']
-                            ]
-                        );
+                    // if ($safe['generate'] == 'bf') {
+                    //     /* Frontend */
+                    //     $this->dbpdo->insert(
+                    //         $this->TABLE,
+                    //         [
+                    //             'id_groupmenu' => $data['id_groupmenu'],
+                    //             'nama' => $data['menu'],
+                    //             'icon' => null,
+                    //             'controller' => $data['className'] . ':index',
+                    //             'url' => '/' . $data['url'],
+                    //             'tipe' => 'GET',
+                    //             'aktif' => 1,
+                    //             'urut' => $data['urutGroup']
+                    //         ]
+                    //     );
 
-                        /* Permission Frontend */
-                        $idsecond = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idsecond,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-                    }
+                    //     /* Permission Frontend */
+                    //     $idsecond = $this->dbpdo->id();
+                    //     foreach ($safe['id_jabatan'] as $jbt) {
+                    //         $this->dbpdo->insert(
+                    //             'j_menu',
+                    //             [
+                    //                 'id_menu' => $idsecond,
+                    //                 'idrole' => $jbt
+                    //             ]
+                    //         );
+                    //     }
+                    // }
 
                     /* Error Check */
                     if (!$this->dbpdo->error()) {
@@ -436,6 +492,11 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 throw new \Exception($e->getMessage());
             }
         } catch (\Exception $e) {
+            $this->logger->error(__CLASS__ . '->' .  __METHOD__ . ' :: ', [
+                'error' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'db_last' => $this->dbpdo->last(),
+            ]);
             return $this->jsonFail('Unable to process request', ['error' => $this->overrideSQLMsg($e->getMessage())]);
         }
     }
@@ -909,7 +970,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $html = '';
 
         /* Breadcomb Area */
-        $html .= "\n<!-- Breadcomb area Start-->";
+        $html .= "<!-- Breadcomb area Start-->";
         $html .= "\n<div class=\"breadcomb-area\">";
         $html .= "\n\t<div class=\"container\">";
         $html .= "\n\t\t<div class=\"row\">";
@@ -919,7 +980,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $html .= "\n\t\t\t\t\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-12\">";
         $html .= "\n\t\t\t\t\t\t\t<div class=\"breadcomb-wp\">";
         $html .= "\n\t\t\t\t\t\t\t\t<div class=\"breadcomb-icon\">";
-        $html .= "\n\t\t\t\t\t\t\t\t\t<i class=\"notika-icon " . $data['icon_groupmenu'] . " animated infinite flip\"></i>";
+        $html .= "\n\t\t\t\t\t\t\t\t\t<i class=\"" . $data['icon_groupmenu'] . " animated infinite flip\"></i>";
         $html .= "\n\t\t\t\t\t\t\t\t</div>";
         $html .= "\n\t\t\t\t\t\t\t\t<div class=\"breadcomb-ctn\">";
         $html .= "\n\t\t\t\t\t\t\t\t\t<h2>" . $data['menu'] . "</h2>";
@@ -1096,7 +1157,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 $jsPopulate .= "\n/* Get " . $col['REFERENCED_TABLE_NAME'] . " */";
                 $jsPopulate .= "\nfunction get" . $col['REFERENCED_TABLE_NAME'] . "(obj, sel = null) {";
                 $jsPopulate .= "\n\tlet opt = \$(obj);";
-                $jsPopulate .= "\n\tlet url = SiteRoot + 'c_" . $col['REFERENCED_TABLE_NAME'] . "_read';";
+                $jsPopulate .= "\n\tlet url = SiteRoot + '" . $col['REFERENCED_TABLE_NAME'] . "/read';";
                 $jsPopulate .= "\n\tlet post_data = {";
                 $jsPopulate .= "\n\t\t'draw': 1,";
                 $jsPopulate .= "\n\t\t'start': 0,";
@@ -1114,7 +1175,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
         /* JS String start */
         $js = "/* Variables */;";
-        $js .= "\nvar apiUrl = SiteRoot + 'c_" . $data['url'] . "';";
+        $js .= "\nvar apiUrl = SiteRoot + '" . $data['url'] . "';";
         $js .= "\nvar tbl = \"#datatable-responsive tbody\";";
         $js .= "\nvar pKey, table;";
         $js .= "\nvar saveUpdate = \"save\";\n";
@@ -1256,7 +1317,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\"ordering\": false,";
         $js .= "\n\t\t\"serverSide\": true,";
         $js .= "\n\t\t\"ajax\": {";
-        $js .= "\n\t\t\t\"url\": apiUrl + '_read',";
+        $js .= "\n\t\t\t\"url\": apiUrl + '/read',";
         $js .= "\n\t\t\t\"type\": 'post',";
         $js .= "\n\t\t\t\"headers\": { JWT: get_token(API_TOKEN) },";
         $js .= "\n\t\t\t\"data\": function(data, settings){";
@@ -1376,7 +1437,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         /* Create */
         $js .= "\n\t/* Button Save Action */";
         $js .= "\n\t\$('.btn_save').on('click', function() {";
-        $js .= "\n\t\tsaveOrUpdate(saveUpdate, apiUrl, pKey, '#formEditor');";
+        $js .= "\n\t\tsaveOrUpdate(saveUpdate, apiUrl, pKey, '.formEditorModal:#formEditor');";
         $js .= "\n\t});\n";
         //-->
 
