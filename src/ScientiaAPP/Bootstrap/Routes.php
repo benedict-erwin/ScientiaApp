@@ -23,7 +23,7 @@ $app->get('/scientia/', function ($request, $response, $args) use ($container) {
     $data['page'] = "home";
     $data['jsver'] = $this->get('settings')['jsversion'];
     $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Home/index.html', $data);
+    return $this->view->render($response, 'Home/index.twig', $data);
 });
 
 
@@ -32,7 +32,7 @@ $app->get('/scientia/{page}', function ($request, $response, $args) use ($contai
     $data['page'] = $args['page'];
     $data['jsver'] = $this->get('settings')['jsversion'];
     $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Home/index.html', $data);
+    return $this->view->render($response, 'Home/index.twig', $data);
 });
 
 /** REST API **/

@@ -291,7 +291,7 @@ $(document).ready(function () {
             $.ajax({
                 "type": 'POST',
                 "headers": { JWT: get_token(API_TOKEN) },
-                "url": apiUrl + '_setpermission',
+                "url": SiteRoot + 'c_menu_setpermission',
                 "data": formData,
                 "dataType": 'json',
                 "success": function (result, textStatus, jqXHR) {
@@ -300,7 +300,7 @@ $(document).ready(function () {
                         $(".btReload").click();
                         notification(result.message, 'success');
                     } else {
-                        notification((result.message.error) ? result.message.error : result.message, 'warn');
+                        notification(result.error, 'warn', 3, result.message);
                     }
                     $('.formEditorModal2').modal('hide');
                     $('.btn_perm').button('reset');
@@ -340,7 +340,7 @@ function getJabatan(id) {
         'idmenu': id,
         'draw': 1,
         'start': 0,
-        'length': 18446744073709551615, /* All Data */
+        'length': -1, /* All Data */
         'search[value]': ''
     };
     cbx.append("<i class='fa fa-refresh fa-spin'></i> Please wait...")
@@ -349,7 +349,7 @@ function getJabatan(id) {
     $.ajax({
         "type": 'POST',
         "headers": { JWT: get_token(API_TOKEN) },
-        "url": apiUrl + '_jabatanmenu',
+        "url": SiteRoot + 'c_menu_jabatanmenu',
         "data": post_data,
         "dataType": 'json',
         "success": function (result, textStatus, jqXHR) {

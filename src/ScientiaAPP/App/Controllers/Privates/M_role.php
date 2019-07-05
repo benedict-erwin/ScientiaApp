@@ -29,9 +29,9 @@ class M_role extends \App\Plugin\DataTables
 	/* Function Create */
 	public function create()
 	{
-        $gump = new \GUMP('en');
-        $gump->validation_rules(["nama" => "required", 'deskripsi' => 'required']);
-        $gump->filter_rules([ "nama" => "trim|sanitize_string", "deskripsi" => "trim|sanitize_string", ]);
+        $gump = new \GUMP('id');
+        $gump->validation_rules(['nama' => 'required', 'deskripsi' => 'required']);
+        $gump->filter_rules([ 'nama' => 'trim|sanitize_string', 'deskripsi' => 'trim|sanitize_string', ]);
 
         try {
             //sanitize parameter
@@ -92,20 +92,18 @@ class M_role extends \App\Plugin\DataTables
 	/* Function Read */
 	public function read()
 	{
-        $gump = new \GUMP('en');
+        $gump = new \GUMP('id');
         $gump->validation_rules([
-            "draw" => "numeric",
-            "start" => "numeric",
-            "length" => "numeric",
-            "idrole" => "numeric"
+            'draw' => 'numeric',
+            'start' => 'numeric',
+            'length' => 'numeric',
         ]);
 
         $gump->filter_rules([
-            "draw" => "sanitize_numbers",
-            "start" => "sanitize_numbers",
-            "length" => "sanitize_numbers",
-            "nama" => "trim",
-            "deskripsi" => "trim"
+            'draw' => 'sanitize_numbers',
+            'start' => 'sanitize_numbers',
+            'length' => 'sanitize_numbers',
+            'search' => 'trim|sanitize_string',
         ]);
 
         try {
@@ -126,11 +124,11 @@ class M_role extends \App\Plugin\DataTables
                 try {
                     /* Check Cache */
                     $output = [];
-                    $opsional = (isset($safe["opsional"]) ? json_encode($safe["opsional"]) : null);
+                    $opsional = (isset($safe['opsional']) ? json_encode($safe['opsional']) : null);
                     $search = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
                     $length = (isset($safe['length']) ? $safe['length'] : null);
                     $start = (isset($safe['start']) ? $safe['start'] : null);
-                    $ckey = hash("md5", "M_role" . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
+                    $ckey = hash('md5', 'M_role' . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
                     $CachedString = $this->InstanceCache->getItem($ckey);
                     if (is_null($CachedString->get())) {
                         /* Execute DataTables */
@@ -144,9 +142,9 @@ class M_role extends \App\Plugin\DataTables
                         }
 
                         $output = [
-                            "data" => $data,
-                            "recordsTotal" => $this->count_all($safe),
-                            "recordsFiltered" => $this->count_filtered($safe)
+                            'data' => $data,
+                            'recordsTotal' => $this->count_all($safe),
+                            'recordsFiltered' => $this->count_filtered($safe)
                         ];
 
                         $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_role_read_');
@@ -156,7 +154,7 @@ class M_role extends \App\Plugin\DataTables
                     }
 
                     //send back draw
-                    $output["draw"] = (int) (isset($safe["draw"]) ? $safe["draw"] : 0);
+                    $output['draw'] = (int) (isset($safe['draw']) ? $safe['draw'] : 0);
                     return $this->jsonSuccess($output);
                 } catch (\Exception $e) {
                     return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
@@ -170,17 +168,17 @@ class M_role extends \App\Plugin\DataTables
 	/* Function Update */
 	public function update($request, $response, $args)
 	{
-        $gump = new \GUMP('en');
+        $gump = new \GUMP('id');
         $data = array_merge($this->param, $args);
-        $gump->validation_rules(["id" => "required|numeric",]);
+        $gump->validation_rules(['id' => 'required|numeric',]);
         $gump->filter_rules([
-            "id" => "sanitize_numbers",
-            "nama" => "trim|sanitize_string",
-            "deskripsi" => "trim|sanitize_string",
+            'id' => 'sanitize_numbers',
+            'nama' => 'trim|sanitize_string',
+            'deskripsi' => 'trim|sanitize_string',
         ]);
 
         try {
-            //sanitize parameter
+            /* Sanitize parameter */
             $gump->xss_clean($data);
             $safe = $gump->run($data);
             if ($safe === false) {
@@ -220,60 +218,37 @@ class M_role extends \App\Plugin\DataTables
 
 	}
 
-	/* Function Delete */
+	/** Method Delete */
 	public function delete($request, $response, $args)
 	{
+        /** Path variable  */
         $path = explode('/', $request->getUri()->getPath());
 
         /** Batch delete */
         if (trim(end($path)) == 'batch') {
             if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
             if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
-            $data = $this->param;
+            $safe = $this->param;
+        } else {
+            /** Single delete */
+            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+            $safe = $args;
         }
-        /** Single delete */
-        else {
-            $data = $args;
-        }
-
-        $gump = new \GUMP();
-        $gump->validation_rules(["id" => "required|numeric"]);
-        $gump->filter_rules([ "id" => "sanitize_numbers", ]);
 
         try {
-            //sanitize parameter
-            $gump->xss_clean($data);
-            $safe = $gump->run($data);
-
-            if ($safe === false) {
-                $ers = $gump->get_errors_array();
-                $err = implode(', ', array_values($ers));
-
-                /* Logger */
-                if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
-                }
-                throw new \Exception($err);
+            /* Delete from DB */
+            if ($this->deleteDb($safe['id'])) {
+                $this->InstanceCache->deleteItemsByTags([
+                    $this->sign . '_getMenus',
+                    $this->sign . '_router',
+                    $this->sign . '_M_role_read_'
+                ]);
+                return $this->jsonSuccess('Data berhasil dihapus');
             } else {
-                try {
-                    /* Delete from DB */
-                    if ($this->deleteDb($safe['id'])) {
-                        $this->InstanceCache->deleteItemsByTags([
-                            $this->sign . '_getMenus',
-                            $this->sign . '_router',
-                            $this->sign . '_M_role_read_'
-                        ]);
-                        return $this->jsonSuccess('Data berhasil dihapus');
-                    } else {
-                        throw new \Exception('Penghapusan gagal dilakukan!');
-                    }
-                } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-                }
+                throw new \Exception('Penghapusan gagal dilakukan!');
             }
-
         } catch (\Exception $e) {
-            return $this->jsonFail('There was a missing or invalid parameter in the request', ['error' => $e->getMessage()]);
+            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
         }
 	}
 

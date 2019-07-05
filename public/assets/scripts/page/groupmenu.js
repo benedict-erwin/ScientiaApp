@@ -230,7 +230,7 @@ $(document).ready(function () {
 	/* Button Delete */
 	$(tbl).on('click', '#btDel', function () {
 		let data = (table.row($(this).closest('tr')).data() === undefined) ? table.row($(this).closest('li')).data() : table.row($(this).closest('tr')).data();
-		deleteSingle(apiUrl, data);
+		deleteSingle(apiUrl, data[0]);
 	});
 
 	/* Button Delete Multi */

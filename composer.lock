@@ -974,12 +974,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/benedict-erwin/GUMP.git",
-                "reference": "f4e486dc287c6618094bd9951000e3f901234b2f"
+                "reference": "a10f5b80c15890b8200e80b58247b6f9213c9b7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/benedict-erwin/GUMP/zipball/f4e486dc287c6618094bd9951000e3f901234b2f",
-                "reference": "f4e486dc287c6618094bd9951000e3f901234b2f",
+                "url": "https://api.github.com/repos/benedict-erwin/GUMP/zipball/a10f5b80c15890b8200e80b58247b6f9213c9b7e",
+                "reference": "a10f5b80c15890b8200e80b58247b6f9213c9b7e",
                 "shasum": ""
             },
             "type": "library",
@@ -1006,7 +1006,7 @@
             "support": {
                 "source": "https://github.com/benedict-erwin/GUMP/tree/master"
             },
-            "time": "2019-07-03T10:29:47+00:00"
+            "time": "2019-07-04T17:22:23+00:00"
         }
     ],
     "packages-dev": [],

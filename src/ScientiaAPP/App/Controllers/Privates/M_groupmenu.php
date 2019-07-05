@@ -37,193 +37,236 @@ class M_groupmenu extends \App\Plugin\DataTables
 		]);
 		$this->set_ORDER(['urut'=> 'ASC' ]);
 		$this->set_CASE_SENSITIVE(false);
-
-		/* Sanitize Param */
-		$this->sanitizer($this->param);
-	}
-
-	/**
-	 * Parameter Sanitizer
-	 *
-	 * @param array $request
-	 * @return void
-	 */
-	private function sanitizer(array $request)
-	{
-		$gump = new \GUMP();
-		$gump->validation_rules([
-			"draw" => "numeric",
-			"start" => "numeric",
-			"length" => "numeric",
-			"id_groupmenu" => "numeric",
-			"urut" => "numeric",
-			"aktif" => "numeric"
-		]);
-
-		$gump->filter_rules([
-			"draw" => "trim|sanitize_numbers",
-			"start" => "trim|sanitize_numbers",
-			"length" => "trim|sanitize_numbers",
-			"nama" => "trim",
-			"icon" => "trim"
-		]);
-
-		try {
-			//sanitize parameter
-			$gump->xss_clean($request);
-			$this->safe = $gump->run($request);
-
-			if ($this->safe === false) {
-				$ers = $gump->get_errors_array();
-				$err = implode(', ', array_values($ers));
-
-				/* Logger */
-				if ($this->container->get('settings')['mode'] != 'production') {
-					$this->logger->addError(__FUNCTION__ , ['USER_REQUEST'=>$this->user_data['USERNAME'], 'INFO'=>$ers]);
-				}
-				throw new \Exception($err);
-			} else {
-				return $this->safe;
-			}
-		} catch (\Exception $e) {
-			return $this->jsonFail('There was a missing or invalid parameter in the request', ['error' => $e->getMessage()]);
-		}
 	}
 
 	/* Function Create */
 	public function create()
 	{
-		if ($this->safe){
-			try {
-				/* Send to DB */
-				$this->safe['aktif'] = (isset($this->safe['aktif'])) ? (($this->safe['aktif'] == 1) ? 1:0):0;
-				if ($this->saveDb($this->safe) !== false) {
-                    //remove old chace
-                    $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus_',
-                        $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read_'
-                    ]);
-					return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
-				}else{
-					throw new \Exception('Penyimpanan gagal dilakukan!');
-				}
-			} catch (\Exception $e) {
-				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-			}
-		}
+        $gump = new \GUMP('id');
+        $gump->validation_rules([
+            'nama' => 'required|alpha_space',
+            'icon' => 'required',
+            'urut' => 'required|numeric',
+        ]);
+        $gump->filter_rules([
+            'nama' => 'trim|sanitize_string',
+            'icon' => 'trim|sanitize_string',
+            'urut' => 'trim|sanitize_numbers',
+            'aktif' => 'trim|sanitize_numbers',
+        ]);
+
+        try {
+            /* Sanitize parameter */
+            $gump->xss_clean($this->param);
+            $safe = $gump->run($this->param);
+
+            if ($safe === false) {
+                $ers = $gump->get_errors_array();
+                $err = implode(', ', array_values($ers));
+
+                /* Logger */
+                if ($this->container->get('settings')['mode'] != 'production') {
+                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                }
+                throw new \Exception($err);
+            } else {
+                try {
+                    /* Send to DB */
+                    $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
+                    if ($this->saveDb($safe) !== false) {
+                        //remove old chace
+                        $this->InstanceCache->deleteItemsByTags([
+                            $this->sign . '_getMenus_',
+                            $this->sign . '_router',
+                            $this->sign . '_M_groupmenu_read_'
+                        ]);
+                        return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
+                    } else {
+                        throw new \Exception('Penyimpanan gagal dilakukan!');
+                    }
+                } catch (\Exception $e) {
+                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                }
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Invalid Request', ['error' => $e->getMessage()]);
+        }
 	}
 
 	/* Function Read */
 	public function read()
 	{
-		if ($this->safe){
-			try {
-				/* Check Cache */
-                $output = [];
-                $opsional = (isset($this->safe["opsional"]) ? json_encode($this->safe["opsional"]):null);
-                $search = (isset($this->safe['search']['value']) ? $this->safe['search']['value']:null);
-                $length = (isset($this->safe['length']) ? $this->safe['length']:null);
-                $start = (isset($this->safe['start']) ? $this->safe['start']:null);
-				$ckey = hash("md5", "M_groupmenu" . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
-				$CachedString = $this->InstanceCache->getItem($ckey);
+        $gump = new \GUMP('id');
+        $gump->validation_rules([
+            'draw' => 'numeric',
+            'start' => 'numeric',
+            'length' => 'numeric',
+        ]);
 
-				/* If not in Cache */
-				if(is_null($CachedString->get())){
-                    /* Execute DataTables */
-                    $data = [];
-                    $list = $this->get_datatables($this->safe);
-                    $no = (int)$this->safe['start'];
-                    foreach ($list as $cols) {
-                        $no++;
-                        $cols['no'] = $no;
-                        $data[] = $cols;
+        $gump->filter_rules([
+            'draw' => 'sanitize_numbers',
+            'start' => 'sanitize_numbers',
+            'length' => 'sanitize_numbers',
+            'search' => 'trim|sanitize_string',
+            'opsional' => 'trim|sanitize_string',
+        ]);
+
+        try {
+            /* Sanitize parameter */
+            $gump->xss_clean($this->param);
+            $safe = $gump->run($this->param);
+
+            if ($safe === false) {
+                $ers = $gump->get_errors_array();
+                $err = implode(', ', array_values($ers));
+
+                /* Logger */
+                if ($this->container->get('settings')['mode'] != 'production') {
+                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                }
+                throw new \Exception($err);
+            } else {
+                try {
+                    /* Check Cache */
+                    $output = [];
+                    $opsional = (isset($safe["opsional"]) ? json_encode($safe["opsional"]) : null);
+                    $search = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
+                    $length = (isset($safe['length']) ? $safe['length'] : null);
+                    $start = (isset($safe['start']) ? $safe['start'] : null);
+                    $ckey = hash("md5", "M_groupmenu" . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
+                    $CachedString = $this->InstanceCache->getItem($ckey);
+
+                    /* If not in Cache */
+                    if (is_null($CachedString->get())) {
+                        /* Execute DataTables */
+                        $data = [];
+                        $list = $this->get_datatables($safe);
+                        $no = (int) $safe['start'];
+                        foreach ($list as $cols) {
+                            $no++;
+                            $cols['no'] = $no;
+                            $data[] = $cols;
+                        }
+
+                        $output = [
+                            "recordsTotal" => $this->count_all($safe),
+                            "recordsFiltered" => $this->count_filtered($safe),
+                            "data" => $data
+                        ];
+
+                        $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_groupmenu_read_");
+                        $this->InstanceCache->save($CachedString);
+                    } else {
+                        /* Get data from Cache */
+                        $output = $CachedString->get();
                     }
 
-					$output = [
-						"recordsTotal" => $this->count_all($this->safe),
-						"recordsFiltered" => $this->count_filtered($this->safe),
-						"data" => $data
-					];
-
-					$CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . "_M_groupmenu_read_");
-					$this->InstanceCache->save($CachedString);
-				} else {
-					/* Get data from Cache */
-					$output = $CachedString->get();
-				}
-
-				//send back draw
-				$output["draw"] = (int)(isset($this->safe["draw"]) ? $this->safe["draw"] : 0);
-				return $this->jsonSuccess($output);
-			}  catch (\Exception $e) {
-				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-			}
-		}
+                    //send back draw
+                    $output["draw"] = (int) (isset($safe["draw"]) ? $safe["draw"] : 0);
+                    return $this->jsonSuccess($output);
+                } catch (\Exception $e) {
+                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                }
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Invalid Request', ['error' => $e->getMessage()]);
+        }
 	}
 
-	/* Function Update */
-	public function update()
-	{
-		if ($this->safe){
-			try {
-				/* Prepare vars */
-				$this->safe['aktif'] = (isset($this->safe['aktif'])) ? (($this->safe['aktif'] == 1) ? 1:0):0;
-                $where = [$this->PKEY => $this->safe['id']];
-                unset($this->safe['id']);
+    /* Function Update */
+    public function update($request, $response, $args)
+    {
+        $gump = new \GUMP('id');
+        $data = array_merge($this->param, $args);
+        $gump->validation_rules([
+            'id' => 'required|numeric',
+            'nama' => 'required|alpha_space',
+            'icon' => 'required',
+            'urut' => 'required|numeric',
+            'aktif' => 'required|numeric',
+        ]);
+        $gump->filter_rules([
+            'id' => 'sanitize_numbers',
+            'nama' => 'trim|sanitize_string',
+            'icon' => 'trim|sanitize_string',
+            'urut' => 'trim|sanitize_numbers',
+            'aktif' => 'trim|sanitize_numbers',
+        ]);
 
-				/* Send to DB */
-				if ($this->updateDb($this->safe, $where)) {
-                    //remove old chace
-                    $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus_',
-                        $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read_'
-                    ]);
-					return $this->jsonSuccess('Perubahan data berhasil');
-				}else{
-					throw new \Exception('Perubahan gagal dilakukan!');
-				}
-			} catch (\Exception $e) {
-				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-			}
-		}
+        try {
+            /* Sanitize parameter */
+            $gump->xss_clean($data);
+            $safe = $gump->run($data);
+
+            if ($safe === false) {
+                $ers = $gump->get_errors_array();
+                $err = implode(', ', array_values($ers));
+
+                /* Logger */
+                if ($this->container->get('settings')['mode'] != 'production') {
+                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                }
+                throw new \Exception($err);
+            } else {
+                try {
+                    /* Prepare vars */
+                    $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
+                    $where = [$this->PKEY => $safe['id']];
+                    unset($safe['id']);
+
+                    /* Send to DB */
+                    if ($this->updateDb($safe, $where)) {
+                        //remove old chace
+                        $this->InstanceCache->deleteItemsByTags([
+                            $this->sign . '_getMenus_',
+                            $this->sign . '_router',
+                            $this->sign . '_M_groupmenu_read_'
+                        ]);
+                        return $this->jsonSuccess('Perubahan data berhasil');
+                    } else {
+                        throw new \Exception('Perubahan gagal dilakukan!');
+                    }
+                } catch (\Exception $e) {
+                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                }
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Invalid Request', ['error' => $e->getMessage()]);
+        }
 	}
 
 	/* Function Delete */
 	public function delete($request, $response, $args)
 	{
-		if ($this->safe){
-			try {
-                $id = null;
-                $path = explode('/', $request->getUri()->getPath());
+        /** Path variable  */
+        $path = explode('/', $request->getUri()->getPath());
 
-                /** Batch delete */
-                if (trim(end($path)) == 'batch') {
-                    if (!is_array($this->safe['id'])) throw new \Exception('ID tidak valid!');
-                    if (in_array(false, array_map('is_numeric', $this->safe['id']))) throw new \Exception('ID tidak valid!');
-                    $id = $this->safe['id'];
-                } else {
-                    /** Single delete */
-                    $id = $args['id'];
-                }
+        /** Batch delete */
+        if (trim(end($path)) == 'batch') {
+            if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
+            if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
+            $safe = $this->param;
+        } else {
+            /** Single delete */
+            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+            $safe = $args;
+        }
 
-				/* Send to DB */
-				if ($this->deleteDb($id)) {
-					//remove old chace
-                    $this->InstanceCache->deleteItemsByTags([
-                        $this->sign . '_getMenus_',
-                        $this->sign . '_router',
-                        $this->sign . '_M_groupmenu_read_'
-                    ]);
-					return $this->jsonSuccess('Data berhasil dihapus');
-				}else{
-					throw new \Exception('Penghapusan gagal dilakukan!');
-				}
-			} catch (\Exception $e) {
-				return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-			}
-		}
+        try {
+            /* Delete from DB */
+            if ($this->deleteDb($safe['id'])) {
+                $this->InstanceCache->deleteItemsByTags([
+                    $this->sign . '_getMenus_',
+                    $this->sign . '_router',
+                    $this->sign . '_M_groupmenu_read_'
+                ]);
+                return $this->jsonSuccess('Data berhasil dihapus');
+            } else {
+                throw new \Exception('Penghapusan gagal dilakukan!');
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+        }
 	}
 
 }

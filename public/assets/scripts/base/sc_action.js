@@ -41,11 +41,10 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                 if (result.success === true) {
                     $(".btReload").click();
                     notification(result.message, 'success');
+                    $(clModal).modal('hide');
                 } else {
                     notification(result.error, 'warn', 3, result.message);
                 }
-                $(window).scrollTop(0);
-                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $(document.body).css({ 'cursor': 'default' });
                 $('.btn_save').prop('disabled', false);
@@ -54,7 +53,6 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
                 typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
-                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $('.btn_save').prop('disabled', false);
                 $(document.body).css({ 'cursor': 'default' });
@@ -116,11 +114,10 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
                 if (result.success === true) {
                     $(".btReload").click();
                     notification(result.message, 'success');
+                    $(clModal).modal('hide');
                 } else {
                     notification(result.error, 'warn', 3, result.message);
                 }
-                //$(window).scrollTop(0);
-                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $(document.body).css({ 'cursor': 'default' });
                 $('.btn_save').prop('disabled', false);
@@ -129,7 +126,6 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
                 typeof callback === 'function' && callback(result);
             },
             "error": function (jqXHR, textStatus, errorThrown) {
-                $(clModal).modal('hide');
                 $('.btn_save').button('reset');
                 $('.btn_save').prop('disabled', false);
                 $(document.body).css({ 'cursor': 'default' });
