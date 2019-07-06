@@ -92,7 +92,7 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl + '/read',
             "type": 'post',
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();

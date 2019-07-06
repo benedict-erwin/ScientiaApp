@@ -110,7 +110,7 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl + '/read',
             "type": 'post',
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
@@ -290,7 +290,7 @@ $(document).ready(function () {
         if ($("form#formEditor2").parsley().validate({ force: true, group: 'role' })) {
             $.ajax({
                 "type": 'POST',
-                "headers": { JWT: get_token(API_TOKEN) },
+                "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
                 "url": SiteRoot + 'c_menu_setpermission',
                 "data": formData,
                 "dataType": 'json',
@@ -348,7 +348,7 @@ function getJabatan(id) {
     /* Retrieve Jabatan Menu */
     $.ajax({
         "type": 'POST',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
         "url": SiteRoot + 'c_menu_jabatanmenu',
         "data": post_data,
         "dataType": 'json',

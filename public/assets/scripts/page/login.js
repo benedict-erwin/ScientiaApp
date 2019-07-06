@@ -32,11 +32,11 @@ $(document).ready(function() {
                 'tx_password': $('#tx_password').val()
             };
             $.ajax({
-                type: 'POST',
-                url: SiteRoot + 'clogin',
-                data: post_data,
-                dataType: 'json',
-                success: function(data, textStatus, jqXHR) {
+                "type": 'POST',
+                "url": SiteRoot + 'clogin',
+                "data": post_data,
+                "dataType": 'json',
+                "success": function(data, textStatus, jqXHR) {
                     if (data.success === true) {
                         set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
                         notification(data.message, 'success');
@@ -50,7 +50,7 @@ $(document).ready(function() {
                         klik = true;
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                "error": function(jqXHR, textStatus, errorThrown) {
                     klik = true;
                     $(this.element).prop('disabled', false);
                     $('#tx_spin').html('LOGIN');

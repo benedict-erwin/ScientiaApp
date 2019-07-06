@@ -41,9 +41,7 @@ class PrivateController
     public function __construct(\Slim\Container $container)
     {
         // Vars
-        global $IC;
-
-        $this->InstanceCache = $IC;
+        $this->InstanceCache = $container->cacher;
         $this->container = $container;
         $this->head = $this->container->get('request')->getHeaders();
         $this->param = $this->container->get('request')->getParsedBody();
@@ -154,6 +152,7 @@ class PrivateController
 
         if ($token) {
             $response = $response->withAddedHeader('JWT', $token);
+            // $response = $response->withAddedHeader('Authorization', "Bearer {$token}");
         }
 
         $response = $response->withJson($output, $code);
@@ -249,8 +248,10 @@ class PrivateController
     public function getUser()
     {
         $this->user_data = array();
-        $head = $this->head;
-        $token = (new Parser())->parse((string) $head['HTTP_JWT'][0]);
+        // $head = $this->head;
+        // $token = (new Parser())->parse((string) $head['HTTP_JWT'][0]);
+        $token = explode('Bearer', $this->head['HTTP_AUTHORIZATION'][0]);
+        $token = (new Parser())->parse((string) trim(end($token)));
 
         if (!$token) {
             return null;
@@ -343,14 +344,18 @@ class PrivateController
      */
     public function check()
     {
-        $head = $this->head;
+        // $head = $this->head;
         $signer = new Sha256();
         $token = null;
-
-        if (array_key_exists('HTTP_JWT', $head)) {
+        // var_dump($this->head); die();
+        // if (array_key_exists('HTTP_JWT', $this->head)) {
+        if (array_key_exists('HTTP_AUTHORIZATION', $this->head)) {
             try {
                 try {
-                    $token = (new Parser())->parse((string) $head['HTTP_JWT'][0]);
+                    // $token = (new Parser())->parse((string) $this->head['HTTP_JWT'][0]);
+                    // var_dump(trim(end($token))); die();
+                    $token = explode('Bearer', $this->head['HTTP_AUTHORIZATION'][0]);
+                    $token = (new Parser())->parse((string) trim(end($token)));
                     if (!$token->verify($signer, $this->sign)) {
                         header('HTTP/1.1 498 Token Invalid');
                         header("Content-Type: application/json;charset=utf-8");

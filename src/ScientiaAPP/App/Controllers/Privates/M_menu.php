@@ -12,9 +12,6 @@ namespace App\Controllers\Privates;
 
 class M_menu extends \App\Plugin\DataTables
 {
-    /* Declare Variable */
-    private $safe;
-
     /* Constructor */
     public function __construct(\Slim\Container $container)
     {

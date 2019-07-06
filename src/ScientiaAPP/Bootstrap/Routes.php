@@ -40,8 +40,8 @@ $app->get('/scientia/{page}', function ($request, $response, $args) use ($contai
 try {
     $ckey = hash('md5', $container->get('settings')['dbnya']['SIGNATURE'] . '_restapi_router');
     $api_path = $container->get('settings')['api_path'];
-    $CachedString = $IC->getItem($ckey);
-    if (is_null($CachedString->get())) {
+    $CachedString = $container->cacher->getItem($ckey);
+    if (!$CachedString->isHit()) {
         $result = $container->database->select('m_menu (menu)',
             [
                 '[>]m_groupmenu (group)' => 'id_groupmenu'
@@ -72,14 +72,14 @@ try {
             ]
         );
         $CachedString->set($result)->expiresAfter(28800)->addTag($container->get('settings')['dbnya']['SIGNATURE'] . '_router'); //8jam
-        $IC->save($CachedString);
+        $container->cacher->save($CachedString);
     }else {
         $result = $CachedString->get();
     }
     foreach ($result as $res) {
         $method = strtoupper($res['tipe']);
         $exp = explode(':', $res['controller']);
-        $controller = (!in_array($exp[0], ['PrivateController', 'PublicController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
+        $controller = (!in_array($exp[0], ['BaseController', 'PrivateController', 'PublicController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
         $url = "/{$api_path}" . strtolower($res['url']);
 
         switch ($method) {

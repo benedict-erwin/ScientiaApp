@@ -196,11 +196,11 @@ function loadMenu(reload) {
 		$("div.mean-bar > a.meanmenu-reveal").addClass("animated infinite flip");
 	}
     $.ajax({
-        type: 'POST',
-        url: SiteRoot + 'cmenu',
-        data: post_data,
-        dataType: 'json',
-        headers: { JWT: get_token(API_TOKEN) },
+        "type": 'POST',
+        "url": SiteRoot + 'cmenu',
+        "data": post_data,
+        "dataType": 'json',
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         success: function (data, textStatus, jqXHR) {
             if (data.success == true) {
                 set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));

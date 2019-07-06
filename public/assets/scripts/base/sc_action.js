@@ -32,7 +32,7 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
     if ($(clForm).parsley().validate({ force: true, group: 'role' })) {
         $.ajax({
             "type": httpMethod,
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "url": urLink,
             "data": formData,
             "dataType": 'json',
@@ -104,7 +104,7 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
     if ($(clForm).parsley().validate({ force: true, group: 'role' })) {
         $.ajax({
             "type": httpMethod,
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "url": urLink,
             "data": formData,
             "processData": false,
@@ -156,7 +156,7 @@ function deleteSingle(apiUrl, data, callback) {
         $.ajax({
             "type": 'DELETE',
             "url": apiUrl + '/' + data,
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "dataType": 'json',
             "success": function (result, textStatus, jqXHR) {
                 set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
@@ -204,7 +204,7 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
             $.ajax({
                 "type": 'DELETE',
                 "url": apiUrl + '/batch',
-                "headers": { JWT: get_token(API_TOKEN) },
+                "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
                 "data": post_data,
                 "dataType": 'json',
                 "success": function (result, textStatus, jqXHR) {
@@ -255,7 +255,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
     opt.chosen("destroy");
     $.ajax({
         "type": 'POST',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "url": apiUrl,
         "data": post_data,
         "dataType": 'json',
@@ -362,7 +362,7 @@ function switchStatus(selector, status) {
 function findSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_add) {
     $.ajax({
         "type": 'POST',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "url": apiUrl,
         "delay": 250,
         "data": post_data,

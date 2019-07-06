@@ -1319,7 +1319,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\"ajax\": {";
         $js .= "\n\t\t\t\"url\": apiUrl + '/read',";
         $js .= "\n\t\t\t\"type\": 'post',";
-        $js .= "\n\t\t\t\"headers\": { JWT: get_token(API_TOKEN) },";
+        $js .= "\n\t\t\t\"headers\": { Authorization: \"Bearer \" + get_token(API_TOKEN) },";
         $js .= "\n\t\t\t\"data\": function(data, settings){";
         $js .= "\n\t\t\t\t/* start_loader */";
         $js .= "\n\t\t\t\t\$(\".cssload-loader\").hide();";

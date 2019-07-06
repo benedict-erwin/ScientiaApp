@@ -13,30 +13,9 @@ require_once BASE_PATH . '/env.php';
 use \phpFastCache\CacheManager;
 use Medoo\Medoo;
 
-try {
-    /* FastCachePHP - FileDriver
-     * Setup cache File Path
-     */
-    CacheManager::setDefaultConfig(["path" => APP_PATH . "/Cache/Api"]);
-
-    /* Create Instance Cache */
-    $IC = CacheManager::getInstance("files");
-
-    /* FastCachePHP - RedisDriver */
-    // $IC = CacheManager::getInstance('redis', [
-    //     'host' => $conf['REDIS_HOST'],
-    //     'port' => $conf['REDIS_PORT'],
-    //     'password' => $conf['REDIS_PASS'],
-    //     'database' => $conf['REDIS_DB']
-    // ]);
-} catch (\Exception $e) {
-    header("HTTP/1.0 500 Internal Server Error");
-    header("Content-Type: application/json;charset=utf-8");
-    echo json_encode(['code' => 'SC501', 'message' => 'Cache error ' . $e->getMessage()]);
-    exit();
-}
 
 /* Configuration Parameter */
+$cache = null;
 $config = [
     'settings' => [
         'app_version' => $conf['APPVER'],
@@ -65,6 +44,29 @@ $config = [
     ],
 ];
 
+try {
+    /* FastCachePHP - FileDriver
+     * Setup cache File Path
+     */
+    CacheManager::setDefaultConfig(["path" => APP_PATH . "/Cache/Api"]);
+
+    /* Create Instance Cache */
+    $cache = CacheManager::getInstance("files");
+
+    /* FastCachePHP - RedisDriver */
+    // $cache = CacheManager::getInstance('redis', [
+    //     'host' => $conf['REDIS_HOST'],
+    //     'port' => $conf['REDIS_PORT'],
+    //     'password' => $conf['REDIS_PASS'],
+    //     'database' => $conf['REDIS_DB']
+    // ]);
+} catch (\Exception $e) {
+    header("HTTP/1.0 500 Internal Server Error");
+    header("Content-Type: application/json;charset=utf-8");
+    echo json_encode(['code' => 'SC501', 'message' => 'Cache error ' . $e->getMessage()]);
+    exit();
+}
+
 $app = new \Slim\App($config);
 $container = $app->getContainer();
 
@@ -77,9 +79,17 @@ $container['logger'] = function ($container) {
     return $logger;
 };
 
+/* FastCache setup */
+$container['cacher'] = function($container) use ($cache) {
+    return $cache;
+};
+
+
+
 /* Make the custom App autoloader */
 spl_autoload_register(function ($class) use ($container){
     $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
+    $container['logger']->error('App::spl_autoload_register', ['autoload' => $class]);
     if (!is_file($classFile)) {
         $container['logger']->error('App::spl_autoload_register', ['code' => 'SC400', 'message' => 'Invalid File! cannot load class: ' . $class]);
         throw new \Exception('Invalid File! cannot load class: ' . $class);

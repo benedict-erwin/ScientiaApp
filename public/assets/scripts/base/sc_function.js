@@ -695,11 +695,11 @@ function forceDownload(href) {
 function kickAss() {
     setNprogressLoader("start");
     $.ajax({
-        type: 'GET',
-        url: SiteRoot + 'clogout/1',
-        dataType: 'json',
-        headers: { JWT: get_token(API_TOKEN) },
-        success: function (data, textStatus, jqXHR) {
+        "type": 'GET',
+        "url": SiteRoot + 'clogout/1',
+        "dataType": 'json',
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
+        "success": function (data, textStatus, jqXHR) {
             del_token(API_TOKEN);
             setNprogressLoader("done");
             if (data.success === true) {
@@ -712,7 +712,7 @@ function kickAss() {
                 window.location.replace('login');
             }, 1000);
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        "error": function (jqXHR, textStatus, errorThrown) {
             setNprogressLoader("done");
             notification(errorThrown, 'error');
             redirectLogin(jqXHR);
@@ -728,12 +728,12 @@ function kickAss() {
 function checkAuth(callback) {
     post_data = { 'path': getCurrentPath() };
     $.ajax({
-        type: 'POST',
-        url: SiteRoot + 'cauth',
-        data: post_data,
-        dataType: 'json',
-        headers: { JWT: get_token(API_TOKEN) },
-        success: function (data, textStatus, jqXHR) {
+        "type": 'POST',
+        "url": SiteRoot + 'cauth',
+        "data": post_data,
+        "dataType": 'json',
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
+        "success": function (data, textStatus, jqXHR) {
             set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
 
             if (data.success === true) {
@@ -790,7 +790,7 @@ function checkAuth(callback) {
             /* Execute callback if exist */
             typeof callback === 'function' && callback();
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        "error": function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
             redirectLogin(jqXHR);
             console.log(jqXHR);
@@ -900,7 +900,7 @@ function updateProfile() {
         $.ajax({
             "type": 'POST',
             "url": SiteRoot + 'update_profile',
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "dataType": 'json',
             "data": formData,
             "success": function (result, textStatus, jqXHR) {
@@ -954,7 +954,7 @@ function getProfile() {
     $.ajax({
         "type": 'POST',
         "url": SiteRoot + 'get_profile',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "dataType": 'json',
         "success": function (result, textStatus, jqXHR) {
             setNprogressLoader("done");

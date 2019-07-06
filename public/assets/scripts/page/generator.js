@@ -98,7 +98,7 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl,
             "type": 'post',
-            "headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
@@ -222,7 +222,7 @@ function getTables() {
     opt.chosen("destroy");
     $.ajax({
         "type": 'POST',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
         "url": apiUrl,
         "data": post_data,
         "dataType": 'json',
@@ -277,7 +277,7 @@ function getJabatan() {
     /* Retrieve Jabatan */
     $.ajax({
         "type": 'POST',
-        "headers": { JWT: get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
         "url": apiUrl,
         "data": post_data,
         "dataType": 'json',

@@ -10,7 +10,7 @@
 
 namespace App\Controllers;
 
-class PublicController
+class BaseController
 {
     /* Declare Variable */
     protected $container;
@@ -32,7 +32,9 @@ class PublicController
     public function __construct(\Slim\Container $container)
     {
         // Vars
-        $this->InstanceCache = $container->cacher;
+        global $IC;
+
+        $this->InstanceCache = $IC;
         $this->container = $container;
         $this->siteOwner = $this->container->get('settings')['base_url'];
         $this->param = $this->container->get('request')->getParsedBody();
@@ -79,65 +81,6 @@ class PublicController
             $arr = $CachedString->get();
         }
         return $arr;
-    }
-
-    /**
-     * Handle the response and put it into a standard JSON structure
-     *
-     * @param boolean $status Pass/fail status of the request
-     * @param string $message Message to put in the response [optional]
-     * @param array $addl Set of additional information to add to the response [optional]
-     * @param string $token JWT token [optional]
-     * @param int $code http status code
-     */
-    public function jsonResponse($status, $message = null, array $addl = null, int $code)
-    {
-        $output = ['success' => $status];
-
-        if ($message !== null) {
-            $output['message'] = $message;
-        }
-
-        if (!empty($addl)) {
-            $output = array_merge($output, $addl);
-        }
-
-        $response = $this->response->withHeader('Cache-Control', 'no-cache, must-revalidate');
-        $response = $response->withAddedHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $response = $response->withJson($output, $code);
-
-        if ($this->container->get('settings')['mode'] != 'production') {
-            $this->logger->addInfo(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['INFO' => 'status : ' . $status]);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Handle a failure response
-     *
-     * @param string $message Message to put in response [optional]
-     * @param array $addl Set of additional information to add to the response [optional]
-     * @param int $code http status code
-     */
-    public function jsonFail($message = null, array $addl = [], int $code = null)
-    {
-        $code = (is_int($code)) ? $code : 200;
-        return $this->jsonResponse(false, $message, $addl, $code);
-    }
-
-    /**
-     * Handle a success response
-     *
-     * @param string $message Message to put in response [optional]
-     * @param array $addl Set of additional information to add to the response [optional]
-     * @param string $token JWT token [optional]
-     * @param int $code http status code [optional]
-     */
-    public function jsonSuccess($message = null, $addl = null, int $code = null)
-    {
-        $code = (is_int($code)) ? $code : 200;
-        return $this->jsonResponse(true, $message, $addl, $code);
     }
 
     /* isAjax */

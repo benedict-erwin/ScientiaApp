@@ -23,9 +23,10 @@ $(document).ready(function() {
 	table = $("#datatable-responsive").DataTable({
 		autoWidth: false,
 		language: {
+            "emptyTable": "Tidak ada data yang tersedia",
 			"zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
 			"info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-			"infoEmpty": "Data belum tersedia",
+			"infoEmpty": "Menampilkan 0 - 0 dari 0 data",
 			"infoFiltered": "(terfilter dari _MAX_ total data)",
 			"searchPlaceholder": "Enter untuk mencari"
 		},
@@ -98,7 +99,7 @@ $(document).ready(function() {
 		"ajax": {
 			"url": apiUrl + '/read',
 			"type": 'post',
-			"headers": { JWT: get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
 			"data": function(data, settings){
 				/* start_loader */
 				$(".cssload-loader").hide();

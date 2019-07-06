@@ -96,7 +96,7 @@ $(document).ready(function () {
 		"ajax": {
 			"url": apiUrl + '/read',
 			"type": 'post',
-			"headers": { JWT: get_token(API_TOKEN) },
+			"headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
 			"data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
@@ -223,7 +223,7 @@ $(document).ready(function () {
 		$("input[name=urut]").val(data[4]);
         switchStatus('input[name=aktif]', data[5]);
 		$('.btn_save').html('<i class="fa fa-save"></i> Update');
-		$('.modal-title').html('Edit Groupmenu');
+        $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('Edit Groupmenu');
 		$('.formEditorModal').modal();
 	});
 
@@ -270,7 +270,7 @@ function btn_add() {
 	id = '';
 	saveUpdate = 'save';
 	$('.btn_save').html('<i class="fa fa-save"></i> Save');
-	$('.modal-title').html('New Groupmenu');
+    $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('New Groupmenu');
 	$('.formEditorModal form')[0].reset();
 	$('.formEditorModal').modal();
     switchStatus('input[name=aktif]', 0);
