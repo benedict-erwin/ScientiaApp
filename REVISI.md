@@ -10,9 +10,8 @@
       - [x] Batch  : /batch - Delete multiple records
   - [x] Dibedakan path untuk router api dengan front
     - [x] REST API : /api/nama_api
-    - [ ] FRONT:
+    - [x] FRONT:
       - [x] CMS: /scientia/nama_halaman
-      - [ ] Web: /nama_halaman
 
 ### 2. Controller
   - [x] Dipisahkan berdasarkan controller private dan public
@@ -24,10 +23,10 @@
   - [x] Untuk semua template dengan ekstensi .html diganti dengan ekstensi .twig
 
 ### 4. Plugin
-  - [ ] DataTables:
-    - [ ] Dibuat independen tanpa perlu extend dengan BaseController, sehingga bisa digunakan untuk semua controller (public, private)
-    - [ ] Menggunakan library Medoo
-    - [ ] Contructor disiapkan untuk inisiasi object database
+  - [x] DataTables:
+    - [x] Dibuat independen tanpa perlu extend dengan BaseController, sehingga bisa digunakan untuk semua controller (public, private)
+    - [x] Menggunakan library Medoo
+    - [x] Contructor disiapkan untuk inisiasi object database
 
 ### 5. ERROR CODE
   - [ ] Format error log :

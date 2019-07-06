@@ -42,9 +42,10 @@ $(document).ready(function () {
     table = $("#datatable-responsive").DataTable({
         autoWidth: false,
         language: {
+            "emptyTable": "Tidak ada data yang tersedia",
             "zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
             "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-            "infoEmpty": "Data belum tersedia",
+            "infoEmpty": "Menampilkan 0 - 0 dari 0 data",
             "infoFiltered": "(terfilter dari _MAX_ total data)",
             "searchPlaceholder": "Enter untuk mencari"
         },

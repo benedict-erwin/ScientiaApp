@@ -23,11 +23,12 @@ $(document).ready(function () {
 	table = $("#datatable-responsive").DataTable({
         autoWidth: false,
 		language: {
-			"zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
-			"info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-			"infoEmpty": "Data belum tersedia",
-			"infoFiltered": "(terfilter dari _MAX_ total data)",
-			"searchPlaceholder": "Enter untuk mencari"
+            "emptyTable": "Tidak ada data yang tersedia",
+            "zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
+            "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            "infoEmpty": "Menampilkan 0 - 0 dari 0 data",
+            "infoFiltered": "(terfilter dari _MAX_ total data)",
+            "searchPlaceholder": "Enter untuk mencari"
 		},
 		"dom": "<'row'<'col-sm-8'B><'col-sm-4'f>><'row'<'col-sm-12't>><'row'<'col-sm-4'<'pull-left' p>><'col-sm-8'<'pull-right' i>>>",
 		"buttons": [
