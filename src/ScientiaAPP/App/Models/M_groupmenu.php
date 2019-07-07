@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    ScientiaAPP/App/Models
  * @author     Benedict E. Pranata
  * @copyright  (c) 2019 benedict.erwin@gmail.com
  * @created    on Fri Jul 05 2019
@@ -27,7 +28,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
         /* Cache Setup */
         $this->Sign = $container->get('settings')['dbnya']['SIGNATURE'];
         $this->Cacher = $container->cacher;
-        $this->TagName = hash('sha256', $this->Sign . __CLASS__);
+        $this->TagName = hash('sha256', $this->Sign . 'M_groupmenu');
         $this->CacheExp = 3600; # in seconds (1 hour)
 
         /* Table Setup */
@@ -48,7 +49,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
     {
         try {
             $output = null;
-            $cacheKey = hash('md5', __CLASS__ . $id);
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . $id);
             $CachedString = $this->Cacher->getItem($cacheKey);
             if (!$CachedString->isHit()) {
                 $output = $this->getDataById($id);
@@ -98,7 +99,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
     {
         unset($data['draw']);
         $output = [];
-        $cacheKey = hash('md5', __CLASS__ . json_encode($data));
+        $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
         $CachedString = $this->Cacher->getItem($cacheKey);
         if (!$CachedString->isHit()) {
             $output = [

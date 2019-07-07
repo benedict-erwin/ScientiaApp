@@ -1,7 +1,7 @@
 <?php
 /*
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    App\Controllers\Privates
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018

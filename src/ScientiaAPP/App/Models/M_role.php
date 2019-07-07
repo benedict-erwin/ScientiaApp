@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_config extends \App\Plugin\DataTablesMysql
+class M_role extends \App\Plugin\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -28,19 +28,19 @@ class M_config extends \App\Plugin\DataTablesMysql
         /* Cache Setup */
         $this->Sign = $container->get('settings')['dbnya']['SIGNATURE'];
         $this->Cacher = $container->cacher;
-        $this->TagName = hash('sha256', $this->Sign . 'M_config');
+        $this->TagName = hash('sha256', $this->Sign . 'M_role');
         $this->CacheExp = 3600; # in seconds (1 hour)
 
         /* Table Setup */
-        $this->setTable('m_config')
-            ->setColumns(['id_config', 'name', 'value', 'description', 'scope'])
-            ->setPkey('id_config')
-            ->setSearchCols(['name', 'value', 'description'])
-            ->setDefaultOrder(['id_config' => 'DESC']);
+        $this->setTable('m_role')
+            ->setColumns(['idrole', 'nama', 'deskripsi'])
+            ->setPkey('idrole')
+            ->setSearchCols(['nama', 'deskripsi'])
+            ->setDefaultOrder(['idrole' => 'DESC']);
     }
 
     /**
-     * Get Data in M_config by Primary Key
+     * Get Data in M_role by Primary Key
      *
      * @param integer $id
      * @return array
@@ -66,7 +66,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Insert Data in M_config
+     * Insert Data in M_role
      *
      * @param array $data
      * @return int $last_insert_id
@@ -75,7 +75,11 @@ class M_config extends \App\Plugin\DataTablesMysql
     {
         try {
             if($lastId = $this->saveData($data)){
-                $this->Cacher->deleteItemsByTag($this->TagName);
+                $this->Cacher->deleteItemsByTags([
+                    $this->TagName,
+                    $this->Sign . '_getMenus',
+                    $this->Sign . '_router',
+                ]);
                 return $lastId;
             }else {
                 return false;
@@ -85,8 +89,55 @@ class M_config extends \App\Plugin\DataTablesMysql
         }
     }
 
+    public function createAndSetDefaultPermission(array $data = [])
+    {
+        /* Start transaction */
+        $this->db->pdo->beginTransaction();
+        try {
+            /* Save and get last_insert_id */
+            if($idrole = $this->create($data)){
+
+                /* Select default access */
+                $jmenu = $this->db->select(
+                    'm_menu',
+                    'id_menu',
+                    [
+                        'url' => [
+                            '/clogin',
+                            '/clogout',
+                            '/cauth',
+                            '/cmenu'
+                        ]
+                    ]
+                );
+
+                /* Grant access to new role */
+                foreach ($jmenu as $menu) {
+                    $this->db->insert('j_menu', ['id_menu' => $menu, 'idrole' => $idrole]);
+                }
+
+                /* Commit transaction & delete old cache */
+                $this->db->pdo->commit();
+                $this->Cacher->deleteItemsByTags([
+                    $this->TagName,
+                    $this->Sign . '_getMenus',
+                    $this->Sign . '_router',
+                ]);
+
+                return true;
+            }else {
+                return false;
+            }
+
+        } catch (\Exception $e) {
+            /* Rollback transaction on error */
+            $this->db->pdo->rollBack();
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
+    }
+
     /**
-     * Retrieve data from M_config
+     * Retrieve data from M_role
      *
      * @param array $data
      * @return array $output
@@ -113,7 +164,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Update data from M_config
+     * Update data from M_role
      *
      * @param array $data
      * @param integer $id
@@ -123,7 +174,11 @@ class M_config extends \App\Plugin\DataTablesMysql
     {
         try {
             $update = $this->updateData($data, [$this->getPkey() => $id]);
-            $this->Cacher->deleteItemsByTag($this->TagName);
+            $this->Cacher->deleteItemsByTags([
+                $this->TagName,
+                $this->Sign . '_getMenus',
+                $this->Sign . '_router',
+            ]);
             return $update;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
@@ -131,7 +186,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Remove single or multiple data from M_config
+     * Remove single or multiple data from M_role
      *
      * @param array|integer $data
      * @return bool
@@ -140,7 +195,11 @@ class M_config extends \App\Plugin\DataTablesMysql
     {
         try {
             $delete = $this->deleteData($data);
-            $this->Cacher->deleteItemsByTag($this->TagName);
+            $this->Cacher->deleteItemsByTags([
+                $this->TagName,
+                $this->Sign . '_getMenus',
+                $this->Sign . '_router',
+            ]);
             return $delete;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));

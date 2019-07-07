@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_config extends \App\Plugin\DataTablesMysql
+class M_user extends \App\Plugin\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -28,19 +28,19 @@ class M_config extends \App\Plugin\DataTablesMysql
         /* Cache Setup */
         $this->Sign = $container->get('settings')['dbnya']['SIGNATURE'];
         $this->Cacher = $container->cacher;
-        $this->TagName = hash('sha256', $this->Sign . 'M_config');
+        $this->TagName = hash('sha256', $this->Sign . 'M_user');
         $this->CacheExp = 3600; # in seconds (1 hour)
 
         /* Table Setup */
-        $this->setTable('m_config')
-            ->setColumns(['id_config', 'name', 'value', 'description', 'scope'])
-            ->setPkey('id_config')
-            ->setSearchCols(['name', 'value', 'description'])
-            ->setDefaultOrder(['id_config' => 'DESC']);
+        $this->setTable('m_user')
+            ->setColumns(['iduser' , 'nama' , 'email' , 'idrole' , 'telpon' , 'lastlogin' , 'username'])
+            ->setPkey('iduser')
+            ->setSearchCols(['nama' , 'email' , 'telpon' , 'username'])
+            ->setOrderCols(['iduser', null, 'nama' , 'email', 'telpon', null, 'username']);
     }
 
     /**
-     * Get Data in M_config by Primary Key
+     * Get Data in M_user by Primary Key
      *
      * @param integer $id
      * @return array
@@ -66,7 +66,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Insert Data in M_config
+     * Insert Data in M_user
      *
      * @param array $data
      * @return int $last_insert_id
@@ -86,7 +86,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Retrieve data from M_config
+     * Retrieve data from M_user
      *
      * @param array $data
      * @return array $output
@@ -113,7 +113,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Update data from M_config
+     * Update data from M_user
      *
      * @param array $data
      * @param integer $id
@@ -131,7 +131,7 @@ class M_config extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Remove single or multiple data from M_config
+     * Remove single or multiple data from M_user
      *
      * @param array|integer $data
      * @return bool

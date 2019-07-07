@@ -200,6 +200,12 @@ $(document).ready(function() {
                 "orderable": false
             },
             {
+                "targets": 4,
+                "render": function (data, type, row) {
+                    return '<a href="mailto:' + data + '" target="_blank">' + data + '</a>';
+                }
+            },
+            {
                 "targets": 5,
                 "visible": false,
                 "searchable": false,
@@ -249,6 +255,7 @@ $(document).ready(function() {
         getJabatan('#idjabatan', data[5]);
         $("input[name=telpon]").val(data[6]);
         $("input[name=username]").val(data[3]);
+        $("input[name=password]").removeAttr('required');
         $('.btn_save').html('<i class="fa fa-save"></i> Update');
         $('.modal-title').html('Edit User');
         $('.formEditorModal').modal();
@@ -291,6 +298,7 @@ function getJabatan(obj, sel = null) {
 function btn_add() {
     id = '';
     saveUpdate = 'save';
+    $('input[name=password]').attr('required', 'required');
     getJabatan('#idjabatan', ($("#fm_jabatan").val() ? $("#fm_jabatan").val() : '0'));
 	$('.btn_save').html('<i class="fa fa-save"></i> Save');
 	$('.modal-title').html('New User');

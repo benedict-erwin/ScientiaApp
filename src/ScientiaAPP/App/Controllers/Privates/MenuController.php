@@ -1,7 +1,7 @@
 <?php
 /*
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    App\Controllers\Privates
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018
@@ -12,84 +12,32 @@ namespace App\Controllers\Privates;
 
 class MenuController extends \App\Controllers\PrivateController
 {
-    public function index()
+    private $M_MENU, $J_MENU;
+
+    /* Constructor */
+    public function __construct(\Slim\Container $container)
     {
-        $gump = new \GUMP();
-        $gump->validation_rules(["reload" => "numeric"]);
-        $gump->filter_rules(["reload" => "trim"]);
+        /* Call Parent Constructor */
+        parent::__construct($container);
 
-        try {
-            $gump->xss_clean($this->param);
-            $safe = $gump->run($this->param);
-
-            if ($safe === false) {
-                $ers = $gump->get_errors_array();
-                $err = implode(', ', array_values($ers));
-
-                /* Logger */
-                if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['INFO' => $ers]);
-                }
-
-                throw new \Exception($err);
-            } else {
-                return $this->getMenus($this->user_data['ID_ROLE'], $safe['reload']);
-            }
-        } catch (\Exception $e) {
-            return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);
-        }
+        /* Set DataTables Variables */
+        $this->M_MENU = new \App\Models\M_menu($container);
+        $this->J_MENU = new \App\Models\J_menu($container);
     }
 
-    private function getMenus($idrole=NULL, $reload=false)
+    public function index()
+    {
+        return $this->getMenus((int)$this->user_data['ID_ROLE']);
+    }
+
+    private function getMenus(int $idrole)
     {
         try {
-            $GROUPMENU = array();
-            if ($reload==1) {
-                $this->InstanceCache->deleteItemsByTags([
-                    $this->sign . '_getMenus',
-                    $this->sign . '_restapi_router',
-                    $this->sign . '_M_menu_read',
-                    $this->sign . '_CRUDGenerator_read_menu'
-                ]);
-            }
-            $ckey = hash('md5', $this->sign . '_cmenu_' . $idrole);
+            $GROUPMENU = [];
+            $ckey = hash('md5', $this->sign . '_groupmenu_' . $idrole);
             $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                $sql = "SELECT a.idrole,
-                            b.nama,
-                            a.id_menu,
-                            c.nama    nama_m,
-                            CONCAT('ic_', REPLACE(LOWER(c.nama), ' ', '_')) badge,
-                            c.url,
-                            c.controller,
-                            c.id_groupmenu,
-                            d.nama    nama_g,
-                            c.icon    icon_m,
-                            d.icon    icon_g,
-                            c.aktif aktif_m,
-                            d.aktif aktif_g,
-                            c.tipe,
-                            c.urut order_m,
-                            d.urut order_g
-                        FROM j_menu a
-                            LEFT JOIN m_role b
-                                ON a.idrole = b.idrole
-                            LEFT JOIN m_menu c
-                                ON a.id_menu = c.id_menu
-                            LEFT JOIN m_groupmenu d
-                                ON c.id_groupmenu = d.id_groupmenu
-                        WHERE b.idrole=:idrole
-                            AND c.tipe=:tipe
-                            AND d.aktif=1
-                            AND c.aktif=1
-                        ORDER BY d.urut ASC, c.urut ASC";
-
-                $tipe = 'MENU';
-                $query = $this->dbpdo->pdo->prepare($sql);
-                $query->bindParam(':idrole', $idrole, \PDO::PARAM_STR);
-                $query->bindParam(':tipe', $tipe, \PDO::PARAM_STR);
-                $query->execute();
-                $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+            if (!$CachedString->isHit()) {
+                $result = $this->M_MENU->getMenu($idrole);
                 $c = 0;
                 $x = 0;
                 foreach ($result as $r) {
@@ -142,65 +90,8 @@ class MenuController extends \App\Controllers\PrivateController
                 }
                 throw new \Exception($err);
             } else {
-                $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
+                $cn = $this->getPermission($safe['path'], (int)$this->user_data['ID_ROLE']);
                 return $this->jsonSuccess($cn);
-            //     try {
-            //         $result = null;
-            //         $ckey = md5($this->sign . '_cauth_' . $this->user_data['ID_USER'] . $safe['path']);
-            //         $CachedString = $this->InstanceCache->getItem($ckey);
-            //         if (is_null($CachedString->get())) {
-            //             $sql = "SELECT a.idrole,
-            //                         b.nama,
-            //                         a.id_menu,
-            //                         c.nama    nama_m,
-            //                         c.url,
-            //                         c.controller,
-            //                         c.id_groupmenu,
-            //                         d.nama nama_g,
-            //                         c.icon icon_m,
-            //                         d.icon icon_g,
-            //                         c.aktif aktif_m,
-            //                         d.aktif aktif_g,
-            //                         c.tipe,
-            //                         c.urut order_m,
-            //                         d.urut order_g
-            //                     FROM j_menu a
-            //                     LEFT JOIN m_role b
-            //                         ON a.idrole = b.idrole
-            //                     LEFT JOIN m_menu c
-            //                         ON a.id_menu = c.id_menu
-            //                     LEFT JOIN m_groupmenu d
-            //                         ON c.id_groupmenu = d.id_groupmenu
-            //                     WHERE b.idrole=:idrole AND c.url=:url
-            //                     ORDER BY d.urut ASC, c.urut ASC";
-
-            //             /* log sql */
-            //             if($this->container->get('settings')['mode'] != 'production'){
-            //                 $this->logger->addInfo(__CLASS__ . ' query :: ' . preg_replace('/\v(?:[\v\h]+)/', ' ', $sql));
-            //             }
-
-            //             $path = ($safe['path']=='/') ? '/home':$safe['path'];
-            //             $query = $this->dbpdo->pdo->prepare($sql);
-            //             $query->bindParam(':idrole', $this->user_data['ID_ROLE'], \PDO::PARAM_STR);
-            //             $query->bindParam(':url', $path, \PDO::PARAM_STR);
-            //             $query->execute();
-            //             $result = $query->fetch();
-            //             $CachedString->set($result)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getAuthMenu_');
-            //             $this->InstanceCache->save($CachedString);
-            //         } else {
-            //             $result = $CachedString->get();
-            //         }
-
-            //         if ($result) {
-            //             $cn = $this->getPermission($safe['path'], $this->user_data['ID_ROLE']);
-            //             return $this->jsonSuccess($cn);
-            //         }else {
-            //             throw new \Exception("User not authorized!");
-            //         }
-
-            //     } catch (\PDOException $e) {
-            //         throw new \Exception("User not authorized!");
-            //     }
             }
         } catch (\Exception $e) {
             return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);
@@ -210,42 +101,13 @@ class MenuController extends \App\Controllers\PrivateController
     private function getPermission(string $url = null, int $idrole=null)
     {
         try {
-            $ckey = md5($this->sign . '_perm_' . $url . $idrole);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                //Controller
-                $data = [];
-                $query = $this->dbpdo->get('m_menu', 'controller', ['url' => $url]);
-                $controller = explode(':', $query);
-                $controller = trim($controller[0]) . ':%';
-
-                //Permission
-                $sql = "SELECT a.idrole, a.deskripsi, c.idrole, c.controller
-                        FROM m_role a
-                        LEFT JOIN (
-                            SELECT b.id_menu, b.idrole, m.controller, m.aktif
-                            FROM j_menu b
-                            LEFT JOIN m_menu m
-                                ON b.id_menu=m.id_menu
-                        ) c ON a.idrole=c.idrole
-                        WHERE c.controller LIKE :controller AND a.idrole=:idrole AND c.aktif=1
-                        ORDER BY a.idrole";
-
-                $query = $this->dbpdo->pdo->prepare($sql);
-                $query->bindParam(':controller', $controller, \PDO::PARAM_STR);
-                $query->bindParam(':idrole', $idrole, \PDO::PARAM_INT);
-                $query->execute();
-                $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-                foreach ($result as $res) {
-                    $cnt = explode(':', $res['controller']);
-                    $data[] = end($cnt);
-                }
-
-                $CachedString->set($data)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getPermission_');
-                $this->InstanceCache->save($CachedString);
-            }else {
-                $data = $CachedString->get();
+            $data = [];
+            $result = $this->J_MENU->getPermission($url, $idrole);
+            foreach ($result as $res) {
+                $cnt = explode(':', $res['controller']);
+                $data[] = end($cnt);
             }
+
             return array_values($data);
 
         } catch (\PDOException $e) {

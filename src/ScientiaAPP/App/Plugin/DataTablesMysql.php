@@ -19,7 +19,8 @@ namespace App\Plugin;
 class DataTablesMysql
 {
     /* Declare Property */
-    private $db, $logger, $mode;
+    protected $db;
+    private $logger, $mode;
     private $TABLE;
     private $COLUMNS    = [];
     private $PKEY;
@@ -517,17 +518,18 @@ class DataTablesMysql
         }
     }
 
-    /* Get Single Data */
-    protected function getData($column = [], $where = [])
-    {
-        return $this->db->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*' : $this->COLUMNS) : $column), $where);
-    }
-
     /**
      * Get Data By ID (Primary Key)
      */
     protected function getDataById($id, $column = null)
     {
+        if (!empty($this->SQL)) {
+            $where = ' WHERE ' . $this->PKEY . '=:' . $this->PKEY;
+            $query = $this->db->pdo->prepare($this->SQL . $where);
+            $query->bindParam(':' . $this->PKEY, $id, \PDO::PARAM_INT);
+            $query->execute();
+            return $query->fetchAll(\PDO::FETCH_ASSOC);
+        }
         return $this->db->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*': $this->COLUMNS):$column), [$this->PKEY => $id]);
     }
 

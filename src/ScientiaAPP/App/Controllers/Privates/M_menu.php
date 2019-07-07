@@ -1,7 +1,7 @@
 <?php
 /*
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    App\Controllers\Privates
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018
@@ -10,8 +10,10 @@
 
 namespace App\Controllers\Privates;
 
-class M_menu extends \App\Plugin\DataTables
+class M_menu extends \App\Controllers\PrivateController
 {
+    private $MODEL, $JMENU;
+
     /* Constructor */
     public function __construct(\Slim\Container $container)
     {
@@ -19,27 +21,24 @@ class M_menu extends \App\Plugin\DataTables
         parent::__construct($container);
 
         /* Set DataTables Variables */
-        $this->set_TABLE('m_menu');
-        $this->set_PKEY('id_menu');
-        $this->set_COLUMNS([
-            'id_menu',
-            'id_groupmenu',
-            'nama',
-            'icon',
-            'url',
-            'controller',
-            'tipe',
-            'aktif',
-            'urut',
-            'is_public'
-        ]);
-        $this->set_COLUMN_SEARCH([
-            'nama',
-            'url',
-            'controller',
-            'tipe'
-        ]);
-        $this->set_ORDER([ 'id_menu'=> 'DESC' ]);
+        $this->MODEL = new \App\Models\M_menu($container);
+        $this->JMENU = new \App\Models\J_menu($container);
+    }
+
+    /* Get Data By Id */
+    public function get($request, $response, $args)
+    {
+        try {
+            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+            $output = $this->MODEL->getByID($args['id']);
+            if (!empty($output)) {
+                return $this->jsonSuccess($output);
+            } else {
+                return $this->jsonFail('Data tidak ditemukan', [], 404);
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
+        }
     }
 
     /* Function Create */
@@ -52,7 +51,7 @@ class M_menu extends \App\Plugin\DataTables
             'url' => 'required',
             'controller' => 'required',
             'tipe' => 'required|alpha',
-            'aktif' => 'required|numeric',
+            'aktif' => 'numeric',
             'is_public' => 'required|numeric',
         ]);
         $gump->filter_rules([
@@ -78,7 +77,7 @@ class M_menu extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
@@ -93,28 +92,17 @@ class M_menu extends \App\Plugin\DataTables
                     $isExist = $this->dbpdo->count('m_menu', [
                         'url' => $safe['url'],
                         'tipe' => $safe['tipe'],
-                        'controller' => $safe['controller'],
+                        'controller' => $safe['controller']
                     ]);
 
-                    if ($isExist > 0) {
-                        throw new \Exception('Menu sudah tersedia di database!');
-                    }
-
-                    if ($this->saveDb($safe) !== false) {
-                        $this->InstanceCache->deleteItemsByTags([
-                            $this->sign . '_getMenus_',
-                            $this->sign . '_router',
-                            $this->sign . '_M_menu_read_',
-                            $this->sign . '_getPermission_',
-                            $this->sign . '_getAuthMenu_',
-                            $this->sign . '_CRUDGenerator_read_menu'
-                        ]);
+                    if ($isExist > 0) throw new \Exception('Menu sudah tersedia di database!');
+                    if ($this->MODEL->create($safe)) {
                         return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
                     } else {
                         throw new \Exception('Penyimpanan gagal dilakukan!');
                     }
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Invalid Request', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -151,50 +139,32 @@ class M_menu extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
-                    /* Check Cache */
+                    /* Get Data */
+                    $data = [];
                     $output = [];
-                    $opsional = (isset($safe['opsional']) ? json_encode($safe['opsional']) : null);
-                    $search = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
-                    $length = (isset($safe['length']) ? $safe['length'] : null);
-                    $start = (isset($safe['start']) ? $safe['start'] : null);
-                    $ckey = hash('md5', 'M_menu' . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
-                    $CachedString = $this->InstanceCache->getItem($ckey);
-
-                    /* If not in Cache */
-                    if (is_null($CachedString->get())) {
-                        /* Execute DataTables */
-                        $data = [];
-                        $list = $this->get_datatables($safe);
-                        $no = (int) $safe['start'];
-                        foreach ($list as $cols) {
-                            $no++;
-                            $cols['no'] = $no;
-                            $data[] = $cols;
-                        }
-
-                        $output = [
-                            'recordsTotal' => $this->count_all($safe),
-                            'recordsFiltered' => $this->count_filtered($safe),
-                            'data' => $data
-                        ];
-
-                        $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_menu_read_');
-                        $this->InstanceCache->save($CachedString);
-                    } else {
-                        /* Get data from Cache */
-                        $output = $CachedString->get();
+                    $records = $this->MODEL->read($safe);
+                    $no = (int) $safe['start'];
+                    foreach ($records['datalist'] as $cols) {
+                        $no++;
+                        $cols['no'] = $no;
+                        $data[] = $cols;
                     }
 
-                    //send back draw
-                    $output['draw'] = (int) (isset($safe['draw']) ? $safe['draw'] : 0);
+                    $output = [
+                        'recordsTotal' => $records['recordsTotal'],
+                        'recordsFiltered' => $records['recordsFiltered'],
+                        'data' => $data,
+                        'draw' => (int) (isset($safe['draw']) ? $safe['draw'] : 0),
+                    ];
+
                     return $this->jsonSuccess($output);
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -213,7 +183,7 @@ class M_menu extends \App\Plugin\DataTables
             'url' => 'required',
             'controller' => 'required',
             'tipe' => 'required|alpha',
-            'aktif' => 'required|numeric',
+            'aktif' => 'numeric',
             'is_public' => 'required|numeric',
         ]);
         $gump->filter_rules([
@@ -239,32 +209,22 @@ class M_menu extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
-                    $safe['url'] = '/' . trim($safe['url'], '/');
-                    $where = [$this->PKEY => $safe['id']];
+                    $id = $safe['id'];
                     unset($safe['id']);
-
-                    /* Send to DB */
-                    if ($this->updateDb($safe, $where)) {
-                        //remove old chace
-                        $this->InstanceCache->deleteItemsByTags([
-                            $this->sign . '_getMenus_',
-                            $this->sign . '_router',
-                            $this->sign . '_M_menu_read_',
-                            $this->sign . '_getPermission_',
-                            $this->sign . '_getAuthMenu_',
-                            $this->sign . '_CRUDGenerator_read_menu'
-                        ]);
+                    $safe['url'] = '/' . trim($safe['url'], '/');
+                    $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
+                    if ($this->MODEL->update($safe, $id)) {
                         return $this->jsonSuccess('Perubahan data berhasil');
                     } else {
-                        throw new \Exception('Perubahan gagal dilakukan!');
+                        throw new \Exception('Tidak ada perubahan data!');
                     }
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -275,37 +235,29 @@ class M_menu extends \App\Plugin\DataTables
     /* Function Delete */
     public function delete($request, $response, $args)
     {
-        /** Path variable  */
-        $path = explode('/', $request->getUri()->getPath());
-
-        /** Batch delete */
-        if (trim(end($path)) == 'batch') {
-            if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
-            if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
-            $safe = $this->param;
-        } else {
-            /** Single delete */
-            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
-            $safe = $args;
-        }
-
         try {
+            /** Path variable  */
+            $path = explode('/', $request->getUri()->getPath());
+
+            /** Batch delete */
+            if (trim(end($path)) == 'batch') {
+                if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
+                if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
+                $safe = $this->param;
+            } else {
+                /** Single delete */
+                if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+                $safe = $args;
+            }
+
             /* Delete from DB */
-            if ($this->deleteDb($safe['id'])) {
-                $this->InstanceCache->deleteItemsByTags([
-                    $this->sign . '_getMenus_',
-                    $this->sign . '_router',
-                    $this->sign . '_M_menu_read_',
-                    $this->sign . '_getPermission_',
-                    $this->sign . '_getAuthMenu_',
-                    $this->sign . '_CRUDGenerator_read_menu'
-                ]);
+            if ($this->MODEL->delete($safe['id'])) {
                 return $this->jsonSuccess('Data berhasil dihapus');
             } else {
                 throw new \Exception('Penghapusan gagal dilakukan!');
             }
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -327,26 +279,15 @@ class M_menu extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
-                    $sql = 'SELECT a.idrole, a.deskripsi, c.idrole ID_ROLE
-					FROM m_role a
-					LEFT JOIN (
-						SELECT b.id_menu, b.idrole
-						FROM j_menu b
-						WHERE b.id_menu=:idmenu
-					) c ON a.idrole=c.idrole
-					ORDER BY a.idrole DESC';
-                    $query = $this->dbpdo->pdo->prepare($sql);
-                    $query->bindParam(':idmenu', $safe['idmenu'], \PDO::PARAM_INT);
-                    $query->execute();
-                    $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+                    $result = $this->MODEL->getMenuRole($safe['idmenu']);
                     return $this->jsonSuccess($result);
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -358,7 +299,7 @@ class M_menu extends \App\Plugin\DataTables
     public function setPermission()
     {
         $gump = new \GUMP('id');
-        $gump->validation_rules(['ID_ROLE' => 'required', 'idmenu' => 'required|numeric']);
+        $gump->validation_rules(['idmenu' => 'required|numeric']);
         $gump->filter_rules(['ID_ROLE' => 'trim|sanitize_numbers', 'idmenu' => 'trim|sanitize_numbers',]);
 
         try {
@@ -366,8 +307,9 @@ class M_menu extends \App\Plugin\DataTables
             $gump->xss_clean($this->param);
             $safe = $gump->run($this->param);
 
-            if (!is_array($this->param['ID_ROLE'])) throw new \Exception('ID_ROLE tidak valid!');
-            if (in_array(false, array_map('is_numeric', $this->param['ID_ROLE']))) throw new \Exception('ID_ROLE tidak valid!');
+            if (isset($this->param['ID_ROLE'])) {
+                if (in_array(false, array_map('is_numeric', $this->param['ID_ROLE']))) throw new \Exception('ID_ROLE tidak valid!');
+            }
 
             if ($safe === false) {
                 $ers = $gump->get_errors_array();
@@ -375,46 +317,16 @@ class M_menu extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
+
                 try {
-                    /* Start transaction */
-
-                    $this->dbpdo->pdo->beginTransaction();
-                    try {
-                        $idmenu = $safe['idmenu'];
-                        $this->dbpdo->delete('j_menu', ['id_menu' => $idmenu]);
-                        if (array_key_exists('ID_ROLE', $this->param)) {
-                            foreach ($this->param['ID_ROLE'] as $jbt) {
-                                $this->dbpdo->insert('j_menu', ['id_menu' => $idmenu, 'idrole' => $jbt]);
-                            }
-                        }
-
-                        /* Commit transaction & Refresh Cache */
-                        $this->InstanceCache->deleteItemsByTags([
-                            $this->sign . '_getMenus_',
-                            $this->sign . '_router',
-                            $this->sign . '_M_menu_read_',
-                            $this->sign . '_getPermission_',
-                            $this->sign . '_getAuthMenu_',
-                            $this->sign . '_CRUDGenerator_read_menu'
-                        ]);
-                        $this->dbpdo->pdo->commit();
-                        return $this->jsonSuccess('Permission updated!');
-                    } catch (\Exception $e) {
-                        /* Logger */
-                        if ($this->container->get('settings')['mode'] != 'production') {
-                            $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'SQL' => $this->dbpdo->log()]);
-                        }
-
-                        /* Rollback transaction on error */
-                        $this->dbpdo->pdo->rollBack();
-                        throw new \Exception($e->getMessage());
-                    }
+                    $this->JMENU->setPermission($this->param, $safe['idmenu']);
+                    return $this->jsonSuccess('Permission updated!');
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {

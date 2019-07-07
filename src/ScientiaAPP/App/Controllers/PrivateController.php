@@ -247,9 +247,7 @@ class PrivateController
     /* Get User from JWT */
     public function getUser()
     {
-        $this->user_data = array();
-        // $head = $this->head;
-        // $token = (new Parser())->parse((string) $head['HTTP_JWT'][0]);
+        $this->user_data = [];
         $token = explode('Bearer', $this->head['HTTP_AUTHORIZATION'][0]);
         $token = (new Parser())->parse((string) trim(end($token)));
 
@@ -347,13 +345,10 @@ class PrivateController
         // $head = $this->head;
         $signer = new Sha256();
         $token = null;
-        // var_dump($this->head); die();
-        // if (array_key_exists('HTTP_JWT', $this->head)) {
+
         if (array_key_exists('HTTP_AUTHORIZATION', $this->head)) {
             try {
                 try {
-                    // $token = (new Parser())->parse((string) $this->head['HTTP_JWT'][0]);
-                    // var_dump(trim(end($token))); die();
                     $token = explode('Bearer', $this->head['HTTP_AUTHORIZATION'][0]);
                     $token = (new Parser())->parse((string) trim(end($token)));
                     if (!$token->verify($signer, $this->sign)) {

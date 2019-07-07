@@ -1,7 +1,7 @@
 <?php
 /*
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    App\Controllers\Privates
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018
@@ -10,8 +10,10 @@
 
 namespace App\Controllers\Privates;
 
-class M_user extends \App\Plugin\DataTables
+class M_user extends \App\Controllers\PrivateController
 {
+    private $MODEL;
+
     /* Constructor */
     public function __construct(\Slim\Container $container)
     {
@@ -19,11 +21,22 @@ class M_user extends \App\Plugin\DataTables
         parent::__construct($container);
 
         /* Set DataTables Variables */
-        $this->set_TABLE('m_user');
-        $this->set_PKEY('iduser');
-        $this->set_COLUMNS(['iduser' , 'nama' , 'email' , 'idrole' , 'telpon' , 'lastlogin' , 'username']);
-        $this->set_COLUMN_SEARCH(['nama' , 'email' , 'telpon' , 'username']);
-        $this->set_COLUMN_ORDER(['iduser', null, 'nama' , 'email', 'telpon', null, 'username']);
+        $this->MODEL = new \App\Models\M_user($container);
+    }
+
+    public function get($request, $response, $args)
+    {
+        try {
+            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+            $output = $this->MODEL->getByID($args['id']);
+            if (!empty($output)) {
+                return $this->jsonSuccess($output);
+            } else {
+                return $this->jsonFail('Data tidak ditemukan', [], 404);
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
+        }
     }
 
 	/* Function Create */
@@ -59,21 +72,20 @@ class M_user extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
                     /* Send to DB */
                     $safe['password'] = $this->kripto->secure_passwd($safe['username'], $safe['password'], true);
-                    if ($this->saveDb($safe) !== false) {
-                        $this->InstanceCache->deleteItemsByTag($this->sign . '_M_user_read_');
+                    if ($this->MODEL->create($safe)) {
                         return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
                     } else {
                         throw new \Exception('Penyimpanan gagal dilakukan!');
                     }
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -110,47 +122,32 @@ class M_user extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
-                    /* Check Cache */
+                    /* Get Data */
+                    $data = [];
                     $output = [];
-                    $opsional = (isset($safe['opsional']) ? json_encode($safe['opsional']) : null);
-                    $search = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
-                    $length = (isset($safe['length']) ? $safe['length'] : null);
-                    $start = (isset($safe['start']) ? $safe['start'] : null);
-                    $ckey = hash('md5', 'M_user' . $this->user_data['ID_ROLE'] . $start . $length . $opsional . $search);
-                    $CachedString = $this->InstanceCache->getItem($ckey);
-                    if (is_null($CachedString->get())) {
-                        /* Execute DataTables */
-                        $data = [];
-                        $list = $this->get_datatables($safe);
-                        $no = (int) $safe['start'];
-                        foreach ($list as $cols) {
-                            $no++;
-                            $cols['no'] = $no;
-                            $data[] = $cols;
-                        }
-
-                        $output = [
-                            'data' => $data,
-                            'recordsTotal' => $this->count_all($safe),
-                            'recordsFiltered' => $this->count_filtered($safe)
-                        ];
-
-                        $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_M_user_read_');
-                        $this->InstanceCache->save($CachedString);
-                    } else {
-                        $output = $CachedString->get();
+                    $records = $this->MODEL->read($safe);
+                    $no = (int) $safe['start'];
+                    foreach ($records['datalist'] as $cols) {
+                        $no++;
+                        $cols['no'] = $no;
+                        $data[] = $cols;
                     }
 
-                    /* Send back draw */
-                    $output['draw'] = (int) (isset($safe['draw']) ? $safe['draw'] : 0);
+                    $output = [
+                        'recordsTotal' => $records['recordsTotal'],
+                        'recordsFiltered' => $records['recordsFiltered'],
+                        'data' => $data,
+                        'draw' => (int) (isset($safe['draw']) ? $safe['draw'] : 0),
+                    ];
+
                     return $this->jsonSuccess($output);
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -170,7 +167,7 @@ class M_user extends \App\Plugin\DataTables
             'email' => 'required|valid_email',
             'telpon' => 'required|numeric',
             'username' => 'required|alpha_numeric',
-            'password' => 'required|min_len,8',
+            'password' => 'min_len,8',
         ]);
 
         $gump->filter_rules([
@@ -194,27 +191,26 @@ class M_user extends \App\Plugin\DataTables
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(get_class($this) . '->' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
                 try {
-                    /* Prepare vars */
-                    if (isset($safe['password'])) {
-                        $safe['password'] = $this->kripto->secure_passwd($safe['username'], $safe['password'], true);
-                    }
-                    $where = [$this->PKEY => $safe['id']];
+                    $id = $safe['id'];
                     unset($safe['id']);
+                    if (isset($safe['password']) && !empty($safe['password'])) {
+                        $safe['password'] = $this->kripto->secure_passwd($safe['username'], $safe['password'], true);
+                    }else {
+                        unset($safe['password']);
+                    }
 
-                    /* Send to DB */
-                    if ($this->updateDb($safe, $where)) {
-                        $this->InstanceCache->deleteItemsByTag($this->sign . '_M_user_read_');
+                    if ($this->MODEL->update($safe, $id)) {
                         return $this->jsonSuccess('Perubahan data berhasil');
                     } else {
-                        throw new \Exception('Perubahan gagal dilakukan!');
+                        throw new \Exception('Tidak ada perubahan data!');
                     }
                 } catch (\Exception $e) {
-                    return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
                 }
             }
         } catch (\Exception $e) {
@@ -225,30 +221,29 @@ class M_user extends \App\Plugin\DataTables
 	/* Function Delete */
 	public function delete($request, $response, $args)
 	{
-        /** Path variable  */
-        $path = explode('/', $request->getUri()->getPath());
-
-        /** Batch delete */
-        if (trim(end($path)) == 'batch') {
-            if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
-            if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
-            $safe = $this->param;
-        } else {
-            /** Single delete */
-            if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
-            $safe = $args;
-        }
-
         try {
+            /** Path variable  */
+            $path = explode('/', $request->getUri()->getPath());
+
+            /** Batch delete */
+            if (trim(end($path)) == 'batch') {
+                if (!is_array($this->param['id'])) throw new \Exception('ID tidak valid!');
+                if (in_array(false, array_map('is_numeric', $this->param['id']))) throw new \Exception('ID tidak valid!');
+                $safe = $this->param;
+            } else {
+                /** Single delete */
+                if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
+                $safe = $args;
+            }
+
             /* Delete from DB */
-            if ($this->deleteDb($safe['id'])) {
-                $this->InstanceCache->deleteItemsByTag($this->sign . '_M_user_read_');
+            if ($this->MODEL->delete($safe['id'])) {
                 return $this->jsonSuccess('Data berhasil dihapus');
             } else {
                 throw new \Exception('Penghapusan gagal dilakukan!');
             }
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
 	}
 

@@ -1,12 +1,13 @@
 <?php
+
 /**
-* @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
-* @package    ScientiaAPP/App/Controller
-* @author     Benedict E. Pranata
-* @copyright  (c) 2019 benedict.erwin@gmail.com
-* @created    on Tue Jan 15 2019
-* @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
-*/
+ * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
+ * @package    App\Controllers\Privates
+ * @author     Benedict E. Pranata
+ * @copyright  (c) 2019 benedict.erwin@gmail.com
+ * @created    on Tue Jan 15 2019
+ * @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
+ */
 
 namespace App\Controllers\Privates;
 
@@ -230,7 +231,7 @@ class M_config extends \App\Controllers\PrivateController
                     if ($this->MODEL->update($safe, $id)) {
                         return $this->jsonSuccess('Perubahan data berhasil');
                     }else {
-                        throw new \Exception('Perubahan gagal dilakukan!');
+                        throw new \Exception('Tidak ada perubahan data!');
                     }
                 } catch (\Exception $e) {
                     return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);

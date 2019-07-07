@@ -190,15 +190,13 @@ function buildListMobile(data, isSub) {
 }
 
 /* Template menu */
-function loadMenu(reload) {
-	let post_data = { 'reload': ((reload) ? 1 : 0) };
+function loadMenu() {
 	if ($("div.mean-bar").length > 0){
 		$("div.mean-bar > a.meanmenu-reveal").addClass("animated infinite flip");
 	}
     $.ajax({
         "type": 'POST',
         "url": SiteRoot + 'cmenu',
-        "data": post_data,
         "dataType": 'json',
         "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         success: function (data, textStatus, jqXHR) {
