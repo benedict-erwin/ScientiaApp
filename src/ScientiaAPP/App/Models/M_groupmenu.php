@@ -77,6 +77,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
             if($lastId = $this->saveData($data)){
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
+                    hash('sha256', $this->Sign . 'M_menu'),
                     $this->Sign . '_getMenus_',
                     $this->Sign . '_router',
                 ]);
@@ -129,6 +130,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
             $update = $this->updateData($data, [$this->getPkey() => $id]);
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
+                hash('sha256', $this->Sign . 'M_menu'),
                 $this->Sign . '_getMenus_',
                 $this->Sign . '_router',
             ]);
@@ -150,6 +152,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
             $delete = $this->deleteData($data);
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
+                hash('sha256', $this->Sign . 'M_menu'),
                 $this->Sign . '_getMenus_',
                 $this->Sign . '_router',
             ]);

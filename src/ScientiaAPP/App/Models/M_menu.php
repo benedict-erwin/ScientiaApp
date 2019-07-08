@@ -264,4 +264,41 @@ class M_menu extends \App\Plugin\DataTablesMysql
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }
     }
+
+    /**
+     * URL Authorization
+     *
+     * @param integer $idrole
+     * @param string $url
+     * @return string
+     */
+    public function controllerAuth(int $idrole, string $url)
+    {
+        try {
+            $output = null;
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . $idrole . $url);
+            $CachedString = $this->Cacher->getItem($cacheKey);
+
+            if (!$CachedString->isHit()) {
+                $output = $this->db->get(
+                    'm_menu',
+                    ['[>]j_menu' => 'id_menu'],
+                    'm_menu.controller',
+                    [
+                        'j_menu.idrole' => $idrole,
+                        'm_menu.url' => $url
+                    ]
+                );
+
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            }else {
+                $output = $CachedString->get();
+            }
+
+            return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
+    }
 }

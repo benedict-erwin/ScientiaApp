@@ -1,7 +1,7 @@
 <?php
 /*
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    \App\Controllers
  * @author     Benedict E. Pranata
  * @copyright  (c) 2018 benedict.erwin@gmail.com
  * @created    on Wed Sep 05 2018
@@ -15,23 +15,15 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use App\Lib\Encrypter;
 use App\Lib\Ipaddress;
 
-class PrivateController
+class PrivateController extends \App\Controllers\BaseController
 {
-    protected $container;
-    protected $dbpdo;
-    protected $param;
-    protected $InstanceCache;
-    protected $sign;
-    protected $siteOwner;
-    protected $jwtExp;
-    protected $user_data = array();
-    protected $kripto;
-    protected $CacheExp;
-    private $uri_path;
+    protected $user_data = [];
     private $jwtJTID;
+    private $M_MENU;
+    private $M_USER;
+    private $L_AUDITLOG;
 
     /**
      * Initialize the controller with the container
@@ -40,48 +32,19 @@ class PrivateController
      */
     public function __construct(\Slim\Container $container)
     {
-        // Vars
-        $this->InstanceCache = $container->cacher;
-        $this->container = $container;
-        $this->head = $this->container->get('request')->getHeaders();
-        $this->param = $this->container->get('request')->getParsedBody();
-        $this->sign = $this->container->get('settings')['dbnya']['SIGNATURE'];
-        $this->siteOwner = $this->container->get('settings')['base_url'];
+        /* Call Parent Constructor */
+        parent::__construct($container);
 
-        // PDO Setup & Kripto
-        $this->dbpdo    = $container->database;
-        $this->kripto = new Encrypter($this->sign);
-
-        // URI Path variables
-        $this->uri_path = trim($this->request->getUri()->getPath(), '/');
-        if ($this->container->get('settings')['mode'] != 'production') {
-            $this->logger->addInfo(__CLASS__ . ' request_path :: ', ['INFO'=> 'URL_PATH : '. $this->uri_path]);
-        }
-
-        //JWT Expired time
-        $this->jwtExp = 24*3600*30; //30Days
-
-        //CacheExp
-        $this->CacheExp = 3600; //in seconds
+        // Load Model
+        $this->M_MENU = new \App\Models\M_menu($container);
+        $this->M_USER = new \App\Models\M_user($container);
+        $this->L_AUDITLOG = new \App\Models\L_auditlog($container);
 
         // Check Authentication
         $this->jwt_validate();
         $this->getUser();
         $this->controllerAuth();
         $this->auditLog();
-    }
-
-
-    /**
-     * Magic method to get things off of the container by referencing
-     * them as properties on the current object
-     */
-    public function __get($property)
-    {
-        if (isset($this->container, $property)) {
-            return $this->container->$property;
-        }
-        return null;
     }
 
     /* JWT Token Generator */
@@ -115,7 +78,7 @@ class PrivateController
 
         /* Logger in develop mode */
         if ($this->container->get('settings')['mode'] != 'production') {
-            $this->logger->addInfo("jwt_validate_jti :: " . $jtid);
+            $this->logger->info("jwt_validate_jti :: " . $jtid);
         }
 
         return $token = (string) $token;
@@ -158,7 +121,7 @@ class PrivateController
         $response = $response->withJson($output, $code);
 
         if ($this->container->get('settings')['mode'] != 'production') {
-            $this->logger->addInfo(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['INFO'=>'status : ' . $status]);
+            $this->logger->info(__METHOD__ . ' :: ', ['INFO'=>'status : ' . $status]);
         }
 
         return $response;
@@ -199,23 +162,10 @@ class PrivateController
         $exp = explode('/', $urlink);
         $exp = trim(end($exp));
         $urlink = is_numeric($exp) ? str_replace("/{$exp}", '',$urlink):$urlink;
-        $query = $this->dbpdo->get(
-            'm_menu',
-            [ '[>]j_menu' => 'id_menu' ],
-            'm_menu.controller',
-            [
-                'j_menu.idrole' => $this->user_data['ID_ROLE'],
-                'm_menu.url' => $urlink
-            ]
-        );
+        $query = $this->M_MENU->controllerAuth($this->user_data['ID_ROLE'], $urlink);
 
         /* Unauthorized! */
         if (!$query) {
-            /* Logger */
-            if ($this->container->get('settings')['mode'] != 'production') {
-                $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', $this->dbpdo->log());
-            }
-
             header('HTTP/1.1 403 Forbidden');
             header("Content-Type: application/json;charset=utf-8");
             die("{\"success\":false,\"message\":{\"error\":\"Unauthorized!\"}}");
@@ -230,8 +180,7 @@ class PrivateController
     {
         if (!in_array($this->uri_path, ['cauth', 'cmenu'])) {
             $ip = new Ipaddress();
-            return $this->dbpdo->insert(
-                'l_auditlog',
+            $this->L_AUDITLOG->create(
                 [
                     'iduser' => $this->user_data['ID_USER'],
                     'tanggal' => Medoo::raw('NOW()'),
@@ -256,7 +205,8 @@ class PrivateController
         }
 
         $id_user = $this->kripto->decrypt($token->getClaim('ID_USER'));
-        $userdata = $this->getUserDetail($id_user);
+        $userdata = $this->M_USER->getByID((int)$id_user);
+        $userdata = $userdata[0];
         $this->user_data['ID_USER']  = $userdata['iduser'];
         $this->user_data['USERNAME'] = $userdata['username'];
         $this->user_data['NAME']     = $userdata['nama'];
@@ -266,34 +216,6 @@ class PrivateController
         $this->user_data['ROLE']    = strtolower($userdata['role']);
 
         return $this->user_data;
-    }
-
-    /* Get User Role */
-    private function getUserDetail($id_user='')
-    {
-        $ckey = md5($this->sign . '_iduser_' . $id_user);
-        $CachedString = $this->InstanceCache->getItem($ckey);
-        if (is_null($CachedString->get())) {
-            $userdata = $this->dbpdo->get(
-                "m_user",
-                ["[>]m_role" => "idrole"],
-                [
-                    "m_user.iduser",
-                    "m_user.username",
-                    "m_user.nama",
-                    "m_user.email",
-                    "m_user.telpon",
-                    "m_user.idrole",
-                    "m_role.nama (role)",
-                ],
-                ["m_user.iduser" => $id_user]
-            );
-            $CachedString->set($userdata)->expiresAfter($this->jwtExp)->addTag($this->sign . "_UserDetail" . $id_user);
-            $this->InstanceCache->save($CachedString);
-        } else {
-            $userdata = $CachedString->get();
-        }
-        return $userdata;
     }
 
     /* Validate JWT */
@@ -320,13 +242,13 @@ class PrivateController
 
                 $this->jwtJTID = $jtid;
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addInfo("jwt_validate_jti :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
+                    $this->logger->info("jwt_validate_jti :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
                 }
 
                 if ($this->isAjax()===false) {
                     //logger
                     if ($this->container->get('settings')['mode'] != 'production') {
-                        $this->logger->addInfo("ONE_TIME-TOKEN :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
+                        $this->logger->info("ONE_TIME-TOKEN :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
                     }
                     // Remove cache for one time token
                     $this->InstanceCache->deleteItem($this->jwtJTID);
@@ -398,7 +320,7 @@ class PrivateController
                 $this->sign . '_getPermission_',
                 $this->sign . '_router',
                 $this->sign . '_userSession_' . $iduser,
-                $this->sign . '_UserDetail' . $iduser,
+                hash('sha256', $this->sign . 'M_user'),
             ]);
 
             return true;
@@ -420,10 +342,4 @@ class PrivateController
             && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true:false;
     }
 
-    /* Destructor */
-    public function __destruct()
-    {
-        $this->dbpdo = null;
-        $this->param = null;
-    }
 }

@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    \App\Controllers
  * @author     Benedict E. Pranata
  * @copyright  (c) 2019 benedict.erwin@gmail.com
  * @created    on Thu Jun 23 2019
@@ -10,18 +11,9 @@
 
 namespace App\Controllers;
 
-class PublicController
+class PublicController extends \App\Controllers\BaseController
 {
     /* Declare Variable */
-    protected $container;
-    protected $dbpdo;
-    protected $InstanceCache;
-    protected $siteOwner;
-    protected $logger;
-    protected $CacheExp;
-    protected $param;
-    protected $sign;
-    protected $jwtExp;
     protected $conf_data = array();
 
     /**
@@ -31,36 +23,8 @@ class PublicController
      */
     public function __construct(\Slim\Container $container)
     {
-        // Vars
-        $this->InstanceCache = $container->cacher;
-        $this->container = $container;
-        $this->siteOwner = $this->container->get('settings')['base_url'];
-        $this->param = $this->container->get('request')->getParsedBody();
-        $this->sign = $this->container->get('settings')['dbnya']['SIGNATURE'];
-        $this->CacheExp = 3600; //in seconds
-
-        // PDO Setup & Kripto
-        $this->dbpdo = $container->database;
-        $this->logger = $container->logger;
-        $this->conf_data = $this->getConfig();
-
-        //JWT Expired time
-        $this->jwtExp = 24 * 3600 * 30; //30Days
-
-        //CacheExp
-        $this->CacheExp = 3600; //in seconds
-    }
-
-    /**
-     * Magic method to get things off of the container by referencing
-     * them as properties on the current object
-     */
-    public function __get($property)
-    {
-        if (isset($this->container, $property)) {
-            return $this->container->$property;
-        }
-        return null;
+        /* Call Parent Constructor */
+        parent::__construct($container);
     }
 
     private function getConfig()
@@ -140,17 +104,4 @@ class PublicController
         return $this->jsonResponse(true, $message, $addl, $code);
     }
 
-    /* isAjax */
-    public function isAjax()
-    {
-        return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
-    }
-
-    /* Destructor */
-    public function __destruct()
-    {
-        $this->dbpdo = null;
-        $this->param = null;
-    }
 }

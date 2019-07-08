@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
- * @package    ScientiaAPP/App/Controller
+ * @package    \App\Controllers
  * @author     Benedict E. Pranata
  * @copyright  (c) 2019 benedict.erwin@gmail.com
  * @created    on Thu Jun 23 2019
@@ -10,19 +11,20 @@
 
 namespace App\Controllers;
 
+use App\Lib\Encrypter;
+
 class BaseController
 {
     /* Declare Variable */
     protected $container;
-    protected $dbpdo;
     protected $InstanceCache;
     protected $siteOwner;
     protected $logger;
-    protected $CacheExp;
     protected $param;
     protected $sign;
+    protected $kripto;
     protected $jwtExp;
-    protected $conf_data = array();
+    protected $CacheExp;
 
     /**
      * Initialize the controller with the container
@@ -31,25 +33,28 @@ class BaseController
      */
     public function __construct(\Slim\Container $container)
     {
-        // Vars
-        global $IC;
-
-        $this->InstanceCache = $IC;
+        // Default Vars
+        $this->InstanceCache = $container->cacher;
+        $this->logger = $container->logger;
         $this->container = $container;
-        $this->siteOwner = $this->container->get('settings')['base_url'];
+        $this->head = $this->container->get('request')->getHeaders();
         $this->param = $this->container->get('request')->getParsedBody();
         $this->sign = $this->container->get('settings')['dbnya']['SIGNATURE'];
-        $this->CacheExp = 3600; //in seconds
+        $this->siteOwner = $this->container->get('settings')['base_url'];
 
-        // PDO Setup & Kripto
-        $this->dbpdo = $container->database;
-        $this->logger = $container->logger;
-        $this->conf_data = $this->getConfig();
+        // Kripto
+        $this->kripto = new Encrypter($this->sign);
 
-        //JWT Expired time
+        // URI Path variables
+        $this->uri_path = trim($this->request->getUri()->getPath(), '/');
+        if ($this->container->get('settings')['mode'] != 'production') {
+            $this->logger->info(__METHOD__ . ' request_path :: ', ['INFO' => 'URL_PATH : ' . $this->uri_path]);
+        }
+
+        // JWT Expired time
         $this->jwtExp = 24 * 3600 * 30; //30Days
 
-        //CacheExp
+        // Cache Expired time
         $this->CacheExp = 3600; //in seconds
     }
 
@@ -65,35 +70,26 @@ class BaseController
         return null;
     }
 
-    private function getConfig()
+    /* isAjaxAndReferer */
+    public function isAjaxAndReferer()
     {
-        $arr = array();
-        $ckey = hash('md5', $this->sign . '_load_m_config_');
-        $CachedString = $this->InstanceCache->getItem($ckey);
-        if (is_null($CachedString->get())) {
-            $config = $this->dbpdo->select('m_config', ['name', 'value']);
-            foreach ($config as $key => $value) {
-                $arr[$value['name']] = $value['value'];
-            }
-            $CachedString->set($arr)->expiresAfter($this->CacheExp);
-            $this->InstanceCache->save($CachedString);
-        } else {
-            $arr = $CachedString->get();
-        }
-        return $arr;
-    }
-
-    /* isAjax */
-    public function isAjax()
-    {
-        return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
+        $xrequest = @(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
+        $referer = @(strpos($_SERVER['HTTP_REFERER'], $this->siteOwner) !== false) ? true : false;
+        return ($xrequest && $referer);
     }
 
     /* Destructor */
     public function __destruct()
     {
-        $this->dbpdo = null;
+        $this->InstanceCache = null;
+        $this->logger = null;
+        $this->container = null;
+        $this->head = null;
         $this->param = null;
+        $this->sign = null;
+        $this->siteOwner = null;
+        $this->kripto = null;
+        $this->CacheExp = null;
+        $this->jwtExp = null;
     }
 }

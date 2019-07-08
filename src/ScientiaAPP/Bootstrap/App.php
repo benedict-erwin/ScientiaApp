@@ -89,7 +89,7 @@ $container['cacher'] = function($container) use ($cache) {
 /* Make the custom App autoloader */
 spl_autoload_register(function ($class) use ($container){
     $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
-    $container['logger']->error('App::spl_autoload_register', ['autoload' => $class]);
+    $container['logger']->info('App::spl_autoload_register', ['autoload' => $class]);
     if (!is_file($classFile)) {
         $container['logger']->error('App::spl_autoload_register', ['code' => 'SC400', 'message' => 'Invalid File! cannot load class: ' . $class]);
         throw new \Exception('Invalid File! cannot load class: ' . $class);

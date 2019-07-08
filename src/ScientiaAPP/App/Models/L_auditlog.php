@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_user extends \App\Plugin\DataTablesMysql
+class L_auditlog extends \App\Plugin\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -28,34 +28,33 @@ class M_user extends \App\Plugin\DataTablesMysql
         /* Cache Setup */
         $this->Sign = $container->get('settings')['dbnya']['SIGNATURE'];
         $this->Cacher = $container->cacher;
-        $this->TagName = hash('sha256', $this->Sign . 'M_user');
+        $this->TagName = hash('sha256', $this->Sign . 'L_auditlog');
         $this->CacheExp = 3600; # in seconds (1 hour)
 
         /* Table Setup */
-        $this->setTable('m_user')
-            ->setPkey('iduser')
-            ->setSearchCols(['mu.nama' , 'mu.email' , 'mu.telpon' , 'mu.username'])
-            ->setOrderCols(['mu.iduser', null, 'mu.nama' , 'mu.email', 'mu.telpon', null, 'mu.username'])
+        $this->setTable('l_auditlog')
+            ->setPkey('idauditlog')
+            ->setSearchCols(['la.action', 'la.data', 'mu.nama', 'mu.username'])
+            ->setDefaultOrder(['la.idauditlog' => 'DESC'])
             ->setQuery($this->alterSql());
     }
 
     /* Alter Default DataTablles Query */
     public function alterSql()
     {
-        return "SELECT mu.iduser,
-                       mu.username,
-                       mu.nama,
-                       mu.email,
-                       mu.telpon,
-                       mu.idrole,
-                       mr.nama AS role,
-                       mu.lastlogin
-                FROM m_user mu
-                LEFT JOIN m_role mr ON mr.idrole=mu.idrole";
+        $where = '';
+        if(isset($this->safe['periode_start']) && isset($this->safe['periode_end'])){
+            $where = "WHERE la.tanggal >='" . $this->safe['periode_start'] . "' AND la.tanggal <='" . $this->safe['periode_end'] . "'";
+        }
+
+        return "SELECT la.*, mu.nama, mu.username
+                FROM l_auditlog la
+                LEFT JOIN m_user mu ON mu.iduser=la.iduser {$where}";
+
     }
 
     /**
-     * Get Data in M_user by Primary Key
+     * Get Data in L_auditlog by Primary Key
      *
      * @param integer $id
      * @return array
@@ -81,7 +80,7 @@ class M_user extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Insert Data in M_user
+     * Insert Data in L_auditlog
      *
      * @param array $data
      * @return int $last_insert_id
@@ -101,7 +100,7 @@ class M_user extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Retrieve data from M_user
+     * Retrieve data from L_auditlog
      *
      * @param array $data
      * @return array $output
@@ -128,7 +127,7 @@ class M_user extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Update data from M_user
+     * Update data from L_auditlog
      *
      * @param array $data
      * @param integer $id
@@ -146,7 +145,7 @@ class M_user extends \App\Plugin\DataTablesMysql
     }
 
     /**
-     * Remove single or multiple data from M_user
+     * Remove single or multiple data from L_auditlog
      *
      * @param array|integer $data
      * @return bool

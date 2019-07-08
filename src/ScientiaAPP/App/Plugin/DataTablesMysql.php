@@ -524,7 +524,7 @@ class DataTablesMysql
     protected function getDataById($id, $column = null)
     {
         if (!empty($this->SQL)) {
-            $where = ' WHERE ' . $this->PKEY . '=:' . $this->PKEY;
+            $where = ((strpos(strtoupper($this->SQL), 'WHERE') !== false) ? ' AND ':' WHERE ')  . $this->PKEY . '=:' . $this->PKEY;
             $query = $this->db->pdo->prepare($this->SQL . $where);
             $query->bindParam(':' . $this->PKEY, $id, \PDO::PARAM_INT);
             $query->execute();

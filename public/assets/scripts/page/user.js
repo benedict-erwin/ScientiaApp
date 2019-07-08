@@ -161,7 +161,8 @@ $(document).ready(function() {
 							4: json.message.data[i].email,
 							5: json.message.data[i].idrole,
 							6: json.message.data[i].telpon,
-							7: json.message.data[i].lastlogin,
+							7: json.message.data[i].role,
+							8: json.message.data[i].lastlogin,
 						})
 					}
 					return return_data;
@@ -213,6 +214,13 @@ $(document).ready(function() {
             },
             {
                 "targets": 7,
+                "orderable": false,
+                "render": function (data, type, row) {
+                    return strtoupper(data);
+                }
+            },
+            {
+                "targets": 8,
                 "className": "dt-center",
                 "orderable": false,
                 "render": function (data, type, row) {

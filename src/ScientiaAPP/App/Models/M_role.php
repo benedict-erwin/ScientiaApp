@@ -120,6 +120,7 @@ class M_role extends \App\Plugin\DataTablesMysql
                 $this->db->pdo->commit();
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
+                    hash('sha256', $this->Sign . 'M_menu'),
                     $this->Sign . '_getMenus',
                     $this->Sign . '_router',
                 ]);
