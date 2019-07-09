@@ -13,11 +13,11 @@ namespace App\Controllers\Publics;
 use Medoo\Medoo;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use App\Lib\Encrypter;
 use App\Lib\Ipaddress;
 
 class LoginController extends \App\Controllers\PublicController
 {
+    private $M_USER, $L_AUDITLOG;
 
     /**
      * Call Parent Constructor
@@ -26,7 +26,12 @@ class LoginController extends \App\Controllers\PublicController
      */
     public function __construct(\Slim\Container $container)
     {
+        /* Call Parent Constructor */
         parent::__construct($container);
+
+        /* Load Model */
+        $this->M_USER = new \App\Models\M_user($container);
+        $this->L_AUDITLOG = new \App\Models\L_auditlog($container);
     }
 
     /**
@@ -57,7 +62,7 @@ class LoginController extends \App\Controllers\PublicController
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'USER_REQUEST' => $this->param[ 'tx_username'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__ . ' :: ', [ 'USER_REQUEST' => $this->param[ 'tx_username'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
@@ -79,41 +84,36 @@ class LoginController extends \App\Controllers\PublicController
         /* Check db */
         try {
             $ip = new Ipaddress();
-            $kripto = new Encrypter($this->sign);
             $output['success'] = true;
             $output['message'] = '';
-            $userdata = $this->dbpdo->get("m_user", ["iduser", "username", "password"], ["username" => $userpass['tx_username']]);
+            $userdata = $this->M_USER->usernameCheck($userpass['tx_username']);
 
             if ($userdata) {
-                if ($kripto->verify_passwd($userpass['tx_username'], $userpass['tx_password'], $userdata['password'])) {
+                if ($this->kripto->verify_passwd($userpass['tx_username'], $userpass['tx_password'], $userdata['password'])) {
                     /* Insert l_auditlog */
-                    $this->dbpdo->insert(
-                        'l_auditlog',
+                    $this->L_AUDITLOG->create(
                         [
                             'iduser' => $userdata['iduser'],
                             'tanggal' => Medoo::raw('NOW()'),
                             'action' => 'clogin',
+                            'http_method' => 'POST',
                             'data' => json_encode(['action' => 'sign_in']),
                             'ip_address' => $ip->get_ip_address()
                         ]
                     );
 
                     /* Update last login */
-                    $this->dbpdo->update(
-                        'm_user',
+                    $this->M_USER->update(
                         [
                             'lastlogin' => Medoo::raw('NOW()'),
                             'ip_address' => $ip->get_ip_address()
                         ],
-                        ['iduser' => $userdata['iduser']]
+                        $userdata['iduser']
                     );
 
                     /* Generate token */
-                    // $userdata['ID_USER'] = $userdata['iduser'];
-                    // $userdata['USERNAME'] = $userdata['username'];
-                    // $token = (string) $this->getTokenJWT($userdata);
                     $jtid = null;
-                    $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['iduser'] . (($this->isAjax() === false) ? '_' . rand(0, time()) : ''));
+                    $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['iduser'] . (($this->isAjaxAndReferer() === false) ? '_' . rand(0, time()) : ''));
                     $CachedString = $this->InstanceCache->getItem($ckey);
                     if (is_null($CachedString->get())) {
                         $jtid = $ckey;
@@ -131,7 +131,7 @@ class LoginController extends \App\Controllers\PublicController
                         ->setIssuedAt(time())
                         ->setNotBefore(time())
                         ->setExpiration(time() + ($this->jwtExp))
-                        ->set('ID_USER', $kripto->encrypt($userdata['iduser']))
+                        ->set('ID_USER', $this->kripto->encrypt($userdata['iduser']))
                         ->set('USERNAME', $userdata['username'])
                         ->sign($signer, $this->sign)
                         ->getToken();
@@ -140,7 +140,6 @@ class LoginController extends \App\Controllers\PublicController
                     $output['success'] = true;
                     $output['message'] = 'Welcome Back ' . ucfirst($userdata['username']) . ' 🙂';
                     $output['username'] = $userdata['username'];
-                    // return $this->jsonSuccess("Welcome " . ucfirst($userdata['username']) . " 🙂", ['username' => $userdata['username']], $token, 202);
                 } else {
                     throw new \Exception("Oops, username or password is incorrect 🙁");
                 }
@@ -166,7 +165,6 @@ class LoginController extends \App\Controllers\PublicController
             $response = $response->withAddedHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
             $response = $response->withJson($output, 401);
             return $response;
-            // return $this->jsonFail('Verification fail!', ['error'=>$e->getMessage()], 401);
         }
     }
 }

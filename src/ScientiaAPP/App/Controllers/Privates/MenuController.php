@@ -86,7 +86,7 @@ class MenuController extends \App\Controllers\PrivateController
 
                 /* Logger */
                 if($this->container->get('settings')['mode'] != 'production'){
-                    $this->logger->addError(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['INFO' => $ers]);
+                    $this->logger->error(__METHOD__ . ' :: ', ['INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {

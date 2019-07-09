@@ -72,7 +72,7 @@ class M_user extends \App\Controllers\PrivateController
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
@@ -122,7 +122,7 @@ class M_user extends \App\Controllers\PrivateController
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
@@ -191,7 +191,7 @@ class M_user extends \App\Controllers\PrivateController
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {

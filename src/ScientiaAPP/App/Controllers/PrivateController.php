@@ -35,12 +35,12 @@ class PrivateController extends \App\Controllers\BaseController
         /* Call Parent Constructor */
         parent::__construct($container);
 
-        // Load Model
+        /* Load Model */
         $this->M_MENU = new \App\Models\M_menu($container);
         $this->M_USER = new \App\Models\M_user($container);
         $this->L_AUDITLOG = new \App\Models\L_auditlog($container);
 
-        // Check Authentication
+        /* Check Authentication */
         $this->jwt_validate();
         $this->getUser();
         $this->controllerAuth();
@@ -51,9 +51,9 @@ class PrivateController extends \App\Controllers\BaseController
     public function getTokenJWT(array $userdata = [])
     {
         // Generate jtid for one time token
-        $userdata = (!empty($userdata)) ? $userdata:$this->user_data;
         $jtid = null;
-        $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['ID_USER'] . (($this->isAjax() === false) ? '_'.rand(0, time()):''));
+        $userdata = (!empty($userdata)) ? $userdata:$this->user_data;
+        $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['ID_USER'] . (($this->isAjaxAndReferer() === false) ? '_'.rand(0, time()):''));
         $CachedString = $this->InstanceCache->getItem($ckey);
         if (is_null($CachedString->get())) {
             $jtid = $ckey;

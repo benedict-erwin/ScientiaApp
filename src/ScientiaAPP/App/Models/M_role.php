@@ -145,23 +145,27 @@ class M_role extends \App\Plugin\DataTablesMysql
      */
     public function read(array $data = [])
     {
-        unset($data['draw']);
-        $output = [];
-        $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
-        $CachedString = $this->Cacher->getItem($cacheKey);
-        if (!$CachedString->isHit()) {
-            $output = [
-                'datalist' => $this->get_datatables($data),
-                'recordsTotal' => $this->count_all($data),
-                'recordsFiltered' => $this->count_filtered($data)
-            ];
-            $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
-            $this->Cacher->save($CachedString);
-        }else {
-            $output = $CachedString->get();
-        }
+        try {
+            unset($data['draw']);
+            $output = [];
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
+            $CachedString = $this->Cacher->getItem($cacheKey);
+            if (!$CachedString->isHit()) {
+                $output = [
+                    'datalist' => $this->get_datatables($data),
+                    'recordsTotal' => $this->count_all($data),
+                    'recordsFiltered' => $this->count_filtered($data)
+                ];
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            }else {
+                $output = $CachedString->get();
+            }
 
-        return $output;
+            return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
     }
 
     /**

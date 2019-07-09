@@ -52,9 +52,7 @@ $(document).ready(function() {
 				download: "open",
 				pageSize: "LEGAL",
 				orientation: "portrait", /* portrait | landscape */
-				title: function () {
-                    return 'Config';
-                },
+				title: function () { return 'Config'; },
 				exportOptions: {
 					/* Show column */
 					columns: ":visible" /* [1, 2, 3] => selected column only */
@@ -212,7 +210,7 @@ $(document).ready(function() {
 	/* Button Delete */
 	$(tbl).on( 'click', '#btDel', function () {
 		let data = (table.row($(this).closest('tr')).data() === undefined) ? table.row($(this).closest('li')).data() : table.row($(this).closest('tr')).data();
-		deleteSingle(apiUrl, data[0]);
+        deleteSingle(apiUrl, data[0], data[2]);
 	});
 
 	/* Button Delete Multi */

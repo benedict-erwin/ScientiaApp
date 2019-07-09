@@ -157,7 +157,7 @@ $(document).ready(function () {
                             6: json.message.data[i].controller,
                             7: json.message.data[i].tipe,
                             8: json.message.data[i].aktif,
-                            9: json.message.data[i].public,
+                            9: json.message.data[i].is_public,
                             10: json.message.data[i].urut
                         })
                     }
@@ -255,7 +255,7 @@ $(document).ready(function () {
     /* Button Delete */
     $(tbl).on('click', '#btDel', function () {
         let data = (table.row($(this).closest('tr')).data() === undefined) ? table.row($(this).closest('li')).data() : table.row($(this).closest('tr')).data();
-        deleteSingle(apiUrl, data[0]);
+        deleteSingle(apiUrl, data[0], data[3]);
     });
 
     /* Button Assign Action */

@@ -12,6 +12,17 @@
 ##> Redirect default page
 $app->redirect('/', 'scientia/', 301);
 
+##> Forbidden
+$app->get('/api/forbidden', function(){
+    header('Internal Server Error', true, 403);
+    $msg = [
+        'success' => false,
+        'error' => "[SC403] - The server understood the request, but is refusing to authorize it."
+    ];
+    print(json_encode($msg));
+    exit();
+});
+
 ##> Login Page
 $app->get('/scientia/login', function ($request, $response, $args) use ($container) {
     $data['template'] = $container->get('settings')['cms_template'];

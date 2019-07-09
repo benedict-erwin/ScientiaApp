@@ -100,23 +100,27 @@ class M_menu extends \App\Plugin\DataTablesMysql
      */
     public function read(array $data = [])
     {
-        unset($data['draw']);
-        $output = [];
-        $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
-        $CachedString = $this->Cacher->getItem($cacheKey);
-        if (!$CachedString->isHit()) {
-            $output = [
-                'datalist' => $this->get_datatables($data),
-                'recordsTotal' => $this->count_all($data),
-                'recordsFiltered' => $this->count_filtered($data)
-            ];
-            $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
-            $this->Cacher->save($CachedString);
-        } else {
-            $output = $CachedString->get();
-        }
+        try {
+            unset($data['draw']);
+            $output = [];
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
+            $CachedString = $this->Cacher->getItem($cacheKey);
+            if (!$CachedString->isHit()) {
+                $output = [
+                    'datalist' => $this->get_datatables($data),
+                    'recordsTotal' => $this->count_all($data),
+                    'recordsFiltered' => $this->count_filtered($data)
+                ];
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            } else {
+                $output = $CachedString->get();
+            }
 
-        return $output;
+            return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
     }
 
     /**
@@ -297,6 +301,41 @@ class M_menu extends \App\Plugin\DataTablesMysql
             }
 
             return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
+    }
+
+    /**
+     * Check if Duplicated
+     *
+     * @param array $url
+     * @param array $tipe
+     * @return boolean
+     */
+    public function isDuplicate(array $url, array $tipe)
+    {
+        try {
+            $output = null;
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode(array_merge($url,$tipe)));
+            $CachedString = $this->Cacher->getItem($cacheKey);
+
+            if (!$CachedString->isHit()) {
+                $output = $this->db->count(
+                    $this->getTable(),
+                    [
+                        'url' => $url,
+                        'tipe' => $tipe,
+                    ]
+                );
+
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            } else {
+                $output = $CachedString->get();
+            }
+
+            return ((int)$output > 0) ? true:false;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }

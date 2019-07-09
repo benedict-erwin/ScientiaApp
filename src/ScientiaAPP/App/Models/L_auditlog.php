@@ -35,22 +35,20 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
         $this->setTable('l_auditlog')
             ->setPkey('idauditlog')
             ->setSearchCols(['la.action', 'la.data', 'mu.nama', 'mu.username'])
-            ->setDefaultOrder(['la.idauditlog' => 'DESC'])
-            ->setQuery($this->alterSql());
+            ->setDefaultOrder(['la.idauditlog' => 'DESC']);
     }
 
     /* Alter Default DataTablles Query */
-    public function alterSql()
+    public function alterSql($data)
     {
         $where = '';
-        if(isset($this->safe['periode_start']) && isset($this->safe['periode_end'])){
-            $where = "WHERE la.tanggal >='" . $this->safe['periode_start'] . "' AND la.tanggal <='" . $this->safe['periode_end'] . "'";
+        if (isset($data['periode_start']) && isset($data['periode_end'])) {
+            $where = "WHERE date_format(la.tanggal, '%Y-%m-%d') >='" . $data['periode_start'] . "' AND date_format(la.tanggal, '%Y-%m-%d') <='" . $data['periode_end'] . "'";
         }
 
         return "SELECT la.*, mu.nama, mu.username
                 FROM l_auditlog la
                 LEFT JOIN m_user mu ON mu.iduser=la.iduser {$where}";
-
     }
 
     /**
@@ -66,10 +64,11 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
             $cacheKey = hash('md5', $this->Sign . __METHOD__ . $id);
             $CachedString = $this->Cacher->getItem($cacheKey);
             if (!$CachedString->isHit()) {
+                $this->setQuery($this->alterSql(null));
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -88,10 +87,10 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTag($this->TagName);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
@@ -107,23 +106,28 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
      */
     public function read(array $data = [])
     {
-        unset($data['draw']);
-        $output = [];
-        $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
-        $CachedString = $this->Cacher->getItem($cacheKey);
-        if (!$CachedString->isHit()) {
-            $output = [
-                'datalist' => $this->get_datatables($data),
-                'recordsTotal' => $this->count_all($data),
-                'recordsFiltered' => $this->count_filtered($data)
-            ];
-            $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
-            $this->Cacher->save($CachedString);
-        }else {
-            $output = $CachedString->get();
-        }
+        try {
+            unset($data['draw']);
+            $output = [];
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
+            $CachedString = $this->Cacher->getItem($cacheKey);
+            if (!$CachedString->isHit()) {
+                $this->setQuery($this->alterSql($data));
+                $output = [
+                    'datalist' => $this->get_datatables($data),
+                    'recordsTotal' => $this->count_all($data),
+                    'recordsFiltered' => $this->count_filtered($data)
+                ];
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            } else {
+                $output = $CachedString->get();
+            }
 
-        return $output;
+            return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
     }
 
     /**

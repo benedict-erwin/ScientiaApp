@@ -24,9 +24,12 @@ function saveOrUpdate(saveUpdate, apiUrl, pKey, form, callback) {
     } else if (saveUpdate == 'update') {
         urLink = apiUrl + '/' + pKey;
         httpMethod = 'PUT';
+    } else if (saveUpdate == 'generate') {
+        urLink = apiUrl;
+        httpMethod = 'POST';
     } else {
         httpMethod = 'GET';
-        urLink = apiUrl + '/forbidden';
+        urLink = SiteRoot + '/forbidden';
     }
 
     if ($(clForm).parsley().validate({ force: true, group: 'role' })) {
@@ -149,13 +152,14 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
  * @param {object} data
  * @callback callback
  */
-function deleteSingle(apiUrl, data, callback) {
-    let msg = 'Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
+function deleteSingle(apiUrl, id, identifier, callback) {
+    let msg = '<font color="red"><strong>Penghapusan : ' + identifier + '</strong></font>';
+    msg = msg + '<br>Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
     alertify.confirm('PERINGATAN!', msg, function () {
         /* Ok */
         $.ajax({
             "type": 'DELETE',
-            "url": apiUrl + '/' + data,
+            "url": apiUrl + '/' + id,
             "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "dataType": 'json',
             "success": function (result, textStatus, jqXHR) {

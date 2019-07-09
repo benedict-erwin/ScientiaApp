@@ -135,7 +135,9 @@ $(document).ready(function () {
                             2: json.message.data[i].nama,
                             3: json.message.data[i].url,
                             4: json.message.data[i].controller,
-                            5: json.message.data[i].aktif
+                            5: json.message.data[i].tipe,
+                            6: json.message.data[i].aktif,
+                            7: json.message.data[i].is_public
                         })
                     }
 
@@ -164,7 +166,7 @@ $(document).ready(function () {
                 "searchable": false
             },
             {
-                "targets": 5,
+                "targets": 6,
                 "className": "dt-center",
                 "render": function (data, type, row) {
                     if (data == '1') {
@@ -173,7 +175,18 @@ $(document).ready(function () {
                         return '<span class="label label-default">NON AKTIF</span>';
                     }
                 }
-            }
+            },
+            {
+                "targets": 7,
+                "className": "dt-center",
+                "render": function (data, type, row) {
+                    if (data == '1') {
+                        return '<span class="label label-primary">PUBLIC</span>';
+                    } else {
+                        return '<span class="label label-warning">PRIVATE</span>';
+                    }
+                }
+            },
         ]
     });
 
@@ -185,7 +198,7 @@ $(document).ready(function () {
         crudCheck();
         saveOrUpdate('generate', apiUrl, null, '.formEditorModal:#formEditor', function () {
             setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
             }, 600);
         });
     });

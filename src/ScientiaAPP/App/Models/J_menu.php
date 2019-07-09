@@ -92,7 +92,11 @@ class J_menu extends \App\Plugin\DataTablesMysql
     {
         try {
             if($lastId = $this->saveData($data)){
-                $this->Cacher->deleteItemsByTag($this->TagName);
+                $this->Cacher->deleteItemsByTags([
+                    $this->TagName,
+                    hash('sha256', $this->Sign . 'M_menu'),
+                    $this->Sign . '_router',
+                ]);
                 return $lastId;
             }else {
                 return false;
@@ -110,23 +114,27 @@ class J_menu extends \App\Plugin\DataTablesMysql
      */
     public function read(array $data = [])
     {
-        unset($data['draw']);
-        $output = [];
-        $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
-        $CachedString = $this->Cacher->getItem($cacheKey);
-        if (!$CachedString->isHit()) {
-            $output = [
-                'datalist' => $this->get_datatables($data),
-                'recordsTotal' => $this->count_all($data),
-                'recordsFiltered' => $this->count_filtered($data)
-            ];
-            $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
-            $this->Cacher->save($CachedString);
-        }else {
-            $output = $CachedString->get();
-        }
+        try {
+            unset($data['draw']);
+            $output = [];
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode($data));
+            $CachedString = $this->Cacher->getItem($cacheKey);
+            if (!$CachedString->isHit()) {
+                $output = [
+                    'datalist' => $this->get_datatables($data),
+                    'recordsTotal' => $this->count_all($data),
+                    'recordsFiltered' => $this->count_filtered($data)
+                ];
+                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
+                $this->Cacher->save($CachedString);
+            } else {
+                $output = $CachedString->get();
+            }
 
-        return $output;
+            return $output;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
     }
 
     /**
@@ -140,7 +148,11 @@ class J_menu extends \App\Plugin\DataTablesMysql
     {
         try {
             $update = $this->updateData($data, [$this->getPkey() => $id]);
-            $this->Cacher->deleteItemsByTag($this->TagName);
+            $this->Cacher->deleteItemsByTags([
+                $this->TagName,
+                hash('sha256', $this->Sign . 'M_menu'),
+                $this->Sign . '_router',
+            ]);
             return $update;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
@@ -157,7 +169,11 @@ class J_menu extends \App\Plugin\DataTablesMysql
     {
         try {
             $delete = $this->deleteData($data);
-            $this->Cacher->deleteItemsByTag($this->TagName);
+            $this->Cacher->deleteItemsByTags([
+                $this->TagName,
+                hash('sha256', $this->Sign . 'M_menu'),
+                $this->Sign . '_router',
+            ]);
             return $delete;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
@@ -188,11 +204,7 @@ class J_menu extends \App\Plugin\DataTablesMysql
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
                 hash('sha256', $this->Sign . 'M_menu'),
-                $this->Sign . '_getMenus_',
                 $this->Sign . '_router',
-                $this->Sign . '_getPermission_',
-                $this->Sign . '_getAuthMenu_',
-                $this->Sign . '_CRUDGenerator_read_menu'
             ]);
         } catch (\Exception $e) {
             /* Rollback transaction on error */

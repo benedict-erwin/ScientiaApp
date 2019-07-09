@@ -13,12 +13,13 @@ namespace App\Controllers\Privates;
 
 use App\Lib\Stringer;
 
-class CRUDGenerator extends \App\Plugin\DataTables
+class CRUDGenerator extends \App\Controllers\PrivateController
 {
     private $template;
     private $aproject;
     private $aauthor;
     private $acopyright;
+    private $M_ROLE, $M_MENU, $M_GROUPMENU, $CRUDGEN;
 
     /**
      * Constructor
@@ -29,6 +30,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
     {
         /* Execute parent constructor */
         parent::__construct($container);
+
+        /* Set DataTables Variables */
+        $this->M_ROLE = new \App\Models\M_role($container);
+        $this->M_MENU = new \App\Models\M_menu($container);
+        $this->M_GROUPMENU = new \App\Models\M_groupmenu($container);
+        $this->CRUDGEN = new \App\Models\CRUDGenerator($container);
 
         /* Set Header variables */
         $this->aproject = "ScientiaAPP - Web Apps Skeleton & CRUD Generator";
@@ -67,17 +74,16 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
             if ($safe === false) {
                 $err = implode(', ', array_values($gump->get_errors_array()));
-
-                /* Logger */
-                if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->addError(__class__ . ' :: ' . __FUNCTION__ . ' :: ' . $err);
-                }
                 throw new \Exception($err);
             } else {
                 /* GoTo Switcher */
                 return $this->switcher($safe);
             }
         } catch (\Exception $e) {
+            /* Logger */
+            if ($this->container->get('settings')['mode'] != 'production') {
+                $this->logger->error(__METHOD__ . ' :: ' . $e->getMessage());
+            }
             return $this->jsonFail(null, ['error' => $this->overrideSQLMsg($e->getMessage())]);
         }
     }
@@ -87,52 +93,18 @@ class CRUDGenerator extends \App\Plugin\DataTables
     {
         switch ($safe['action']) {
             case 'generate':
-                /* Set DataTables Variables */
-                $this->set_TABLE("m_menu");
-                $this->set_PKEY('id_menu');
-                $this->set_COLUMN_SEARCH(['nama', 'url', 'controller']);
-                $this->set_ORDER(['id_menu' => 'DESC']);
-                if ($safe['generate'] == 'bf') {
-                    $safe['crud'] = ['c', 'r', 'u', 'd'];
-                }
                 return $this->generate($safe);
                 break;
             case 'read_menu':
-                /* Set DataTables Variables */
-                $this->set_TABLE("m_menu");
-                $this->set_PKEY('id_menu');
-                $this->set_COLUMN_SEARCH(['nama', 'url', 'controller']);
-                $this->set_ORDER(['id_menu' => 'DESC']);
-
                 return $this->read_menu($safe);
                 break;
             case 'get_tables':
-                 /* Set DataTables Variables */
-                $this->set_TABLE("m_menu");
-                $this->set_PKEY('id_menu');
-                $this->set_COLUMN_SEARCH(['nama', 'url', 'controller']);
-                $this->set_ORDER(['id_menu' => 'DESC']);
-
                 return $this->get_tables($safe);
                 break;
             case 'get_jabatan':
-                /* Set Table m_role */
-                $this->set_TABLE('m_role');
-                $this->set_PKEY('idrole');
-                $this->set_COLUMNS(['idrole', 'nama', 'deskripsi']);
-                $this->set_COLUMN_SEARCH(['nama', 'deskripsi']);
-                $this->set_ORDER(['idrole' => 'DESC']);
-
                 return $this->getJabatan($safe);
                 break;
             case 'get_groupmenu':
-                /* Set DataTables Variables */
-                $this->set_TABLE('m_groupmenu');
-                $this->set_PKEY('id_groupmenu');
-                $this->set_COLUMNS(['id_groupmenu', 'nama', 'icon', 'urut', 'aktif']);
-                $this->set_COLUMN_SEARCH(['nama']);
-                $this->set_ORDER(['urut' => 'ASC']);
-
                 return $this->get_groupmenu($safe);
                 break;
             default:
@@ -145,6 +117,10 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function generate($safe = [])
     {
         try {
+            if ($safe['generate'] == 'bf') {
+                $safe['crud'] = ['c', 'r', 'u', 'd'];
+            }
+
             /* Initiate variables */
             $data = [];
             $cselect = null;
@@ -168,10 +144,10 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 /* DataTables Column */
                 $tbcols[] = $desc['Field'];
 
-                /* ColumnSearch */
+                /* ColumnSearch & Gump String Filter */
                 if (Stringer::is_like($colTypeToSearch, $desc['Type'])) {
                     $csearch .= "\n\t\t\t'" . $desc['Field'] . "', ";
-                    $gumpFilterRules .= "\n\t\t\t\"" . $desc['Field'] . '" => "trim",';
+                    $gumpFilterRules .= "\n\t\t\t\"" . $desc['Field'] . '" => "trim|sanitize_string",';
                 }
 
                 /* ColumnOrder, PrimaryKey */
@@ -185,15 +161,15 @@ class CRUDGenerator extends \App\Plugin\DataTables
                     $input[] = $desc['Field'];
                 }
 
-                /* Gump */
+                /* Gump Numeric Validation */
                 if (Stringer::is_like(['int'], $desc['Type'])) {
                     $gumpValidationRules .= "\n\t\t\t\"" . $desc['Field'] . '" => "numeric",';
                 }
+
             }
 
             /* Variable for generate backend */
-            $groupmenu = $this->dbpdo->get('m_groupmenu', ['nama', 'icon'], ['id_groupmenu' => $safe['m_groupmenu']]);
-            $urutGroup = $this->dbpdo->max('m_menu', 'urut', ['id_groupmenu' => $safe['m_groupmenu'], 'tipe' => 'GET']);
+            $groupmenu = $this->CRUDGEN->getGroupmenuIcon($safe['m_groupmenu']);
             $data['className'] = $safe['controller'];
             $data['tableName'] = $safe['get_tables'];
             $data['columnsSelect'] = empty($cselect) ? null : trim($cselect, ', ');
@@ -209,254 +185,54 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $data['id_groupmenu'] = $safe['m_groupmenu'];
             $data['nama_groupmenu'] = $groupmenu['nama'];
             $data['icon_groupmenu'] = $groupmenu['icon'];
-            $data['urutGroup'] = (int) $urutGroup +1;
+            $data['urutGroup'] = $this->CRUDGEN->urutanMenu($safe['m_groupmenu']);
             $data['menu'] = ucwords(strtolower($safe['menu']));
             $data['url'] = strtolower(trim($safe['url'], "/"));
             $data['crud'] = $safe['crud'];
 
-            /* Insert to table M_menu */
-            $cek = $this->dbpdo->select(
-                $this->TABLE,
-                'id_menu',
+            /* Check Duplicate M_menu */
+            $cek = $this->M_MENU->isDuplicate(
                 [
-                    'nama' => [
-                        $data['menu'],
-                        'Api ' . $data['menu'] . ' Create',
-                        'Api ' . $data['menu'] . ' Read',
-                        'Api ' . $data['menu'] . ' Update',
-                        'Api ' . $data['menu'] . ' Delete',
-                    ],
-                    'id_groupmenu' => $data['id_groupmenu'],
-                    'tipe' => ['GET', 'PUT', 'POST', 'DELETE']
+                    '/' . $data['url'],
+                    '/' . $data['url'] . '/create',
+                    '/' . $data['url'] . '/read',
+                    '/' . $data['url'] . '/batch',
+                ],
+                [
+                    'GET',
+                    'PUT',
+                    'POST',
+                    'DELETE',
+                    'MENU',
                 ]
             );
 
             /* Start transaction */
-            $this->dbpdo->pdo->beginTransaction();
             try {
-                if (count($cek) === 0) {
-                    /* Insert to table m_menu */
 
-                    /* Backend Create */
-                    if (in_array('c', $safe['crud'], true)) {
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Create',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':create',
-                                'url' => '/' . $data['url'] . '/create',
-                                'tipe' => 'POST',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Create */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-                    }
-
-                    /* Backend Read */
-                    if (in_array('r', $safe['crud'], true)) {
-                        /* Read Data By ID */
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Read',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':read',
-                                'url' => '/' . $data['url'],
-                                'tipe' => 'GET',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Read Data By ID */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-
-                        /* Read Data */
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Read',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':read',
-                                'url' => '/' . $data['url'] . '/read',
-                                'tipe' => 'POST',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Read Data */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-                    }
-
-                    /* Backend Update */
-                    if (in_array('u', $safe['crud'], true)) {
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Update',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':update',
-                                'url' => '/' . $data['url'],
-                                'tipe' => 'PUT',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Update */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-                    }
-
-                    /* Backend Delete */
-                    if (in_array('d', $safe['crud'], true)) {
-                        /* Single delete */
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Delete',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':delete',
-                                'url' => '/' . $data['url'],
-                                'tipe' => 'DELETE',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Single Delete */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-
-                        /* Batch delete */
-                        $this->dbpdo->insert(
-                            $this->TABLE,
-                            [
-                                'id_groupmenu' => $data['id_groupmenu'],
-                                'nama' => 'Api ' . $data['menu'] . ' Delete',
-                                'icon' => null,
-                                'controller' => $data['className'] . ':delete',
-                                'url' => '/' . $data['url'] . '/batch',
-                                'tipe' => 'DELETE',
-                                'aktif' => 1,
-                                'urut' => 0
-                            ]
-                        );
-
-                        /* Permission Backend Batch Delete */
-                        $idfirst = $this->dbpdo->id();
-                        foreach ($safe['id_jabatan'] as $jbt) {
-                            $this->dbpdo->insert(
-                                'j_menu',
-                                [
-                                    'id_menu' => $idfirst,
-                                    'idrole' => $jbt
-                                ]
-                            );
-                        }
-                    }
-
-                    // if ($safe['generate'] == 'bf') {
-                    //     /* Frontend */
-                    //     $this->dbpdo->insert(
-                    //         $this->TABLE,
-                    //         [
-                    //             'id_groupmenu' => $data['id_groupmenu'],
-                    //             'nama' => $data['menu'],
-                    //             'icon' => null,
-                    //             'controller' => $data['className'] . ':index',
-                    //             'url' => '/' . $data['url'],
-                    //             'tipe' => 'GET',
-                    //             'aktif' => 1,
-                    //             'urut' => $data['urutGroup']
-                    //         ]
-                    //     );
-
-                    //     /* Permission Frontend */
-                    //     $idsecond = $this->dbpdo->id();
-                    //     foreach ($safe['id_jabatan'] as $jbt) {
-                    //         $this->dbpdo->insert(
-                    //             'j_menu',
-                    //             [
-                    //                 'id_menu' => $idsecond,
-                    //                 'idrole' => $jbt
-                    //             ]
-                    //         );
-                    //     }
-                    // }
-
-                    /* Error Check */
-                    if (!$this->dbpdo->error()) {
-                        throw new \Exception("Error on insert db!");
-                    }
+                if ($cek === false) {
+                    $this->CRUDGEN->generateMenus($safe, $data);
                 }
 
-
-                /* Generate PHP BackEnd */
-                $phpFileName = APP_PATH . '/Controller/' . $data['className'] . '.php';
+                /* Generate Pivate Controller */
+                $phpFileName = APP_PATH . '/Controllers/Privates/' . $data['className'] . '.php';
                 $handle = @fopen($phpFileName, 'w') or die('Cannot open file:  ' . $phpFileName);
-                $php = $this->stringPHP($data);
+                $php = $this->controllerPHP($data);
                 if (!fwrite($handle, $php)) {
                     throw new \Exception("PHP File not generated");
                 }
 
+                /* Generate Model */
+                $modFileName = APP_PATH . '/Models/' . $data['className'] . '.php';
+                $modHandle = @fopen($modFileName, 'w') or die('Cannot open file:  ' . $modFileName);
+                $phpMod = $this->modelPHP($data);
+                if (!fwrite($modHandle, $phpMod)) {
+                    throw new \Exception("PHP File not generated");
+                }
 
                 if ($safe['generate'] == 'bf') {
                     /* HTML */
-                    $htmlFileName = APP_PATH . '/Templates/Home/' . $this->template . '/' . str_replace(' ', '_', strtolower($data['url'])) . '.html';
+                    $htmlFileName = APP_PATH . '/Templates/Home/' . $this->template . '/' . str_replace(' ', '_', strtolower($data['url'])) . '.twig';
                     $handleHTML = @fopen($htmlFileName, 'w') or die('Cannot open file:  ' . $htmlFileName);
                     $html = $this->stringHTML($data);
                     if (!fwrite($handleHTML, $html)) {
@@ -472,32 +248,18 @@ class CRUDGenerator extends \App\Plugin\DataTables
                     }
                 }
 
-                /* Commit transaction & Refresh Router  */
-                $this->dbpdo->pdo->commit();
-                $this->InstanceCache->deleteItemsByTags([
-                    $this->sign . '_getMenus_',
-                    $this->sign . '_router',
-                    $this->sign . '_M_menu_read_',
-                    $this->sign . '_CRUDGenerator_read_menu',
-                    $this->sign . '_describe_table',
-                    $this->sign . '_tableForeignKeys',
-                    $this->sign . '_getJabatan',
-                    $this->sign . '_get_groupmenu',
-                    $this->sign . '_get_tables'
-                ]);
                 return $this->jsonSuccess('File Created');
             } catch (\Exception $e) {
                 /* Rollback transaction on error */
-                $this->dbpdo->pdo->rollBack();
+                // $this->dbpdo->pdo->rollBack();
                 throw new \Exception($e->getMessage());
             }
         } catch (\Exception $e) {
             $this->logger->error(__CLASS__ . '->' .  __METHOD__ . ' :: ', [
                 'error' => $e->getCode(),
                 'message' => $e->getMessage(),
-                'db_last' => $this->dbpdo->last(),
             ]);
-            return $this->jsonFail('Unable to process request', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);
         }
     }
 
@@ -505,50 +267,27 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function read_menu(array $safe = [])
     {
         try {
-            /* Check Cache */
+            /* Get Data */
+            $data = [];
             $output = [];
-            $ckey = hash("md5", "CRUDGenerator_read_menu" . $safe["start"] . $safe["length"] . (isset($safe["opsional"]) ? json_encode($safe["opsional"]) : null) . $safe["search"]["value"]);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-
-                /* Execute DataTables */
-                $list = $this->get_datatables($safe);
-                $data = [];
-                $no = (int)$safe['start'];
-
-                foreach ($list as $cols) {
-                    $no++;
-                    $row = [];
-                    $row['no'] = $no;
-                    $row['id_menu'] = (int)$cols['id_menu'];
-                    $row['id_groupmenu'] = (int)$cols['id_groupmenu'];
-                    $row['nama'] = $cols['nama'];
-                    $row['icon'] = $cols['icon'];
-                    $row['url'] = $cols['url'];
-                    $row['controller'] = $cols['controller'];
-                    $row['tipe'] = $cols['tipe'];
-                    $row['aktif'] = $cols['aktif'];
-                    $row['urut'] = (int)$cols['urut'];
-                    $data[] = $row;
-                }
-
-                $output = [
-                    "recordsTotal" => $this->count_all($safe),
-                    "recordsFiltered" => $this->count_filtered($safe),
-                    "data" => $data
-                ];
-
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_CRUDGenerator_read_menu');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
+            $records = $this->M_MENU->read($safe);
+            $no = (int) $safe['start'];
+            foreach ($records['datalist'] as $cols) {
+                $no++;
+                $cols['no'] = $no;
+                $data[] = $cols;
             }
 
-            //send back draw
-            $output["draw"] = (int)(isset($safe["draw"]) ? $safe["draw"] : 0);
+            $output = [
+                'recordsTotal' => $records['recordsTotal'],
+                'recordsFiltered' => $records['recordsFiltered'],
+                'data' => $data,
+                'draw' => (int) (isset($safe['draw']) ? $safe['draw'] : 0),
+            ];
+
             return $this->jsonSuccess($output);
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -556,70 +295,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function describe_table($table = null)
     {
         try {
-            /* Check Cache */
-            $output = [];
-            $ckey = hash("md5", "describe_table" . $table);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                $query = $this->dbpdo->pdo->prepare("DESCRIBE `$table`");
-                $query->execute();
-                $dsc = $query->fetchAll(\PDO::FETCH_ASSOC);
-                $rel = $this->tableForeignKeys($table);
-                $output = ['describe' => $dsc, 'relation' => $rel];
-
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_describe_table');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
-            }
-            return $output;
+            return [
+                'describe' => $this->CRUDGEN->describeTable($table),
+                'relation' => $this->CRUDGEN->getTableRelation($table),
+            ];
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
-        }
-    }
-
-    /**
-     * Get Table Relationship
-     * @param String $table
-     */
-    private function tableForeignKeys(String $table = null)
-    {
-        try {
-            /* Check Cache */
-            $output = [];
-            $ckey = hash("md5", "tableForeignKeys" . $table);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                // Get Table Relation
-                $sql = "SELECT  REFERENCED_TABLE_NAME,
-                                REFERENCED_COLUMN_NAME,
-                                (
-                                    SELECT COLUMN_NAME
-                                    FROM INFORMATION_SCHEMA.COLUMNS
-                                    WHERE TABLE_SCHEMA = DATABASE()
-                                    AND TABLE_NAME = REFERENCED_TABLE_NAME
-                                    AND (DATA_TYPE LIKE '%VARCHAR%' OR DATA_TYPE LIKE '%TEXT%')
-                                    LIMIT 1
-                                ) IS_CHAR
-                        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                        WHERE TABLE_SCHEMA = DATABASE()
-                            AND TABLE_NAME = '$table'
-                            AND REFERENCED_COLUMN_NAME IS NOT NULL";
-
-                $query = $this->dbpdo->pdo->prepare($sql);
-                $query->execute();
-                $relation = $query->fetchAll(\PDO::FETCH_ASSOC);
-                $output = ['relation' => $relation];
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_tableForeignKeys');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
-            }
-
-            // Return result
-            return $output;
-        } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -627,41 +308,27 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function getJabatan(array $safe = [])
     {
         try {
-            /* Check Cache */
+            /* Get Data */
+            $data = [];
             $output = [];
-            $ckey = hash("md5", "getJabatan" . $safe["start"] . $safe["length"] . $safe["search"]["value"]);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                /* Execute DataTables */
-                $list = $this->get_datatables($safe);
-                $data = [];
-                $no = (int)$safe['start'];
-                foreach ($list as $cols) {
-                    $no++;
-                    $row = [];
-                    $row['no'] = $no;
-                    $row['idrole'] = $cols['idrole'];
-                    $row['nama'] = $cols['nama'];
-                    $row['deskripsi'] = $cols['deskripsi'];
-                    $data[] = $row;
-                }
-
-                $output = [
-                    "recordsTotal" => $this->count_all($safe),
-                    "recordsFiltered" => $this->count_filtered($safe),
-                    "data" => $data
-                ];
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_getJabatan');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
+            $records = $this->M_ROLE->read($safe);
+            $no = (int) $safe['start'];
+            foreach ($records['datalist'] as $cols) {
+                $no++;
+                $cols['no'] = $no;
+                $data[] = $cols;
             }
 
-            //send back draw
-            $output["draw"] = (int)(isset($safe["draw"]) ? $safe["draw"] : 0);
+            $output = [
+                'recordsTotal' => $records['recordsTotal'],
+                'recordsFiltered' => $records['recordsFiltered'],
+                'data' => $data,
+                'draw' => (int) (isset($safe['draw']) ? $safe['draw'] : 0),
+            ];
+
             return $this->jsonSuccess($output);
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -669,45 +336,27 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function get_groupmenu(array $safe = [])
     {
         try {
-            /* Check Cache */
+            /* Get Data */
+            $data = [];
             $output = [];
-            $ckey = hash("md5", "get_groupmenu" . $safe["start"] . $safe["length"] . $safe["search"]["value"]);
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                /* Execute DataTables */
-                $list = $this->get_datatables($safe);
-                $data = [];
-                $no = (int)$safe['start'];
-
-                foreach ($list as $cols) {
-                    $no++;
-                    $row = [];
-                    $row['no'] = $no;
-                    $row['id_groupmenu'] = $cols['id_groupmenu'];
-                    $row['nama'] = $cols['nama'];
-                    $row['icon'] = $cols['icon'];
-                    $row['urut'] = $cols['urut'];
-                    $row['aktif'] = $cols['aktif'];
-                    $data[] = $row;
-                }
-
-                $output = [
-                    "recordsTotal" => $this->count_all($safe),
-                    "recordsFiltered" => $this->count_filtered($safe),
-                    "data" => $data
-                ];
-
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_get_groupmenu');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
+            $records = $this->M_GROUPMENU->read($safe);
+            $no = (int) $safe['start'];
+            foreach ($records['datalist'] as $cols) {
+                $no++;
+                $cols['no'] = $no;
+                $data[] = $cols;
             }
 
-            //send back draw
-            $output["draw"] = (int)(isset($safe["draw"]) ? $safe["draw"] : 0);
+            $output = [
+                'recordsTotal' => $records['recordsTotal'],
+                'recordsFiltered' => $records['recordsFiltered'],
+                'data' => $data,
+                'draw' => (int) (isset($safe['draw']) ? $safe['draw'] : 0),
+            ];
+
             return $this->jsonSuccess($output);
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -715,26 +364,15 @@ class CRUDGenerator extends \App\Plugin\DataTables
     private function get_tables()
     {
         try {
-            /* Check Cache */
-            $output = [];
-            $ckey = hash("md5", "get_tables");
-            $CachedString = $this->InstanceCache->getItem($ckey);
-            if (is_null($CachedString->get())) {
-                $query = $this->dbpdo->pdo->prepare("SHOW TABLES");
-                $query->execute();
-                $data = $query->fetchAll(\PDO::FETCH_ASSOC);
-                foreach ($data as $tbl) {
-                    $output['table'][] = $tbl[key($tbl)];
-                }
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->sign . '_get_tables');
-                $this->InstanceCache->save($CachedString);
-            } else {
-                $output = $CachedString->get();
+            /* Get Data */
+            $data = $this->CRUDGEN->getAllTables();
+            foreach ($data as $tbl) {
+                $output['table'][] = $tbl[key($tbl)];
             }
 
             return $this->jsonSuccess($output);
         } catch (\Exception $e) {
-            return $this->jsonFail('Execution Fail!', ['error' => $this->overrideSQLMsg($e->getMessage())]);
+            return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
     }
 
@@ -763,31 +401,211 @@ class CRUDGenerator extends \App\Plugin\DataTables
     }
 
     /**
-     * PHP - Controller Generator
+     * PHP - Models Generator
      *
      * @param array $data
-     * @return void
+     * @return string
      */
-    private function stringPHP($data = [])
+    public function modelPHP(array $data)
     {
         $php = "<?php\n";
         $php .= "/**";
         $php .= "\n* @project    " . $this->aproject;
-        $php .= "\n* @package    ScientiaAPP/App/Controller";
+        $php .= "\n* @package    App\Models";
         $php .= "\n* @author     " . $this->aauthor;
         $php .= "\n* @copyright  (c) " . date('Y') . " " . $this->acopyright;
-        ;
         $php .= "\n* @created    on " . date('D M d Y') . "";
         $php .= "\n* @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>";
         $php .= "\n*/\n\n";
-        $php .= "namespace App\Controller;\n\n";
+        $php .= "namespace App\Models;\n\n";
 
-        /* Class Head */
-        $php .= "class " . $data['className'] . " extends \App\Plugin\DataTables\n{";
+        /* Class Head - Opening tag */
+        $php .= "class " . $data['className'] . " extends \App\Plugin\DataTablesMysql\n{";
 
         /* Declare Variable */
-        $php .= "\n\t/* Declare Variable */";
-        $php .= "\n\tprivate \$safe;\n";
+        $php .= "\n\t/* Declare private variable */";
+        $php .= "\n\tprivate \$Cacher;";
+        $php .= "\n\tprivate \$CacheExp;";
+        $php .= "\n\tprivate \$TagName;";
+        $php .= "\n\tprivate \$Sign;\n";
+
+        /* Constructor */
+        $php .= "\n\t/* Constructor */";
+        $php .= "\n\tpublic function __construct(\\Slim\\Container \$container)\n\t{";
+        $php .= "\n\t\t/* Call Parent Constructor */";
+        $php .= "\n\t\tparent::__construct(\$container);\n";
+        $php .= "\n\t\t/* Cache Setup */";
+        $php .= "\n\t\t\$this->Sign = \$container->get('settings')['dbnya']['SIGNATURE'];";
+        $php .= "\n\t\t\$this->Cacher = \$container->cacher;";
+        $php .= "\n\t\t\$this->TagName = hash('sha256', \$this->Sign . '" . $data['className'] . "');";
+        $php .= "\n\t\t\$this->CacheExp = 3600; # in seconds (1 hour)\n";
+        $php .= "\n\t\t/* Table Setup */";
+        $php .= "\n\t\t\$this->setTable('" . $data['tableName'] . "')";
+        $php .= "\n\t\t\t->setColumns([" . $data['columnsSelect'] . "\n\t\t])";
+        $php .= "\n\t\t\t->setPkey('" . $data['primaryKey'] . "')";
+        $php .= "\n\t\t\t->setSearchCols([" . $data['columnsSearch'] . "\n\t\t])";
+        $php .= "\n\t\t\t->setDefaultOrder(" . $data['columnsOrder'] . ");";
+        $php .= "\n\t}\n";
+
+        /* READ */
+        if (in_array('r', $data['crud'], true)) {
+            /* Get Data By ID */
+            $php .= "\n\t/**";
+            $php .= "\n\t * Get Data in " . $data['className'] . " by Primary Key";
+            $php .= "\n\t *";
+            $php .= "\n\t * @param integer \$id";
+            $php .= "\n\t * @return array";
+            $php .= "\n\t */";
+            $php .= "\n\tpublic function getByID(int \$id)";
+            $php .= "\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t\$output = null;";
+            $php .= "\n\t\t\t\$cacheKey = hash('md5', \$this->Sign . __METHOD__ . \$id);";
+            $php .= "\n\t\t\t\$CachedString = \$this->Cacher->getItem(\$cacheKey);";
+            $php .= "\n\t\t\tif (!\$CachedString->isHit()) {";
+            $php .= "\n\t\t\t\t\$output = \$this->getDataById(\$id);";
+            $php .= "\n\t\t\t\t\$CachedString->set(\$output)->expiresAfter(\$this->CacheExp)->addTag(\$this->TagName);";
+            $php .= "\n\t\t\t\t\$this->Cacher->save(\$CachedString);";
+            $php .= "\n\t\t\t}else {";
+            $php .= "\n\t\t\t\t\$output = \$CachedString->get();";
+            $php .= "\n\t\t\t}\n";
+            $php .= "\n\t\t\treturn \$output;";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\tthrow new \Exception(\$this->overrideSQLMsg(\$e->getMessage()));";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+
+            /* Get Data & Filter */
+            $php .= "\n\t/**";
+            $php .= "\n\t * Retrieve data from " . $data['className'] . "";
+            $php .= "\n\t *";
+            $php .= "\n\t * @param array \$data";
+            $php .= "\n\t * @return array \$output";
+            $php .= "\n\t */";
+            $php .= "\n\tpublic function read(array \$data = [])";
+            $php .= "\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\tunset(\$data['draw']);";
+            $php .= "\n\t\t\t\$output = [];";
+            $php .= "\n\t\t\t\$cacheKey = hash('md5', \$this->Sign . __METHOD__ . json_encode(\$data));";
+            $php .= "\n\t\t\t\$CachedString = \$this->Cacher->getItem(\$cacheKey);";
+            $php .= "\n\t\t\tif (!\$CachedString->isHit()) {";
+            $php .= "\n\t\t\t\t\$output = [";
+            $php .= "\n\t\t\t\t\t'datalist' => \$this->get_datatables(\$data),";
+            $php .= "\n\t\t\t\t\t'recordsTotal' => \$this->count_all(\$data),";
+            $php .= "\n\t\t\t\t\t'recordsFiltered' => \$this->count_filtered(\$data)";
+            $php .= "\n\t\t\t\t];";
+            $php .= "\n\t\t\t\t\$CachedString->set(\$output)->expiresAfter(\$this->CacheExp)->addTag(\$this->TagName);";
+            $php .= "\n\t\t\t\t\$this->Cacher->save(\$CachedString);";
+            $php .= "\n\t\t\t} else {";
+            $php .= "\n\t\t\t\t\$output = \$CachedString->get();";
+            $php .= "\n\t\t\t}\n";
+            $php .= "\n\t\t\treturn \$output;";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\tthrow new \Exception(\$this->overrideSQLMsg(\$e->getMessage()));";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+        }
+
+        /* CREATE */
+        if (in_array('c', $data['crud'], true)) {
+            /* Insert Data */
+            $php .= "\n\t/**";
+            $php .= "\n\t * Insert Data in " . $data['className'] . "";
+            $php .= "\n\t *";
+            $php .= "\n\t * @param array \$data";
+            $php .= "\n\t * @return int \$last_insert_id";
+            $php .= "\n\t */";
+            $php .= "\n\tpublic function create(array \$data = [])";
+            $php .= "\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\tif(\$lastId = \$this->saveData(\$data)){";
+            $php .= "\n\t\t\t\t\$this->Cacher->deleteItemsByTag(\$this->TagName);";
+            $php .= "\n\t\t\t\treturn \$lastId;";
+            $php .= "\n\t\t\t}else {";
+            $php .= "\n\t\t\t\treturn false;";
+            $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\tthrow new \Exception(\$this->overrideSQLMsg(\$e->getMessage()));";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+        }
+
+        /* UPDATE */
+        if (in_array('u', $data['crud'], true)) {
+            /* Update Data */
+            $php .= "\n\t/**";
+            $php .= "\n\t * Update data from " . $data['className'] . "";
+            $php .= "\n\t *";
+            $php .= "\n\t * @param array \$data";
+            $php .= "\n\t * @param integer \$id";
+            $php .= "\n\t * @return bool";
+            $php .= "\n\t */";
+            $php .= "\n\tpublic function update(array \$data = [], int \$id)";
+            $php .= "\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t\$update = \$this->updateData(\$data, [\$this->getPkey() => \$id]);";
+            $php .= "\n\t\t\t\$this->Cacher->deleteItemsByTag(\$this->TagName);";
+            $php .= "\n\t\t\treturn \$update;";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\tthrow new \Exception(\$this->overrideSQLMsg(\$e->getMessage()));";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+        }
+
+        /* DELETE */
+        if (in_array('d', $data['crud'], true)) {
+            /* Delete Data */
+            $php .= "\n\t/**";
+            $php .= "\n\t * Remove single or multiple data from " . $data['className'] . "";
+            $php .= "\n\t *";
+            $php .= "\n\t * @param array|integer \$data";
+            $php .= "\n\t * @return bool";
+            $php .= "\n\t */";
+            $php .= "\n\tpublic function delete(\$data)";
+            $php .= "\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t\$delete = \$this->deleteData(\$data);";
+            $php .= "\n\t\t\t\$this->Cacher->deleteItemsByTag(\$this->TagName);";
+            $php .= "\n\t\t\treturn \$delete;";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\tthrow new \Exception(\$this->overrideSQLMsg(\$e->getMessage()));";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+        }
+
+        /* End Class - Closing tag */
+        $php .= "\n}\n";
+
+        /* Return all string */
+        return $php;
+    }
+
+    /**
+     * PHP - Controllers Generator
+     *
+     * @param array $data
+     * @return string
+     */
+    private function controllerPHP(array $data)
+    {
+        $php = "<?php\n";
+        $php .= "/**";
+        $php .= "\n* @project    " . $this->aproject;
+        $php .= "\n* @package    App\Controllers\Privates";
+        $php .= "\n* @author     " . $this->aauthor;
+        $php .= "\n* @copyright  (c) " . date('Y') . " " . $this->acopyright;
+        $php .= "\n* @created    on " . date('D M d Y') . "";
+        $php .= "\n* @license    GNU GPLv3 <https://www.gnu.org/licenses/gpl-3.0.en.html>";
+        $php .= "\n*/\n\n";
+        $php .= "namespace App\Controllers\Privates;\n\n";
+
+        /* Class Head */
+        $php .= "class " . $data['className'] . " extends \App\Controllers\PrivateController\n{";
+
+        /* Declare Variable */
+        $php .= "\n\t/* Declare Model */";
+        $php .= "\n\tprivate \$MODEL;\n";
 
         /* Constructor */
         $php .= "\n\t/* Constructor */";
@@ -795,134 +613,153 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $php .= "\n\t\t/* Call Parent Constructor */";
         $php .= "\n\t\tparent::__construct(\$container);\n";
         $php .= "\n\t\t/* Set DataTables Variables */";
-        $php .= "\n\t\t\$this->set_TABLE('" . $data['tableName'] . "');";
-        $php .= "\n\t\t\$this->set_PKEY('" . $data['primaryKey'] . "');";
-        $php .= "\n\t\t\$this->set_COLUMNS([" . $data['columnsSelect'] . "\n\t\t]);\n";
-        $php .= "\n\t\t\$this->set_COLUMN_SEARCH([" . $data['columnsSearch'] . "\n\t\t]);\n";
-        $php .= "\n\t\t\$this->set_ORDER(" . $data['columnsOrder'] . ");";
-        $php .= "\n\t\t\$this->set_CASE_SENSITIVE(false);\n";
-        $php .= "\n\t\t/* Sanitize Param */";
-        $php .= "\n\t\t\$this->sanitizer(\$this->param);";
+        $php .= "\n\t\t\$this->MODEL = new \App\Models\\" . $data['className'] . "(\$container);";
         $php .= "\n\t}\n";
 
-        /* Parameter Sanitizer */
-        $php .= "\n\t/**";
-        $php .= "\n\t * Parameter Sanitizer";
-        $php .= "\n\t *";
-        $php .= "\n\t * @param array \$request";
-        $php .= "\n\t * @return void";
-        $php .= "\n\t */";
-        $php .= "\n\tprivate function sanitizer(array \$request)\n\t{";
-        $php .= "\n\t\t\$gump = new \GUMP();";
-        $php .= "\n\t\t\$gump->validation_rules([\n\t\t\t\"draw\" => \"numeric\",\n\t\t\t\"start\" => \"numeric\",\n\t\t\t\"length\" => \"numeric\"," . $data['gump_validation'] . "\n\t\t]);\n";
-        $php .= "\n\t\t\$gump->filter_rules([\n\t\t\t\"draw\" => \"trim|sanitize_numbers\",\n\t\t\t\"start\" => \"trim|sanitize_numbers\",\n\t\t\t\"length\" => \"trim|sanitize_numbers\"," . $data['gump_filter'] . "\n\t\t]);\n";
-        $php .= "\n\t\ttry {";
-        $php .= "\n\t\t\t//sanitize parameter";
-        $php .= "\n\t\t\t\$gump->xss_clean(\$request);";
-        $php .= "\n\t\t\t\$this->safe = \$gump->run(\$request);\n";
-        $php .= "\n\t\t\tif (\$this->safe === false) {";
-        $php .= "\n\t\t\t\t\$ers = \$gump->get_errors_array();";
-        $php .= "\n\t\t\t\t\$err = implode(', ', array_values(\$ers));\n";
-        $php .= "\n\t\t\t\t/* Logger */";
-        $php .= "\n\t\t\t\tif (\$this->container->get('settings')['mode'] != 'production') {";
-        $php .= "\n\t\t\t\t\t\$this->logger->addError(__FUNCTION__ , ['USER_REQUEST'=>\$this->user_data['USERNAME'], 'INFO'=>\$ers]);";
-        $php .= "\n\t\t\t\t}";
-        $php .= "\n\t\t\t\tthrow new \\Exception(\$err);";
-        $php .= "\n\t\t\t} else {";
-        $php .= "\n\t\t\t\treturn \$this->safe;";
-        $php .= "\n\t\t\t}";
-        $php .= "\n\t\t} catch (\\Exception \$e) {";
-        $php .= "\n\t\t\treturn \$this->jsonFail('There was a missing or invalid parameter in the request', ['error' => \$e->getMessage()]);";
-        $php .= "\n\t\t}";
-        $php .= "\n\t}\n";
+        /* Function Get By ID */
+        if (in_array('r', $data['crud'], true)) {
+            $php .= "\n\t/* Function Get Data By ID */";
+            $php .= "\n\tpublic function get(\$request, \$response, \$args)\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\tif (!is_numeric(\$args['id'])) throw new \Exception('ID tidak valid!');";
+            $php .= "\n\t\t\t\$output = \$this->MODEL->getByID(\$args['id']);";
+            $php .= "\n\t\t\tif (!empty(\$output)) {";
+            $php .= "\n\t\t\t\treturn \$this->jsonSuccess(\$output);";
+            $php .= "\n\t\t\t}else {";
+            $php .= "\n\t\t\t\treturn \$this->jsonFail('Data tidak ditemukan', [], 404);";
+            $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
+            $php .= "\n\t\t}";
+            $php .= "\n\t}\n";
+
+        }
 
         /* Function Create */
         if (in_array('c', $data['crud'], true)) {
-            $php .= "\n\t/* Function Create */";
+            $php .= "\n\t/**";
+            $php .= "\n\t * Create function";
+            $php .= "\n\t *";
+            $php .= "\n\t * @return void";
+            $php .= "\n\t */";
             $php .= "\n\tpublic function create()\n\t{";
-            $php .= "\n\t\tif (\$this->safe){";
-            $php .= "\n\t\t\ttry {";
-            $php .= "\n\t\t\t\t/* Send to DB */";
-            $php .= "\n\t\t\t\tif (\$this->saveDb(\$this->safe) !== false) {";
-            $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
-            $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);";
-            $php .= "\n\t\t\t\t}else{";
-            $php .= "\n\t\t\t\t\tthrow new \\Exception('Penyimpanan gagal dilakukan!');";
+            $php .= "\n\t\t\$gump = new \GUMP('id');";
+            $php .= "\n\t\t\$gump->validation_rules([" . $data['gump_validation'] . "\n\t\t]);\n";
+            $php .= "\n\t\t\$gump->filter_rules([" . $data['gump_filter'] . "\n\t\t]);\n";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t/* Sanitize parameter */";
+            $php .= "\n\t\t\t\$gump->xss_clean(\$this->param);";
+            $php .= "\n\t\t\t\$safe = \$gump->run(\$this->param);\n";
+            $php .= "\n\t\t\tif (\$safe === false) {";
+            $php .= "\n\t\t\t\t\$ers = \$gump->get_errors_array();";
+            $php .= "\n\t\t\t\t\$err = implode(', ', array_values(\$ers));\n";
+            $php .= "\n\t\t\t\t/* Logger */";
+            $php .= "\n\t\t\t\tif (\$this->container->get('settings')['mode'] != 'production') {";
+            $php .= "\n\t\t\t\t\t\$this->logger->error(__METHOD__, ['USER_REQUEST' => \$this->user_data['USERNAME'], 'INFO' => \$ers]);";
             $php .= "\n\t\t\t\t}";
-            $php .= "\n\t\t\t} catch (\\Exception \$e) {";
-            $php .= "\n\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$this->overrideSQLMsg(\$e->getMessage())]);";
+            $php .= "\n\t\t\t\tthrow new \Exception(\$err);";
+            $php .= "\n\t\t\t} else {";
+            $php .= "\n\t\t\t\ttry {";
+            $php .= "\n\t\t\t\t\t/* Send to DB */";
+            $php .= "\n\t\t\t\t\tif (\$this->MODEL->create(\$safe)) {";
+            $php .= "\n\t\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);";
+            $php .= "\n\t\t\t\t\t} else {";
+            $php .= "\n\t\t\t\t\t\tthrow new \Exception('Penyimpanan gagal dilakukan!');";
+            $php .= "\n\t\t\t\t\t}";
+            $php .= "\n\t\t\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
+            $php .= "\n\t\t\t\t}";
             $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\treturn \$this->jsonFail('Invalid Request', ['error' => \$e->getMessage()]);";
             $php .= "\n\t\t}";
             $php .= "\n\t}\n";
         }
 
         /* Function Read */
         if (in_array('r', $data['crud'], true)) {
+
             $php .= "\n\t/* Function Read */";
             $php .= "\n\tpublic function read()\n\t{";
-            $php .= "\n\t\tif (\$this->safe){";
-            $php .= "\n\t\t\ttry {";
-            $php .= "\n\t\t\t\t/* Check Cache */";
-            $php .= "\n\t\t\t\t\$output = [];";
-            $php .= "\n\t\t\t\t\$opsional = (isset(\$this->safe[\"opsional\"]) ? json_encode(\$this->safe[\"opsional\"]):null);";
-            $php .= "\n\t\t\t\t\$search = (isset(\$this->safe['search']['value']) ? \$this->safe['search']['value']:null);";
-            $php .= "\n\t\t\t\t\$length = (isset(\$this->safe['length']) ? \$this->safe['length']:null);";
-            $php .= "\n\t\t\t\t\$start = (isset(\$this->safe['start']) ? \$this->safe['start']:null);";
-            $php .= "\n\t\t\t\t\$ckey = hash(\"md5\", \"" . $data["className"] . "\" . \$this->user_data['ID_ROLE'] . \$start . \$length . \$opsional . \$search);";
-            $php .= "\n\t\t\t\t\$CachedString = \$this->InstanceCache->getItem(\$ckey);\n";
-            $php .= "\n\t\t\t\t/* If not in Cache */";
-            $php .= "\n\t\t\t\tif(is_null(\$CachedString->get())){";
-            $php .= "\n\t\t\t\t\t/* Execute DataTables */";
+            $php .= "\n\t\t\$gump = new \GUMP('id');";
+            $php .= "\n\t\t\$gump->validation_rules([\n\t\t\t\"draw\" => \"numeric\",\n\t\t\t\"start\" => \"numeric\",\n\t\t\t\"length\" => \"numeric\"," . $data['gump_validation'] . "\n\t\t]);\n";
+            $php .= "\n\t\t\$gump->filter_rules([\n\t\t\t\"draw\" => \"sanitize_numbers\",\n\t\t\t\"start\" => \"sanitize_numbers\",\n\t\t\t\"length\" => \"sanitize_numbers\"," . $data['gump_filter'] . "\n\t\t]);\n";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t/* Sanitize parameter */";
+            $php .= "\n\t\t\t\$gump->xss_clean(\$this->param);";
+            $php .= "\n\t\t\t\$safe = \$gump->run(\$this->param);\n";
+            $php .= "\n\t\t\tif (\$safe === false) {";
+            $php .= "\n\t\t\t\t\$ers = \$gump->get_errors_array();";
+            $php .= "\n\t\t\t\t\$err = implode(', ', array_values(\$ers) );\n";
+            $php .= "\n\t\t\t\t/* Logger */";
+            $php .= "\n\t\t\t\tif (\$this->container->get('settings')['mode'] != 'production') {";
+            $php .= "\n\t\t\t\t\t\$this->logger->error(__METHOD__, ['USER_REQUEST' => \$this->user_data['USERNAME'], 'INFO' => \$ers]);";
+            $php .= "\n\t\t\t\t}";
+            $php .= "\n\t\t\t\tthrow new \Exception(\$err);";
+            $php .= "\n\t\t\t} else {";
+            $php .= "\n\t\t\t\ttry {";
+            $php .= "\n\t\t\t\t\t/* Get Data */";
             $php .= "\n\t\t\t\t\t\$data = [];";
-            $php .= "\n\t\t\t\t\t\$list = \$this->get_datatables(\$this->safe);";
-            $php .= "\n\t\t\t\t\t\$no = (int)\$this->safe['start'];";
-            $php .= "\n\t\t\t\t\tforeach (\$list as \$cols) {";
+            $php .= "\n\t\t\t\t\t\$output = [];";
+            $php .= "\n\t\t\t\t\t\$records = \$this->MODEL->read(\$safe);";
+            $php .= "\n\t\t\t\t\t\$no = (int) \$safe['start'];";
+            $php .= "\n\t\t\t\t\tforeach (\$records['datalist'] as \$cols) {";
             $php .= "\n\t\t\t\t\t\t\$no++;";
             $php .= "\n\t\t\t\t\t\t\$cols['no'] = \$no;";
             $php .= "\n\t\t\t\t\t\t\$data[] = \$cols;";
             $php .= "\n\t\t\t\t\t}\n";
             $php .= "\n\t\t\t\t\t\$output = [";
-            $php .= "\n\t\t\t\t\t\t\"recordsTotal\" => \$this->count_all(\$this->safe),";
-            $php .= "\n\t\t\t\t\t\t\"recordsFiltered\" => \$this->count_filtered(\$this->safe),";
-            $php .= "\n\t\t\t\t\t\t\"data\" => \$data";
+            $php .= "\n\t\t\t\t\t\t'recordsTotal' => \$records['recordsTotal'],";
+            $php .= "\n\t\t\t\t\t\t'recordsFiltered' => \$records['recordsFiltered'],";
+            $php .= "\n\t\t\t\t\t\t'data' => \$data,";
+            $php .= "\n\t\t\t\t\t\t'draw' => (int) (isset(\$safe['draw']) ? \$safe['draw']: 0),";
             $php .= "\n\t\t\t\t\t];\n";
-            $php .= "\n\t\t\t\t\t\$CachedString->set(\$output)->expiresAfter(\$this->CacheExp)->addTag(\$this->sign . \"_" . $data["className"] ."_read_\");";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->save(\$CachedString);";
-            $php .= "\n\t\t\t\t} else {";
-            $php .= "\n\t\t\t\t\t/* Get data from Cache */";
-            $php .= "\n\t\t\t\t\t\$output = \$CachedString->get();";
-            $php .= "\n\t\t\t\t}\n";
-            $php .= "\n\t\t\t\t//send back draw";
-            $php .= "\n\t\t\t\t\$output[\"draw\"] = (int)(isset(\$this->safe[\"draw\"]) ? \$this->safe[\"draw\"] : 0);";
-            $php .= "\n\t\t\t\treturn \$this->jsonSuccess(\$output);";
-            $php .= "\n\t\t\t}  catch (\\Exception \$e) {";
-            $php .= "\n\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$this->overrideSQLMsg(\$e->getMessage())]);";
+            $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess(\$output);";
+            $php .= "\n\t\t\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
+            $php .= "\n\t\t\t\t}";
             $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\treturn \$this->jsonFail('Invalid Request', ['error' => \$e->getMessage()]);";
             $php .= "\n\t\t}";
             $php .= "\n\t}\n";
         }
 
         /* Function Update */
         if (in_array('u', $data['crud'], true)) {
+
             $php .= "\n\t/* Function Update */";
-            $php .= "\n\tpublic function update()\n\t{";
-            $php .= "\n\t\tif (\$this->safe){";
-            $php .= "\n\t\t\ttry {";
-            $php .= "\n\t\t\t\t/* Prepare vars */";
-            $php .= "\n\t\t\t\t\$where = [\$this->PKEY => \$this->safe['pKey']];";
-            $php .= "\n\t\t\t\tunset(\$this->safe['pKey']);\n";
-            $php .= "\n\t\t\t\t/* Send to DB */";
-            $php .= "\n\t\t\t\tif (\$this->updateDb(\$this->safe, \$where)) {";
-            $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
-            $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Perubahan data berhasil');";
-            $php .= "\n\t\t\t\t}else{";
-            $php .= "\n\t\t\t\t\tthrow new \\Exception('Perubahan gagal dilakukan!');";
+            $php .= "\n\tpublic function update(\$request, \$response, \$args)\n\t{";
+            $php .= "\n\t\t\$gump = new \GUMP('id');";
+            $php .= "\n\t\t\$data = array_merge(\$this->param, \$args);";
+            $php .= "\n\t\t\$gump->validation_rules([\n\t\t\t\"id\" => \"required|numeric\"," . $data['gump_validation'] . "\n\t\t]);\n";
+            $php .= "\n\t\t\$gump->filter_rules([\n\t\t\t\"id\" => \"sanitize_numbers\"," . $data['gump_filter'] . "\n\t\t]);\n";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t/* Sanitize parameter */";
+            $php .= "\n\t\t\t\$gump->xss_clean(\$data);";
+            $php .= "\n\t\t\t\$safe = \$gump->run(\$data);\n";
+            $php .= "\n\t\t\tif (\$safe === false) {";
+            $php .= "\n\t\t\t\t\$ers = \$gump->get_errors_array();";
+            $php .= "\n\t\t\t\t\$err = implode(', ', array_values(\$ers) );\n";
+            $php .= "\n\t\t\t\t/* Logger */";
+            $php .= "\n\t\t\t\tif (\$this->container->get('settings')['mode'] != 'production') {";
+            $php .= "\n\t\t\t\t\t\$this->logger->error(__METHOD__, ['USER_REQUEST' => \$this->user_data['USERNAME'], 'INFO' => \$ers]);";
             $php .= "\n\t\t\t\t}";
-            $php .= "\n\t\t\t} catch (\\Exception \$e) {";
-            $php .= "\n\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$this->overrideSQLMsg(\$e->getMessage())]);";
+            $php .= "\n\t\t\t\tthrow new \Exception(\$err);";
+            $php .= "\n\t\t\t} else {";
+            $php .= "\n\t\t\t\ttry {";
+            $php .= "\n\t\t\t\t\t\$id = \$safe['id']; unset(\$safe['id']);";
+            $php .= "\n\t\t\t\t\tif (\$this->MODEL->update(\$safe, \$id)) {";
+            $php .= "\n\t\t\t\t\t\treturn \$this->jsonSuccess('Perubahan data berhasil');";
+            $php .= "\n\t\t\t\t\t}else {";
+            $php .= "\n\t\t\t\t\t\tthrow new \Exception('Tidak ada perubahan data!');";
+            $php .= "\n\t\t\t\t\t}";
+            $php .= "\n\t\t\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
+            $php .= "\n\t\t\t\t}";
             $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception \$e) {";
+            $php .= "\n\t\t\treturn \$this->jsonFail('Invalid Request', ['error' => \$e->getMessage()]);";
             $php .= "\n\t\t}";
             $php .= "\n\t}\n";
         }
@@ -930,23 +767,32 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
         /* Function Delete */
         if (in_array('d', $data['crud'], true)) {
+
             $php .= "\n\t/* Function Delete */";
-            $php .= "\n\tpublic function delete()\n\t{";
-            $php .= "\n\t\tif (\$this->safe){";
-            $php .= "\n\t\t\ttry {";
-            $php .= "\n\t\t\t\t/* Send to DB */";
-            $php .= "\n\t\t\t\tif (\$this->deleteDb(\$this->safe['pKey'])) {";
-            $php .= "\n\t\t\t\t\t//remove old chace";
-            $php .= "\n\t\t\t\t\t\$this->InstanceCache->deleteItemsByTag(\$this->sign . \"_" . $data['className'] . "_read_\");";
-            $php .= "\n\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil dihapus');";
-            $php .= "\n\t\t\t\t}else{";
-            $php .= "\n\t\t\t\t\tthrow new \\Exception('Penghapusan gagal dilakukan!');";
-            $php .= "\n\t\t\t\t}";
-            $php .= "\n\t\t\t} catch (\\Exception \$e) {";
-            $php .= "\n\t\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$this->overrideSQLMsg(\$e->getMessage())]);";
+            $php .= "\n\tpublic function delete(\$request, \$response, \$args)\n\t{";
+            $php .= "\n\t\ttry {";
+            $php .= "\n\t\t\t/** Path variable  */";
+            $php .= "\n\t\t\t\$path = explode('/', \$request->getUri()->getPath());\n";
+            $php .= "\n\t\t\t/** Batch delete */";
+            $php .= "\n\t\t\tif (trim(end(\$path)) == 'batch') {";
+            $php .= "\n\t\t\t\tif (!is_array(\$this->param['id'])) throw new \Exception('ID tidak valid!');";
+            $php .= "\n\t\t\t\tif (in_array(false, array_map('is_numeric', \$this->param['id']))) throw new \Exception('ID tidak valid!');";
+            $php .= "\n\t\t\t\t\$safe = \$this->param;";
+            $php .= "\n\t\t\t} else {";
+            $php .= "\n\t\t\t\t/** Single delete */";
+            $php .= "\n\t\t\t\tif (!is_numeric(\$args['id'])) throw new \Exception('ID t idak valid!');";
+            $php .= "\n\t\t\t\t\$safe = \$args;";
+            $php .= "\n\t\t\t}\n";
+            $php .= "\n\t\t\t/* Delete from DB */";
+            $php .= "\n\t\t\tif (\$this->MODEL->delete(\$safe['id'])) {";
+            $php .= "\n\t\t\t\treturn \$this->jsonSuccess('Data berhasil dihapus');";
+            $php .= "\n\t\t\t}else {";
+            $php .= "\n\t\t\t\tthrow new \Exception('Penghapusan gagal dilakukan!');";
             $php .= "\n\t\t\t}";
+            $php .= "\n\t\t} catch (\Exception\$e) {";
+            $php .= "\n\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
             $php .= "\n\t\t}";
-            $php .= "\n\t}\n";
+            $php .= "\n\t}";
         }
 
 
@@ -1101,8 +947,12 @@ class CRUDGenerator extends \App\Plugin\DataTables
                 $tipe = "<input type=\"text\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['int', 'decimal', 'float'], $desc['Type'])) {
                 $tipe = "<input type=\"number\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
+            } elseif (Stringer::is_like(['datetime', 'timestamp'], $desc['Type'])) {
+                $tipe = "<input type=\"datetime-local\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"mm/dd/yyyy 12:59 AM\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['date'], $desc['Type'])) {
-                $tipe = "<input type=\"date\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"" . $label . "\" data-parsley-group=\"role\" " . $isNull . ">";
+                $tipe = "<input type=\"date\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"mm/dd/yyyy\" data-parsley-group=\"role\" " . $isNull . ">";
+            } elseif (Stringer::is_like(['time'], $desc['Type'])) {
+                $tipe = "<input type=\"time\" class=\"form-control input-sm\" name=\"" . $nama . "\" placeholder=\"12:59 AM\" data-parsley-group=\"role\" " . $isNull . ">";
             } elseif (Stringer::is_like(['text'], $desc['Type'])) {
                 $tipe = "<textarea class=\"form-control auto-size\" rows=\"2\" placeholder=\"Input " . $label . " here...\" name=\"" . $nama . "\" " . $isNull . "></textarea>";
             }
@@ -1234,11 +1084,14 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\ttable = \$(\"#datatable-responsive\").DataTable({";
         $js .= "\n\t\tautoWidth: false,";
         $js .= "\n\t\tlanguage: {";
+
+        $js .= "\n\t\t\t\"emptyTable\": \"Tidak ada data yang tersedia\",";
         $js .= "\n\t\t\t\"zeroRecords\": \"Maaf, pencarian Anda tidak ditemukan\",";
         $js .= "\n\t\t\t\"info\": \"Menampilkan _START_ - _END_ dari _TOTAL_ data\",";
-        $js .= "\n\t\t\t\"infoEmpty\": \"Data belum tersedia\",";
+        $js .= "\n\t\t\t\"infoEmpty\": \"Menampilkan 0 - 0 dari 0 data\",";
         $js .= "\n\t\t\t\"infoFiltered\": \"(terfilter dari _MAX_ total data)\",";
         $js .= "\n\t\t\t\"searchPlaceholder\": \"Enter untuk mencari\"";
+
         $js .= "\n\t\t},";
         $js .= "\n\t\t\"dom\": \"<'row'<'col-sm-8'B><'col-sm-4'f>><'row'<'col-sm-12't>><'row'<'col-sm-4'<'pull-left' p>><'col-sm-8'<'pull-right' i>>>\",";
 
@@ -1266,7 +1119,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t\t\t\tdownload: \"open\",";
         $js .= "\n\t\t\t\tpageSize: \"LEGAL\",";
         $js .= "\n\t\t\t\torientation: \"portrait\", /* portrait | landscape */";
-        $js .= "\n\t\t\t\ttitle: \"" . $data['menu'] . "\",";
+        $js .= "\n\t\t\t\ttitle: function () { return '" . $data['menu'] . "';},";
         $js .= "\n\t\t\t\texportOptions: {";
         $js .= "\n\t\t\t\t\t/* Show column */";
         $js .= "\n\t\t\t\t\tcolumns: \":visible\" /* [1, 2, 3] => selected column only */";
@@ -1451,7 +1304,19 @@ class CRUDGenerator extends \App\Plugin\DataTables
 
         foreach ($data['dtcols'] as $idx => $cols) {
             if ($idx >= 1) {
-                $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                if(Stringer::is_like(['date'], $data['describe'][$idx]['Type'])){
+                    $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                } elseif (Stringer::is_like(['time'], $data['describe'][$idx]['Type'])) {
+                    $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                } elseif (Stringer::is_like(['timestamp', 'datetime'], $data['describe'][$idx]['Type'])) {
+                    $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                } elseif (Stringer::is_like(['char', 'int', 'decimal', 'float'], $data['describe'][$idx]['Type'])) {
+                    $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                } elseif (Stringer::is_like(['text'], $data['describe'][$idx]['Type'])) {
+                    $js .= "\n\t\t\$(\"textarea[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                } else {
+                    $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
+                }
             }
         }
 
@@ -1465,7 +1330,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
         $js .= "\n\t/* Button Delete */";
         $js .= "\n\t\$(tbl).on( 'click', '#btDel', function () {";
         $js .= "\n\t\tlet data = (table.row($(this).closest('tr')).data() === undefined) ? table.row($(this).closest('li')).data() : table.row($(this).closest('tr')).data();";
-        $js .= "\n\t\tdeleteSingle(apiUrl, data);";
+        $js .= "\n\t\tdeleteSingle(apiUrl, data[0], data[2]);";
         $js .= "\n\t});\n";
         //-->
 
@@ -1524,7 +1389,7 @@ class CRUDGenerator extends \App\Plugin\DataTables
             $nama = strtolower($desc['Field']);
 
             /* Set input type */
-            if (Stringer::is_like(['char', 'int', 'decimal', 'float', 'date'], $desc['Type'])) {
+            if (Stringer::is_like(['char', 'int', 'decimal', 'float', 'date', 'time'], $desc['Type'])) {
                 $tipe = "input[name=" . $nama . "]";
             } elseif (Stringer::is_like(['text'], $desc['Type'])) {
                 $tipe = "textarea[name=" . $nama . "]";
