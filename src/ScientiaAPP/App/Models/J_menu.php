@@ -221,9 +221,14 @@ class J_menu extends \App\Plugin\DataTablesMysql
             $CachedString = $this->Cacher->getItem($cacheKey);
             if (!$CachedString->isHit()) {
                 //Controller
-                $query = $this->db->get('m_menu', 'controller', ['url' => $url]);
-                $controller = explode(':', $query);
-                $controller = trim($controller[0]) . ':%';
+                $res = $this->db->get('m_menu', ['id_menu', 'controller', 'tipe'], ['url' => $url, 'ORDER' => ['controller' => 'DESC']]);
+                if ($res['tipe']=='MENU') {
+                    $cond = "c.id_menu='" . $res['id_menu'] ."'";
+                }else {
+                    $cond = "c.controller LIKE :controller";
+                    $controller = explode(':', $res['controller']);
+                    $controller = trim($controller[0]) . ':%';
+                }
 
                 //Permission
                 $sql = "SELECT a.idrole, a.deskripsi, c.idrole, c.controller
@@ -234,11 +239,13 @@ class J_menu extends \App\Plugin\DataTablesMysql
                             LEFT JOIN m_menu m
                                 ON b.id_menu=m.id_menu
                         ) c ON a.idrole=c.idrole
-                        WHERE c.controller LIKE :controller AND a.idrole=:idrole AND c.aktif=1
+                        WHERE {$cond} AND a.idrole=:idrole AND c.aktif=1
                         ORDER BY a.idrole";
 
                 $query = $this->db->pdo->prepare($sql);
-                $query->bindParam(':controller', $controller, \PDO::PARAM_STR);
+                if ($res['tipe'] != 'MENU') {
+                    $query->bindParam(':controller', $controller, \PDO::PARAM_STR);
+                }
                 $query->bindParam(':idrole', $idrole, \PDO::PARAM_INT);
                 $query->execute();
                 $output = $query->fetchAll(\PDO::FETCH_ASSOC);

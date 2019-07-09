@@ -91,7 +91,11 @@ class MenuController extends \App\Controllers\PrivateController
                 throw new \Exception($err);
             } else {
                 $cn = $this->getPermission($safe['path'], (int)$this->user_data['ID_ROLE']);
-                return $this->jsonSuccess($cn);
+                if ($cn) {
+                    return $this->jsonSuccess($cn);
+                }else {
+                    return $this->jsonFail('Execution Fail!', ['error' => 'Unauthorized!']);
+                }
             }
         } catch (\Exception $e) {
             return $this->jsonFail('Unable to process request', ['error' => $e->getMessage()]);
@@ -103,12 +107,14 @@ class MenuController extends \App\Controllers\PrivateController
         try {
             $data = [];
             $result = $this->J_MENU->getPermission($url, $idrole);
-            foreach ($result as $res) {
-                $cnt = explode(':', $res['controller']);
-                $data[] = end($cnt);
+            if (!empty($result)) {
+                foreach ($result as $res) {
+                    $cnt = explode(':', $res['controller']);
+                    $data[] = end($cnt);
+                }
+                return array_values(array_unique($data));
             }
-
-            return array_values($data);
+            return false;
 
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage());

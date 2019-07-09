@@ -12,7 +12,6 @@ namespace App\Controllers\Privates;
 
 class LogoutController extends \App\Controllers\PrivateController
 {
-    private $container;
 
     /**
      * Call Parent Constructor
@@ -24,8 +23,6 @@ class LogoutController extends \App\Controllers\PrivateController
         /* Call Parent Constructor */
         parent::__construct($container);
 
-        /* Disconnect */
-        $this->container = null;
     }
 
     /**
