@@ -1,5 +1,5 @@
 ### 1. Router
-  - [ ] Router dibuat dinamis untuk semua method (POST, GET, DELETE, PUT)
+  - [x] Router dibuat dinamis untuk semua method (POST, GET, DELETE, PUT)
     - [] GET : /{id} - Get record by id (PrimaryKey)
     - [x] PUT : /{id} - Update record by id (PrimaryKey)
     - [x] POST
