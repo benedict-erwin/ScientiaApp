@@ -1,6 +1,6 @@
 ### 1. Router
   - [x] Router dibuat dinamis untuk semua method (POST, GET, DELETE, PUT)
-    - [] GET : /{id} - Get record by id (PrimaryKey)
+    - [x] GET : /{id} - Get record by id (PrimaryKey)
     - [x] PUT : /{id} - Update record by id (PrimaryKey)
     - [x] POST
       - [x] Create : /create - Create new record, return new id [id => {new_id}]
