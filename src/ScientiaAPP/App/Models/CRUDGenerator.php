@@ -205,7 +205,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                         'id_groupmenu' => $data['id_groupmenu'],
                         'nama' => $data['menu'],
                         'icon' => null,
-                        'controller' => $data['className'],
+                        'controller' => '',
                         'url' => '/' . $data['url'],
                         'tipe' => 'MENU',
                         'aktif' => 1,
