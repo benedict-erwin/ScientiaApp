@@ -73,7 +73,7 @@ class BaseController
     /* isAjaxAndReferer */
     public function isAjaxAndReferer()
     {
-        $xrequest = @(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
+        $xrequest = $this->container->get('request')->isXhr();
         $referer = @(strpos($_SERVER['HTTP_REFERER'], $this->siteOwner) !== false) ? true : false;
         return ($xrequest && $referer);
     }

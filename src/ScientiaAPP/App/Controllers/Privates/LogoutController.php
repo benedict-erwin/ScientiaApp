@@ -12,6 +12,7 @@ namespace App\Controllers\Privates;
 
 class LogoutController extends \App\Controllers\PrivateController
 {
+    private $container;
 
     /**
      * Call Parent Constructor
@@ -20,7 +21,11 @@ class LogoutController extends \App\Controllers\PrivateController
      */
     public function __construct(\Slim\Container $container)
     {
+        /* Call Parent Constructor */
         parent::__construct($container);
+
+        /* Disconnect */
+        $this->container = null;
     }
 
     /**
@@ -28,7 +33,7 @@ class LogoutController extends \App\Controllers\PrivateController
      *
      * @return json
      */
-    public function logout($request, $response, $args)
+    public function logout()
     {
         try {
             $this->clearUserCache();

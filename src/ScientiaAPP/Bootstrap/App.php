@@ -84,8 +84,6 @@ $container['cacher'] = function($container) use ($cache) {
     return $cache;
 };
 
-
-
 /* Make the custom App autoloader */
 spl_autoload_register(function ($class) use ($container){
     $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
@@ -131,7 +129,9 @@ $container['database'] = function ($container) {
         'username' => $conf['DB_USER'],
         'password' => $conf['DB_PASS'],
         'logging' => $log,
-        'option' => array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION ),
+        'option' => [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        ],
         'charset' => 'utf8',
         'command' => [ 'SET SQL_MODE=ANSI_QUOTES' ]
     ]);
