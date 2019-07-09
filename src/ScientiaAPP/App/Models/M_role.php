@@ -125,7 +125,7 @@ class M_role extends \App\Plugin\DataTablesMysql
                     $this->Sign . '_router',
                 ]);
 
-                return true;
+                return $idrole;
             }else {
                 return false;
             }

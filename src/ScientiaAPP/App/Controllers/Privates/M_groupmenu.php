@@ -74,8 +74,8 @@ class M_groupmenu extends \App\Controllers\PrivateController
                 try {
                     /* Send to DB */
                     $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
-                    if ($this->MODEL->create($safe)) {
-                        return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
+                    if ($lastID = $this->MODEL->create($safe)) {
+                        return $this->jsonSuccess('Data berhasil ditambahkan', ['id' => $lastID], null, 201);
                     } else {
                         throw new \Exception('Penyimpanan gagal dilakukan!');
                     }

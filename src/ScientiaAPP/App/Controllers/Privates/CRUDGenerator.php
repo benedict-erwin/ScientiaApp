@@ -661,8 +661,8 @@ class CRUDGenerator extends \App\Controllers\PrivateController
             $php .= "\n\t\t\t} else {";
             $php .= "\n\t\t\t\ttry {";
             $php .= "\n\t\t\t\t\t/* Send to DB */";
-            $php .= "\n\t\t\t\t\tif (\$this->MODEL->create(\$safe)) {";
-            $php .= "\n\t\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);";
+            $php .= "\n\t\t\t\t\tif (\$lastID = \$this->MODEL->create(\$safe)) {";
+            $php .= "\n\t\t\t\t\t\treturn \$this->jsonSuccess('Data berhasil ditambahkan', ['id' => \$lastID], null, 201);";
             $php .= "\n\t\t\t\t\t} else {";
             $php .= "\n\t\t\t\t\t\tthrow new \Exception('Penyimpanan gagal dilakukan!');";
             $php .= "\n\t\t\t\t\t}";

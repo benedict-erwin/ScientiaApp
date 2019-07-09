@@ -79,8 +79,8 @@ class M_user extends \App\Controllers\PrivateController
                 try {
                     /* Send to DB */
                     $safe['password'] = $this->kripto->secure_passwd($safe['username'], $safe['password'], true);
-                    if ($this->MODEL->create($safe)) {
-                        return $this->jsonSuccess('Data berhasil ditambahkan', null, null, 201);
+                    if ($lastID = $this->MODEL->create($safe)) {
+                        return $this->jsonSuccess('Data berhasil ditambahkan', ['id' => $lastID], null, 201);
                     } else {
                         throw new \Exception('Penyimpanan gagal dilakukan!');
                     }
