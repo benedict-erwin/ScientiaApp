@@ -205,6 +205,7 @@ $container['view'] = function ($container) {
 
 /* Add twig Global variable */
 $container->get('view')->getEnvironment()->addGlobal('mode', $container->get('settings')['mode']);
+$container->get('view')->getEnvironment()->addGlobal('jsver', $container->get('settings')['jsversion']);
 $container->get('view')->getEnvironment()->addGlobal('base_url', $container->get('settings')['base_url']);
 $container->get('view')->getEnvironment()->addGlobal('app_name', $container->get('settings')['app_name']);
 $container->get('view')->getEnvironment()->addGlobal('app_version', $container->get('settings')['app_version']);

@@ -2,11 +2,11 @@ $(document).ready(function() {
     var klik = true;
 
     /* Event default */
-    $("#tx_username").focus();
+    $("#tx_username").trigger('focus');
     $("#tx_username").enterKey(function(e) {
         e.preventDefault();
         klik = true;
-        $("#tx_password").focus();
+        $("#tx_password").trigger('focus');
     });
 
     $("#tx_password").enterKey(function(e) {
@@ -16,12 +16,12 @@ $(document).ready(function() {
     });
 
     /* Click bt_login */
-    $("#bt_login").click(function() {
+    $(document).on('click', '#bt_login', function() {
         if (klik) {
             klik = false;
             if ($('#tx_username').val() == '' || $('#tx_password').val() == '') {
                 notification('Login Invalid', 'warn');
-                $("#tx_username").focus();
+                $("#tx_username").trigger('focus');
                 klik = true;
                 return false;
             }

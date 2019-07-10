@@ -36,7 +36,7 @@ function goPost(path, params, method, target) {
 /* Enter event */
 $.fn.enterKey = function (fnc) {
     return this.each(function () {
-        $(this).keypress(function (event) {
+        $(this).on('keypress', function(event){
             event = event || window.event; /* For IE */
             var keycode = ((event.keyCode) ? event.keyCode : event.which);
             if (keycode === 13) {
