@@ -400,20 +400,10 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
             $this->db->pdo->commit();
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
+                $this->Sign . '_router',
                 hash('sha256', $this->Sign . 'M_menu'),
-                $this->Sign . '_router',
-            ]);
-            $this->Cacher->deleteItemsByTags([
-                $this->TagName,
-                $this->Sign . '_getMenus_',#
-                $this->Sign . '_router',
-                $this->Sign . '_M_menu_read_',#
-                $this->Sign . '_CRUDGenerator_read_menu',#
-                $this->Sign . '_describe_table',
-                $this->Sign . '_tableForeignKeys',
-                $this->Sign . '_getJabatan',
-                $this->Sign . '_get_groupmenu',
-                $this->Sign . '_get_tables'
+                hash('sha256', $this->Sign . 'M_role'),
+                hash('sha256', $this->Sign . 'M_groupmenu')
             ]);
         } catch (\Exception $e) {
             /* Rollback transaction on error */

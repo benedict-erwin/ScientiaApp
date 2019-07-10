@@ -74,14 +74,16 @@ class M_menu extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
+            if($this->isDuplicate(['/'.trim($data['url'], '/')], [$data['tipe']])){
+                throw new \Exception('Menu sudah tersedia!');
+            }
+
             if($lastId = $this->saveData($data)){
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
-                    $this->Sign . '_getMenus_',
                     $this->Sign . '_router',
-                    $this->Sign . '_getPermission_',
-                    $this->Sign . '_getAuthMenu_',
-                    $this->Sign . '_CRUDGenerator_read_menu'
+                    hash('sha256', $this->Sign . 'J_menu'),
+                    hash('sha256', $this->Sign . 'CRUDGenerator')
                 ]);
                 return $lastId;
             }else {
@@ -136,11 +138,9 @@ class M_menu extends \App\Plugin\DataTablesMysql
             $update = $this->updateData($data, [$this->getPkey() => $id]);
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
-                $this->Sign . '_getMenus_',
                 $this->Sign . '_router',
-                $this->Sign . '_getPermission_',
-                $this->Sign . '_getAuthMenu_',
-                $this->Sign . '_CRUDGenerator_read_menu'
+                hash('sha256', $this->Sign . 'J_menu'),
+                hash('sha256', $this->Sign . 'CRUDGenerator')
             ]);
             return $update;
         } catch (\Exception $e) {
@@ -160,11 +160,9 @@ class M_menu extends \App\Plugin\DataTablesMysql
             $delete = $this->deleteData($data);
             $this->Cacher->deleteItemsByTags([
                 $this->TagName,
-                $this->Sign . '_getMenus_',
                 $this->Sign . '_router',
-                $this->Sign . '_getPermission_',
-                $this->Sign . '_getAuthMenu_',
-                $this->Sign . '_CRUDGenerator_read_menu'
+                hash('sha256', $this->Sign . 'J_menu'),
+                hash('sha256', $this->Sign . 'CRUDGenerator')
             ]);
             return $delete;
         } catch (\Exception $e) {
@@ -287,7 +285,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
                 $output = $this->db->get(
                     'm_menu',
                     ['[>]j_menu' => 'id_menu'],
-                    'm_menu.controller',
+                    'm_menu.id_menu',
                     [
                         'j_menu.idrole' => $idrole,
                         'm_menu.url' => $url

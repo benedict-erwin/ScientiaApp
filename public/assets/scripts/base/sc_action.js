@@ -327,19 +327,21 @@ function initChoosen(selector, value=null, placeholder_text=null) {
     let opt = $(selector);
     opt.closest(':has(span i)').find('span').css('display', '');
     opt.closest('div').css('display', 'none');
-    opt.chosen("destroy");
     opt.closest(':has(span i)').find('span').css('display', 'none');
     opt.closest('div').css('display', '');
     if (value != null) {
         opt.val(value);
     }
-    opt.chosen({
-        width: "100%",
-        search_contains: true,
-        allow_single_deselect: !0,
-        no_results_text: "Oops, nothing found!",
-        placeholder_text: placeholder_text || "-- Semua --"
-    }).trigger("chosen:updated");
+    opt.chosen("destroy");
+    setTimeout(() => {
+        opt.chosen({
+            width: "100%",
+            search_contains: true,
+            allow_single_deselect: !0,
+            no_results_text: "Oops, nothing found!",
+            placeholder_text: placeholder_text || "-- Semua --"
+        }).trigger("chosen:updated");
+    }, 250);
 }
 
 /**

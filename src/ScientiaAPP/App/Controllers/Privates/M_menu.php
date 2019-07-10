@@ -32,7 +32,7 @@ class M_menu extends \App\Controllers\PrivateController
             if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
             $output = $this->MODEL->getByID($args['id']);
             if (!empty($output)) {
-                return $this->jsonSuccess($output);
+                return $this->jsonSuccess($output[0]);
             } else {
                 return $this->jsonFail('Data tidak ditemukan', [], 404);
             }
@@ -88,14 +88,6 @@ class M_menu extends \App\Controllers\PrivateController
                     $safe['url'] = '/' . trim($safe['url'], '/');
                     $safe['controller'] = ucfirst($safe['controller']);
 
-                    /* Check if router exists */
-                    $isExist = $this->dbpdo->count('m_menu', [
-                        'url' => $safe['url'],
-                        'tipe' => $safe['tipe'],
-                        'controller' => $safe['controller']
-                    ]);
-
-                    if ($isExist > 0) throw new \Exception('Menu sudah tersedia di database!');
                     if ($lastID = $this->MODEL->create($safe)) {
                         return $this->jsonSuccess('Data berhasil ditambahkan', ['id' => $lastID], null, 201);
                     } else {

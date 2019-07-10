@@ -624,7 +624,7 @@ class CRUDGenerator extends \App\Controllers\PrivateController
             $php .= "\n\t\t\tif (!is_numeric(\$args['id'])) throw new \Exception('ID tidak valid!');";
             $php .= "\n\t\t\t\$output = \$this->MODEL->getByID(\$args['id']);";
             $php .= "\n\t\t\tif (!empty(\$output)) {";
-            $php .= "\n\t\t\t\treturn \$this->jsonSuccess(\$output);";
+            $php .= "\n\t\t\t\treturn \$this->jsonSuccess(\$output[0]);";
             $php .= "\n\t\t\t}else {";
             $php .= "\n\t\t\t\treturn \$this->jsonFail('Data tidak ditemukan', [], 404);";
             $php .= "\n\t\t\t}";
