@@ -264,7 +264,21 @@ $(document).on('focus', 'input[name=icon]', function () {
     $('.iconModal').modal();
 });
 
-
+/* Hover on icon */
+$('.hover-ic').hover(
+    function () {
+        let cl = $(this).attr('class').split(' ');
+        let icon = cl[cl.length - 1];
+        $(this).attr('title', icon);
+        $(this).css('border', '2px solid #00C292');
+        $(this).css('border-width', 'initial');
+        $(this).css('padding', '5px');
+    },
+    function () {
+        $(this).css('border', '0');
+        $(this).css('padding', '0');
+    }
+);
 
 /* Button Create Action */
 function btn_add() {
