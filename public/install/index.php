@@ -461,6 +461,8 @@
                                                                                 msg += '\nUSERNAME\t: ' + data.data.username + '\n';
                                                                                 msg += '\nPASSWORD\t: ' + data.data.password + '\n';
                                                                                 msg += '\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n';
+                                                                                msg += '\n\nYOU CAN USE THIS INSTALLER SCRIPT TO MIGRATE YOUR WEB APPS TO PRODUCTION SERVER\n';
+                                                                                msg += 'BUT REMEMBER,  THAT THIS INSTALLER SHOULD BE REMOVE IN PRODUCTION MODE\n';
                                                                                 $("#outputLast").append(msg);
                                                                                 $("#txInfo > span").text('We done here :)');
                                                                                 $("#txInfo > i").removeClass('fa-spin fa-refresh');
