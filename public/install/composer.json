@@ -1,0 +1,16 @@
+{
+    "name": "benedict_erwin/scientiaapp",
+    "description": "scientiaapp",
+    "license": "GPL-3.0",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Benedict E. Pranata",
+            "email": "benedict.erwin@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "config": {
+        "cache-files-ttl": 0
+    }
+}

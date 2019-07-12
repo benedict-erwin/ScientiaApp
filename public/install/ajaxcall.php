@@ -47,6 +47,7 @@ switch ($_REQUEST['step_name']) {
         sleep(2);
         break;
     case 'wedonehere':
+        file_put_contents('.htaccess', 'Deny from all');
         session_destroy();
         break;
 
@@ -132,8 +133,7 @@ function extractComposer()
 function composerInstall()
 {
     putenv('COMPOSER_HOME=' . __DIR__);
-    $path = '/var/www/public/tmp/sm';
-    // $path = getcwd() . '/';
+    $path = getcwd() . '/';
     if (!file_exists('extracted')) {
         extractComposer();
     }
@@ -143,11 +143,6 @@ function composerInstall()
     $output = new Symfony\Component\Console\Output\StreamOutput(fopen('php://output', 'w'));
     $app = new Composer\Console\Application();
     $app->run($input, $output);
-
-    if (file_exists('.htaccess')) {
-        $r = rename(getcwd() . '/.htaccess', getcwd() . '/htaccess.bak');
-        var_dump($r); die();
-    }
 }
 
 # Crate SUper User
@@ -214,11 +209,6 @@ function createENV()
         die(json_encode(['success' => false, 'error' => error_get_last()['message']]));
     }
 
-    if (file_exists('htaccess.bak')) {
-        rename(getcwd() . '/htaccess.bak', getcwd() . '/.htaccess');
-    }
-
-    file_put_contents('.htaccess', 'Deny from all');
     $data = [
         'username' => $_SESSION['APP_USER'],
         'password' => $_SESSION['APP_PASS'],
@@ -335,7 +325,7 @@ function saveWebConf($url, $fname, $email, $phone, $user, $pass)
 # Create default DIR
 function createDir()
 {
-    $path =  getcwd() . '/../../src/ScientiaAPP';
+    $path =  getcwd() . '/../../src/ScientiaAPP/';
 
     # Set default permission 755
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
@@ -344,8 +334,8 @@ function createDir()
     }
 
     # Create Cache & Log folder
-    mkdir($path . 'App/Cache', 0777);
-    mkdir($path . 'App/Log', 0777);
+    if(!file_exists($path . 'App/Cache')) mkdir($path . 'App/Cache', 0777);
+    if(!file_exists($path . 'App/Log')) mkdir($path . 'App/Log', 0777);
 
     # Set permission for development mode
     chmod($path . 'App/Controllers', 0777);

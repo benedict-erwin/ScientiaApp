@@ -22,7 +22,7 @@
         .container {
             margin-top: 5px;
         }
-        #output {
+        .well {
             width:100%;
             height:275px;
             overflow-y:scroll;
@@ -85,7 +85,7 @@
                             <li id="txPHP"><i class="fa-li fa fa-spin fa-refresh"></i><span>Checking PHP version<span></li>
                             <li id="txComposer"><i class="fa-li fa fa-spin fa-refresh"></i><span>Preparing composer installatiion</span></li>
                         </ul>
-                        <pre id="output"></pre>
+                        <pre id="output" class="well"></pre>
                         <span id="next2"></span>
                         <p>
                 </div>
@@ -232,7 +232,7 @@
                                 <span>Please be patient...</span>
                             </li>
                         </ul>
-                        <pre id="output"></pre>
+                        <pre id="outputLast" class="well"></pre>
                         <span id="nextLast"></span>
                         <p>
                 </div>
@@ -383,11 +383,10 @@
                             }, 450);
                         }
                     });
-                } else if (stepDirection === 'forward' && stepNumber === 4) {
-                    $("#output").html('');
+                } else if (stepDirection === 'forward' && stepNumber === 3) {
                     setTimeout(() => {
                         $("#txInfo > span").text('Preparing Log and Cache...');
-                        $("#output").html('Create App/Cache and App/Log directory...\n');
+                        $("#outputLast").append('Create App/Cache and App/Log directory...\n');
                         $.ajax({
                             type: 'post',
                             url: "ajaxcall.php",
@@ -398,19 +397,19 @@
                                 let txCreated = '';
                                 let txPermission = '';
                                 txCreated = 'Cache and Log directory:\n';
-                                $.each(data.created, function(idx, val){
+                                $(data.created).each(function (index, val){
                                     txCreated += '\t' + val + '\n';
                                 });
-                                txPermission = 'Set Permission for Controller & Model:\n';
-                                $.each(data.permission, function(idx, val){
+                                txPermission = '\nSet Permission for Controller & Model:\n';
+                                $(data.permission).each(function (index, val) {
                                     txPermission += '\t' + val + '\n';
                                 });
-                                $("#output").append(txCreated);
-                                $("#output").append(txPermission);
+                                $("#outputLast").append(txCreated);
+                                $("#outputLast").append(txPermission);
 
                                 setTimeout(() => {
                                     $("#txInfo > span").text('Preparing Database: user and schema...');
-                                    $("#output").append('\n\nCreate new database\n');
+                                    $("#outputLast").append('\n\nCreate new database\n');
                                     $.ajax({
                                         type: 'post',
                                         url: "ajaxcall.php",
@@ -418,12 +417,12 @@
                                             step_name: 'createnewuserdb'
                                         },
                                         success: function (data) {
-                                            $("#output").append('Create new user\n');
-                                            $("#output").append('Grant default privileges for new user\n');
+                                            $("#outputLast").append('Create new user\n');
+                                            $("#outputLast").append('Grant default privileges for new user\n');
 
                                             setTimeout(() => {
                                                 $("#txInfo > span").text('Preparing Database: generating default data...');
-                                                $("#output").append('\n\nImporting data...\n');
+                                                $("#outputLast").append('\n\nImporting data...\n');
                                                 $.ajax({
                                                     type: 'post',
                                                     url: "ajaxcall.php",
@@ -431,10 +430,10 @@
                                                         step_name: 'importdatabase'
                                                     },
                                                     success: function (data) {
-                                                        $("#output").append('All data imported successfully.\n');
+                                                        $("#outputLast").append('All data imported successfully.\n');
                                                         setTimeout(() => {
                                                             $("#txInfo > span").text('Setting up ScientiaApp super user...');
-                                                            $("#output").append('\n\nGenerating super user...\n');
+                                                            $("#outputLast").append('\n\nGenerating super user...\n');
                                                             $.ajax({
                                                                 type: 'post',
                                                                 url: "ajaxcall.php",
@@ -442,10 +441,10 @@
                                                                     step_name: 'createsuperuser'
                                                                 },
                                                                 success: function (data) {
-                                                                    $("#output").append('User created with super role.\n');
+                                                                    $("#outputLast").append('User created with super role.\n');
                                                                     setTimeout(() => {
                                                                         $("#txInfo > span").text('Finalizing...');
-                                                                        $("#output").append('\n\nGenerating APP TOKEN...\n');
+                                                                        $("#outputLast").append('\n\nGenerating APP TOKEN...\n');
                                                                         $.ajax({
                                                                             type: 'post',
                                                                             url: "ajaxcall.php",
@@ -454,15 +453,15 @@
                                                                             },
                                                                             success: function (data) {
                                                                                 let msg = '';
-                                                                                $("#output").append('APP TOKEN generated.\n');
-                                                                                $("#output").append('JS TOKEN generated.\n');
+                                                                                $("#outputLast").append('APP TOKEN generated.\n');
+                                                                                $("#outputLast").append('JS TOKEN generated.\n');
                                                                                 msg += 'Your web apps skeleton is ready\n\n'
                                                                                 msg += '\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n';
                                                                                 msg += '\nBASE_URL\t: ' + data.data.base_url + '\n';
                                                                                 msg += '\nUSERNAME\t: ' + data.data.username + '\n';
                                                                                 msg += '\nPASSWORD\t: ' + data.data.password + '\n';
                                                                                 msg += '\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n';
-                                                                                $("#output").append(msg);
+                                                                                $("#outputLast").append(msg);
                                                                                 $("#txInfo > span").text('We done here :)');
                                                                                 $("#txInfo > i").removeClass('fa-spin fa-refresh');
                                                                                 $("#txInfo > i").addClass('fa-check');

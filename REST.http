@@ -1,89 +1,49 @@
 ##################################################################
 ### Request     : Login
 ### Description : Masuk dalam sistem
-POST http://192.168.33.10/simpel_solusindo/simaset/public/clogin HTTP/1.1
+POST http://192.168.33.10/tmp/ScientiaApp-master/public/api/clogin HTTP/1.1
 X-Requested-With: XMLHttpRequest
 Content-Type: application/json
 
 {
-  "tx_username": "benedict",
-  "tx_password": "Erwin21"
+  "tx_username": "super",
+  "tx_password": "super"
 }
-
-
-##################################################################
-### Request     : Logout
-### Description : Keluar dari sistem
-POST http://192.168.33.10/simpel_solusindo/simaset/public/clogout HTTP/1.1
-X-Requested-With: XMLHttpRequest
-Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9zaW1wZWxfc29sdXNpbmRvXC9zaW1hc2V0XC9wdWJsaWNcLyIsImF1ZCI6Imh0dHA6XC9cLzE5Mi4xNjguMzMuMTBcL3NpbXBlbF9zb2x1c2luZG9cL3NpbWFzZXRcL3B1YmxpY1wvIiwianRpIjoiYWI1NDUwZDI5Njg4ZjA0MmI2MzljNTgwNzBkYzFiNGIiLCJpYXQiOjE1NTEyNDIzNDcsIm5iZiI6MTU1MTI0MjM0NywiZXhwIjoxNTUzODM0MzQ3LCJJRF9VU0VSIjoibGc9PSIsIlVTRVJOQU1FIjoiYmVuZWRpY3QifQ.NMihB0drOQgNf41LM6L2PY2jOhQPg1elhbqSthrt3JQ
-
 
 ##################################################################
 ### Request     : Check Auth
 ### Description : Melihat action yang diijinkan pada menu aktif
-POST http://192.168.33.10/simpel_solusindo/simaset/public/cauth HTTP/1.1
+POST http://192.168.33.10/tmp/ScientiaApp-master/public/api/cauth HTTP/1.1
 X-Requested-With: XMLHttpRequest
 Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9zaW1wZWxfc29sdXNpbmRvXC9zaW1hc2V0XC9wdWJsaWNcLyIsImF1ZCI6Imh0dHA6XC9cLzE5Mi4xNjguMzMuMTBcL3NpbXBlbF9zb2x1c2luZG9cL3NpbWFzZXRcL3B1YmxpY1wvIiwianRpIjoiYWI1NDUwZDI5Njg4ZjA0MmI2MzljNTgwNzBkYzFiNGIiLCJpYXQiOjE1NTEyNDIzNDcsIm5iZiI6MTU1MTI0MjM0NywiZXhwIjoxNTUzODM0MzQ3LCJJRF9VU0VSIjoibGc9PSIsIlVTRVJOQU1FIjoiYmVuZWRpY3QifQ.NMihB0drOQgNf41LM6L2PY2jOhQPg1elhbqSthrt3JQ
+Authorization : Bearer <Token>
 
 {
-  "path": "/configure"
+  "path": "/menu"
 }
 
 
 ##################################################################
-### Request     : Check Auth
-### Description : Melihat action yang diijinkan pada menu aktif
-POST http://192.168.33.10/simpel_solusindo/simaset/public/cauths HTTP/1.1
+### Request     : Menu List
+### Description : Menampilkan semua menu yang dapat diakses
+POST http://192.168.33.10/tmp/ScientiaApp-master/public/api/cmenu HTTP/1.1
 X-Requested-With: XMLHttpRequest
 Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImVkMjBhNmNmMTNiNjkzNzBlNWM2YjY4Yzk5YTA2MjdiIn0.eyJpc3MiOiJodHRwczpcL1wvYmVuZWRpY3QubG9jYWxcL3NpbWFzZXRcL3B1YmxpY1wvIiwiYXVkIjoiaHR0cHM6XC9cL2JlbmVkaWN0LmxvY2FsXC9zaW1hc2V0XC9wdWJsaWNcLyIsImp0aSI6ImVkMjBhNmNmMTNiNjkzNzBlNWM2YjY4Yzk5YTA2MjdiIiwiaWF0IjoxNTUwNTYzODMxLCJuYmYiOjE1NTA1NjM4MzEsImV4cCI6MTU1MzE1NTgzMSwiSURfVVNFUiI6IllnPT0iLCJVU0VSTkFNRSI6ImJlbmVkaWN0In0.pgKDE8cjpfUbDqDNmYdLkQPHlsejEGLE8ZRcG0f2C38
-
-{
-  "path": "/configure"
-}
+Authorization : Bearer <Token>
 
 
 ##################################################################
-### Request     : Check Auth
-### Description : Melihat action yang diijinkan pada menu aktif
-POST http://192.168.33.10/simpel_solusindo/simaset/public/c_groupmenu_read HTTP/1.1
+### Request     : Read Role
+### Description : (DataTables) - Menampilkan semua list role berdasarkan filter
+POST http://192.168.33.10/tmp/ScientiaApp-master/public/api/role/read HTTP/1.1
 X-Requested-With: XMLHttpRequest
 Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9zaW1wZWxfc29sdXNpbmRvXC9zaW1hc2V0XC9wdWJsaWNcLyIsImF1ZCI6Imh0dHA6XC9cLzE5Mi4xNjguMzMuMTBcL3NpbXBlbF9zb2x1c2luZG9cL3NpbWFzZXRcL3B1YmxpY1wvIiwianRpIjoiYWI1NDUwZDI5Njg4ZjA0MmI2MzljNTgwNzBkYzFiNGIiLCJpYXQiOjE1NTEzMzM0ODgsIm5iZiI6MTU1MTMzMzQ4OCwiZXhwIjoxNTUzOTI1NDg4LCJJRF9VU0VSIjoibGc9PSIsIlVTRVJOQU1FIjoiYmVuZWRpY3QifQ.AehX4NC3h68WNbxd_5OBqkMrxcOFNesCGWUvDaMV-qY
+Authorization : Bearer <Token>
 
 {
   "start": 0,
+  "length": 10,
   "search": {
-    "value": null
-  },
-  "length": 10
-}
-
-
-##################################################################
-### Request     : Check Auth
-### Description : Melihat action yang diijinkan pada menu aktif
-POST http://192.168.33.10/simpel_solusindo/simaset/public/cmenu HTTP/1.1
-X-Requested-With: XMLHttpRequest
-Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9zaW1wZWxfc29sdXNpbmRvXC9zaW1hc2V0XC9wdWJsaWNcLyIsImF1ZCI6Imh0dHA6XC9cLzE5Mi4xNjguMzMuMTBcL3NpbXBlbF9zb2x1c2luZG9cL3NpbWFzZXRcL3B1YmxpY1wvIiwianRpIjoiYWI1NDUwZDI5Njg4ZjA0MmI2MzljNTgwNzBkYzFiNGIiLCJpYXQiOjE1NTEzMzM0ODgsIm5iZiI6MTU1MTMzMzQ4OCwiZXhwIjoxNTUzOTI1NDg4LCJJRF9VU0VSIjoibGc9PSIsIlVTRVJOQU1FIjoiYmVuZWRpY3QifQ.AehX4NC3h68WNbxd_5OBqkMrxcOFNesCGWUvDaMV-qY
-
-{
-  "reload": 1
-}
-
-
-##################################################################
-### Request     : Check Auth
-### Description : Melihat action yang diijinkan pada menu aktif
-DELETE http://192.168.33.10/benedict/github/ScientiaApp/public/api/test/1 HTTP/1.1
-X-Requested-With: XMLHttpRequest
-Content-Type: application/json
-JWT: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImFiNTQ1MGQyOTY4OGYwNDJiNjM5YzU4MDcwZGMxYjRiIn0.eyJpc3MiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9iZW5lZGljdFwvZ2l0aHViXC9TY2llbnRpYUFwcFwvcHVibGljXC8iLCJhdWQiOiJodHRwOlwvXC8xOTIuMTY4LjMzLjEwXC9iZW5lZGljdFwvZ2l0aHViXC9TY2llbnRpYUFwcFwvcHVibGljXC8iLCJqdGkiOiJhYjU0NTBkMjk2ODhmMDQyYjYzOWM1ODA3MGRjMWI0YiIsImlhdCI6MTU2MTQ2OTA3MiwibmJmIjoxNTYxNDY5MDcyLCJleHAiOjE1NjQwNjEwNzIsIklEX1VTRVIiOiJsZz09IiwiVVNFUk5BTUUiOiJiZW5lZGljdCJ9.D79kyi344wiut_j9zi1M4Rgp37BjNCdl9qnjx18AKak
-
-{
-  "id": [212, 3, 4]
+      "value": null
+  }
 }
