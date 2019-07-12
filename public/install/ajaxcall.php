@@ -208,7 +208,7 @@ function createENV()
 
     /* Generate env.php */
     $path =  getcwd() . '/../../';
-    $envFile = $path . 'envx.php';
+    $envFile = $path . 'env.php';
     $handle = fopen($envFile, 'w') or die(json_encode(['success' => false, 'error' => 'cannot open file ' . $envFile]));
     if (!fwrite($handle, $php)) {
         die(json_encode(['success' => false, 'error' => error_get_last()['message']]));
