@@ -56,7 +56,7 @@ if [[ -z $composer_loc ]]; then
     c_hash=$(php -r "readfile('https://composer.github.io/installer.sig');");
     php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
     php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === '$c_hash') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-    
+
     if [ -f composer-setup.php ]; then
         php composer-setup.php
         php -r "unlink('composer-setup.php');"
@@ -107,7 +107,7 @@ php install/install.php "$db_hostname" "$my_root" "$my_pass" "$database" "$db_us
 sleep 1
 print_banner
 echo "[Setup Up Permission] - Untuk direktori Log dan Cache...";
-chmod 775 -Rf ../scientiaapp
+chmod 775 -Rf ../ScientiaAPP
 mkdir -p src/ScientiaAPP/App/Log
 mkdir -p src/ScientiaAPP/App/Cache
 chmod 777 src/ScientiaAPP/App/Log
