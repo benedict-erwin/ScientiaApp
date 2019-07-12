@@ -8,7 +8,7 @@ Just clone this repository into your web server
 git clone git@github.com:benedict-erwin/ScientiaApp.git
 ```
 
-Then open Your web browser to http://your-ip-server/path-to-scientiaapp/install/ and follow all the instructions.
+Then open Your web browser to http://your-ip-server/path-to-scientiaapp/public/install/ and follow all the instructions.
 
 #### Installation Screenshoot
 > Intro
