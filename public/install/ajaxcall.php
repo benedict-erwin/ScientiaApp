@@ -133,7 +133,7 @@ function extractComposer()
 function composerInstall()
 {
     putenv('COMPOSER_HOME=' . __DIR__);
-    $path = getcwd() . '/';
+    $path = getcwd() . '/../../';
     if (!file_exists('extracted')) {
         extractComposer();
     }
