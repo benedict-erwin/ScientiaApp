@@ -22,11 +22,12 @@
         .container {
             margin-top: 5px;
         }
+
         .well {
-            width:100%;
-            height:275px;
-            overflow-y:scroll;
-            overflow-x:hidden;
+            width: 100%;
+            height: 275px;
+            overflow-y: scroll;
+            overflow-x: hidden;
         }
     </style>
 </head>
@@ -121,7 +122,7 @@
                                         </li>
                                         <button style="margin-left: 10px;" class="btn btn-success btnTest">Test Connection</button>
                                         <h3></h3>
-                                            <p></p>
+                                        <p></p>
                                     </ul>
                                 </div>
                                 <ul>
@@ -154,7 +155,7 @@
                             </div>
                         </form>
                         <ul id="next3"></ul>
-                    <p>
+                        <p>
                 </div>
                 <div id="step-4" class="">
                     <p style="margin-top:25px;">
@@ -169,48 +170,42 @@
                                     <li id="li_1">
                                         <label class="description" for="element_1">Base URL </label>
                                         <div>
-                                            <input id="tx_baseurl" name="tx_baseurl" class="element text large" type="text"
-                                                maxlength="255" value="" />
+                                            <input id="tx_baseurl" name="tx_baseurl" class="element text large" type="text" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_1"><small>Your web apps base url, end with "/", ( ex: http://domain.com/ )</small></p>
                                     </li>
                                     <li id="li_2">
                                         <label class="description" for="element_2">CMS User Fullname </label>
                                         <div>
-                                            <input id="tx_fullname" name="tx_fullname" class="element text large" type="text"
-                                                maxlength="255" value="" />
+                                            <input id="tx_fullname" name="tx_fullname" class="element text large" type="text" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_2"><small>Super user fullname</small></p>
                                     </li>
                                     <li id="li_3">
                                         <label class="description" for="element_3">CMS User Email</label>
                                         <div>
-                                            <input id="tx_email" name="tx_email" class="element text large" type="email"
-                                                maxlength="255" value="" />
+                                            <input id="tx_email" name="tx_email" class="element text large" type="email" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_3"><small>Super user email</small></p>
                                     </li>
                                     <li id="li_5">
                                         <label class="description" for="element_5">CMS User Phone</label>
                                         <div>
-                                            <input id="tx_phone" name="tx_phone" class="element text medium" type="number" maxlength="255"
-                                                value="" />
+                                            <input id="tx_phone" name="tx_phone" class="element text medium" type="number" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_5"><small>Super user phone number</small></p>
                                     </li>
                                     <li id="li_6">
                                         <label class="description" for="element_6">CMS Username</label>
                                         <div>
-                                            <input id="tx_user" name="tx_new_user" class="element text medium" type="text" maxlength="255"
-                                                value="" />
+                                            <input id="tx_user" name="tx_new_user" class="element text medium" type="text" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_6"><small>Super user username</small></p>
                                     </li>
                                     <li id="li_7">
                                         <label class="description" for="element_7">CMS User Password</label>
                                         <div>
-                                            <input id="tx_pass" name="tx_new_pass" class="element text medium" type="password"
-                                                maxlength="255" value="" />
+                                            <input id="tx_pass" name="tx_new_pass" class="element text medium" type="password" maxlength="255" value="" />
                                         </div>
                                         <p class="guidelines" id="guide_7"><small>Super user password</small></p>
                                     </li>
@@ -222,7 +217,7 @@
                             </div>
                         </div>
                         <ul id="next3"></ul>
-                    <p>
+                        <p>
                 </div>
                 <div id="step-5" class="">
                     <p style="margin-top:25px;">
@@ -249,11 +244,10 @@
     <script type="text/javascript" src="vendor/SmartWizard/dist/js/jquery.smartWizard.min.js"></script>
 
     <script type="text/javascript">
-
         var isOk = false;
         $(document).ready(function() {
 
-            $('.step_dbconf').on('keyup keypress', function (e) {
+            $('.step_dbconf').on('keyup keypress', function(e) {
                 var keyCode = e.keyCode || e.which;
                 if (keyCode === 13) {
                     e.preventDefault();
@@ -320,7 +314,7 @@
                                                 data: {
                                                     step_name: 'composer_down',
                                                 },
-                                                success: function (data) {
+                                                success: function(data) {
                                                     $("#output").append(data);
                                                     $outPut.scrollTop(100);
                                                     $("#txComposer > span").text('Composer installing dependencies...');
@@ -335,20 +329,21 @@
                                                         data: {
                                                             step_name: 'composer',
                                                         },
-                                                        success: function (data) {
+                                                        success: function(data) {
                                                             $("#output").append(data);
                                                             $outPut.scrollTop(400);
                                                             $("#output").append("\n===================================================================\n");
                                                             $("#output").append("Execution Ended");
                                                             $("#output").append("\n===================================================================\n");
                                                             $outPut.scrollTop(600);
+                                                            $("#txComposer > span").text('Done, all dependencies are satisfied');
                                                             $("#txComposer > i").removeClass('fa-spin fa-refresh');
                                                             $("#txComposer > i").addClass('fa-check');
                                                             $("#txComposer > i").css('color', 'green');
                                                             $("#txCek > i").removeClass('fa-spin fa-refresh');
                                                             $("#txCek > i").addClass('fa-check');
                                                             $("#txCek > i").css('color', 'green');
-                                                            $("#txCek > span").text('Done.');
+                                                            $("#txCek > span").text("Done! We're ready for the next step.");
                                                             $("#next2").html(txNext);
                                                         }
                                                     });
@@ -397,11 +392,11 @@
                                 let txCreated = '';
                                 let txPermission = '';
                                 txCreated = 'Cache and Log directory:\n';
-                                $(data.created).each(function (index, val){
+                                $(data.created).each(function(index, val) {
                                     txCreated += '\t' + val + '\n';
                                 });
                                 txPermission = '\nSet Permission for Controller & Model:\n';
-                                $(data.permission).each(function (index, val) {
+                                $(data.permission).each(function(index, val) {
                                     txPermission += '\t' + val + '\n';
                                 });
                                 $("#outputLast").append(txCreated);
@@ -416,7 +411,7 @@
                                         data: {
                                             step_name: 'createnewuserdb'
                                         },
-                                        success: function (data) {
+                                        success: function(data) {
                                             $("#outputLast").append('Create new user\n');
                                             $("#outputLast").append('Grant default privileges for new user\n');
 
@@ -429,7 +424,7 @@
                                                     data: {
                                                         step_name: 'importdatabase'
                                                     },
-                                                    success: function (data) {
+                                                    success: function(data) {
                                                         $("#outputLast").append('All data imported successfully.\n');
                                                         setTimeout(() => {
                                                             $("#txInfo > span").text('Setting up ScientiaApp super user...');
@@ -440,7 +435,7 @@
                                                                 data: {
                                                                     step_name: 'createsuperuser'
                                                                 },
-                                                                success: function (data) {
+                                                                success: function(data) {
                                                                     $("#outputLast").append('User created with super role.\n');
                                                                     setTimeout(() => {
                                                                         $("#txInfo > span").text('Finalizing...');
@@ -451,7 +446,7 @@
                                                                             data: {
                                                                                 step_name: 'createenv'
                                                                             },
-                                                                            success: function (data) {
+                                                                            success: function(data) {
                                                                                 let msg = '';
                                                                                 $("#outputLast").append('APP TOKEN generated.\n');
                                                                                 $("#outputLast").append('JS TOKEN generated.\n');
@@ -488,12 +483,12 @@
                 }
             });
 
-            $(document).on('click', '.btnTest', function(e){
+            $(document).on('click', '.btnTest', function(e) {
                 e.preventDefault();
                 connectionTest(true);
             });
 
-            function connectionTest(msg=false, callback) {
+            function connectionTest(msg = false, callback) {
                 $('.btnTest').text('loading...');
                 $.ajax({
                     type: 'post',
@@ -505,7 +500,7 @@
                         dbpass: $('#tx_dbpass').val()
 
                     },
-                    success: function (data) {
+                    success: function(data) {
                         res = false;
                         $('.btnTest').text('Test Connection');
                         if (data.success == true) {
@@ -524,30 +519,32 @@
             }
 
             /* Intro Next Button */
-            $(document).on('click', '#start-1', function(){
+            $(document).on('click', '#start-1', function() {
                 $("#smartwizard").smartWizard('next');
             });
 
             /* Step-1 Next Button */
-            $(document).on('click', '#start-2', function(){
+            $(document).on('click', '#start-2', function() {
                 $("#smartwizard").smartWizard('next');
             });
 
             /* Step-2 Next Button */
-            $(document).on('click', '#start-3', function(e){
+            $(document).on('click', '#start-3', function(e) {
                 e.preventDefault();
-                let cekInput = $(".step_dbconf input").filter(function () { return $.trim($(this).val()).length == 0 }).length;
+                let cekInput = $(".step_dbconf input").filter(function() {
+                    return $.trim($(this).val()).length == 0
+                }).length;
                 if (cekInput > 0) {
                     alert('Please fill all input fields!');
-                    $(".step_dbconf input").filter(function () {
-                        if($.trim($(this).val()).length == 0){
+                    $(".step_dbconf input").filter(function() {
+                        if ($.trim($(this).val()).length == 0) {
                             $(this).focus();
                         }
                     });
                     return false;
-                }else{
+                } else {
                     $("#smartwizard").addClass('sw-loading');
-                    connectionTest(false, function (res) {
+                    connectionTest(false, function(res) {
                         console.log(res);
                         if (res == false) {
                             $("#smartwizard").removeClass('sw-loading');
@@ -577,18 +574,20 @@
             });
 
             /* Step-4 Next Button */
-            $(document).on('click', '#start-4', function (e) {
+            $(document).on('click', '#start-4', function(e) {
                 e.preventDefault();
-                let cekInput = $("#form_73200 input").filter(function () { return $.trim($(this).val()).length == 0 }).length;
+                let cekInput = $("#form_73200 input").filter(function() {
+                    return $.trim($(this).val()).length == 0
+                }).length;
                 if (cekInput > 0) {
                     alert('Please fill all input fields!');
-                    $("#form_73200 input").filter(function () {
+                    $("#form_73200 input").filter(function() {
                         if ($.trim($(this).val()).length == 0) {
                             $(this).focus();
                         }
                     });
                     return false;
-                }else{
+                } else {
                     if (isUrlValid($('#tx_baseurl').val()) === false) {
                         alert('Please use valid url!');
                         $('#tx_baseurl').focus();
@@ -617,7 +616,7 @@
                             tx_user: $('#tx_user').val(),
                             tx_pass: $('#tx_pass').val()
                         },
-                        success: function (data) {
+                        success: function(data) {
                             // indicate the ajax has been done, release the next step
                             $("#smartwizard").removeClass('sw-loading');
                             $("#smartwizard").smartWizard('next');
@@ -627,14 +626,14 @@
                 }
             });
 
-            $(document).on('click', '#lastFinish', function(e){
+            $(document).on('click', '#lastFinish', function(e) {
                 $.ajax({
                     type: 'post',
                     url: "ajaxcall.php",
                     data: {
                         step_name: 'wedonehere'
                     },
-                    success: function (data) {
+                    success: function(data) {
                         window.location.replace('../');
                     }
                 });

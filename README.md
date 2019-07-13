@@ -18,6 +18,8 @@ FrontEnd menggunakan jquery dan bootstrap yang sudah familiar dikalangan develop
 * CRUD Generator
 * Auditlog / Log aktivitas user
 * Pencarian
+* RESTful API (GET, POST, PUT, DELETE)
+* Data Cache
 
 ## Kebutuhan Sistem
 * PHP versi 7.0 atau lebih
