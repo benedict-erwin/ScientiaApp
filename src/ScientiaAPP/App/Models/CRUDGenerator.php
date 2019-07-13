@@ -40,19 +40,9 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
     public function getAllTables()
     {
         try {
-            $output = null;
-            $cacheKey = hash('md5', $this->Sign . __METHOD__);
-            $CachedString = $this->Cacher->getItem($cacheKey);
-            if (!$CachedString->isHit()) {
-                $query = $this->db->pdo->prepare("SHOW TABLES");
-                $query->execute();
-                $output = $query->fetchAll(\PDO::FETCH_ASSOC);
-                $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
-                $this->Cacher->save($CachedString);
-            }else {
-                $output = $CachedString->get();
-            }
-
+            $query = $this->db->pdo->prepare("SHOW TABLES");
+            $query->execute();
+            $output = $query->fetchAll(\PDO::FETCH_ASSOC);
             return $output;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
