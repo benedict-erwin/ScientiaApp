@@ -37,7 +37,6 @@ git clone git@github.com:benedict-erwin/ScientiaApp.git
 * Untuk panduan lengkap, lihat wiki [instalasi](https://github.com/benedict-erwin/ScientiaApp/wiki/Instalasi)
 
 ## Dokumentasi
-* [Wiki Home](https://github.com/benedict-erwin/ScientiaApp/wiki)
 * [Instalasi](https://github.com/benedict-erwin/ScientiaApp/wiki/1.-Instalasi)
 * [Struktur Folder](https://github.com/benedict-erwin/ScientiaApp/wiki/2.-Struktur-Folder)
 * [Cache](https://github.com/benedict-erwin/ScientiaApp/wiki/3.-Cache)
