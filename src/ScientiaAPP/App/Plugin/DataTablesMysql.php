@@ -433,7 +433,7 @@ class DataTablesMysql
     }
 
     /* Function Insert */
-    protected function saveData($data = [])
+    protected function saveData(aray $data = [])
     {
         try {
             $result = $this->db->insert($this->TABLE, $data);
@@ -453,7 +453,7 @@ class DataTablesMysql
     }
 
     /* Function Update */
-    protected function updateData($data = [], $where = [])
+    protected function updateData(aray $data = [], aray $where = [])
     {
         try {
             $result = $this->db->update($this->TABLE, $data, $where);
