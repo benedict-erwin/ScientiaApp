@@ -39,9 +39,9 @@ class DataTablesMysql
     }
 
     /* Set property TABLE */
-    protected function setTable($table = '')
+    protected function setTable(string $tablename = '')
     {
-        $this->TABLE = $table;
+        $this->TABLE = $tablename;
         return $this;
     }
 
@@ -65,7 +65,7 @@ class DataTablesMysql
     }
 
     /* Set property PKEY */
-    protected function setPkey($pkey = '')
+    protected function setPkey(string $pkey = '')
     {
         $this->PKEY = $pkey;
         return $this;
