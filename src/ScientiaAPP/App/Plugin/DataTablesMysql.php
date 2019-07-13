@@ -52,7 +52,7 @@ class DataTablesMysql
     }
 
     /* Set property COLUMNS */
-    protected function setColumns(array $columns = [])
+    protected function setColumns(array $columns)
     {
         $this->COLUMNS = $columns;
         return $this;
@@ -78,7 +78,7 @@ class DataTablesMysql
     }
 
     /* Set property COLUMN_ORDER */
-    protected function setOrderCols(array $column_order = [])
+    protected function setOrderCols(array $column_order)
     {
         $this->COLUMN_ORDER = $column_order;
         return $this;
@@ -91,7 +91,7 @@ class DataTablesMysql
     }
 
     /* Set property COLUMN_SEARCH */
-    protected function setSearchCols(array $column_search = [])
+    protected function setSearchCols(array $column_search)
     {
         $this->COLUMN_SEARCH = $column_search;
         return $this;
@@ -104,7 +104,7 @@ class DataTablesMysql
     }
 
     /* Set property ORDER */
-    protected function setDefaultOrder(array $order = [])
+    protected function setDefaultOrder(array $order)
     {
         $this->ORDER = $order;
         return $this;
@@ -433,7 +433,7 @@ class DataTablesMysql
     }
 
     /* Function Insert */
-    protected function saveData(aray $data = [])
+    protected function saveData(aray $data)
     {
         try {
             $result = $this->db->insert($this->TABLE, $data);
@@ -453,7 +453,7 @@ class DataTablesMysql
     }
 
     /* Function Update */
-    protected function updateData(aray $data = [], aray $where = [])
+    protected function updateData(aray $data, aray $where)
     {
         try {
             $result = $this->db->update($this->TABLE, $data, $where);
@@ -499,7 +499,7 @@ class DataTablesMysql
      * @param array $where
      * @return void
      */
-    protected function deleteBy(array $where = [])
+    protected function deleteBy(array $where)
     {
         try {
             $result = $this->db->delete($this->TABLE, $where);
