@@ -131,7 +131,7 @@ class DataTablesMysql
     }
 
     /* Set property SQL */
-    protected function setQuery($sql = '')
+    protected function setQuery(string $sql = '')
     {
         $this->SQL = $sql;
         return $this;
