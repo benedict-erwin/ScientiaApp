@@ -1,4 +1,8 @@
 # ScientiaApp
+[![License: GPL v3](https://img.shields.io/github/license/benedict-erwin/ScientiaApp.svg?color=blue)](https://github.com/benedict-erwin/ScientiaApp/blob/master/LICENSE.md)
+[![GitHub forks](https://img.shields.io/github/forks/benedict-erwin/ScientiaApp.svg)](https://github.com/benedict-erwin/ScientiaApp/network)
+[![GitHub stars](https://img.shields.io/github/stars/benedict-erwin/ScientiaApp.svg)](https://github.com/benedict-erwin/ScientiaApp/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/benedict-erwin/ScientiaApp.svg)](https://github.com/benedict-erwin/ScientiaApp/issues)
 
 ## Tentang
 **ScientiaApp** merupakan sebuah skeleton / kerangka dasar untuk mengawali sebuah proyek baru. Core dari Skeleton ini dibangun menggunakan [Slim PHP micro framework](https://www.slimframework.com/), database framework menggunakan [Medoo](https://medoo.in/), dan templating engine menggunakan [Twig](https://twig.symfony.com/).
