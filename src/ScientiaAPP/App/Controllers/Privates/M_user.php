@@ -20,7 +20,7 @@ class M_user extends \App\Controllers\PrivateController
         /* Call Parent Constructor */
         parent::__construct($container);
 
-        /* Set DataTables Variables */
+        /* Set Model */
         $this->MODEL = new \App\Models\M_user($container);
     }
 

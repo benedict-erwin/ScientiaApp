@@ -31,7 +31,7 @@ class CRUDGenerator extends \App\Controllers\PrivateController
         /* Execute parent constructor */
         parent::__construct($container);
 
-        /* Set DataTables Variables */
+        /* Set Model */
         $this->M_ROLE = new \App\Models\M_role($container);
         $this->M_MENU = new \App\Models\M_menu($container);
         $this->M_GROUPMENU = new \App\Models\M_groupmenu($container);
@@ -612,7 +612,7 @@ class CRUDGenerator extends \App\Controllers\PrivateController
         $php .= "\n\tpublic function __construct(\\Slim\\Container \$container)\n\t{";
         $php .= "\n\t\t/* Call Parent Constructor */";
         $php .= "\n\t\tparent::__construct(\$container);\n";
-        $php .= "\n\t\t/* Set DataTables Variables */";
+        $php .= "\n\t\t/* Set Model */";
         $php .= "\n\t\t\$this->MODEL = new \App\Models\\" . $data['className'] . "(\$container);";
         $php .= "\n\t}\n";
 

@@ -20,7 +20,7 @@ class M_menu extends \App\Controllers\PrivateController
         /* Call Parent Constructor */
         parent::__construct($container);
 
-        /* Set DataTables Variables */
+        /* Set Model */
         $this->MODEL = new \App\Models\M_menu($container);
         $this->JMENU = new \App\Models\J_menu($container);
     }
