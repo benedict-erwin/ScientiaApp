@@ -49,7 +49,6 @@ class M_menu extends \App\Controllers\PrivateController
             'id_groupmenu' => 'required|numeric',
             'nama' => 'required|alpha_space',
             'url' => 'required',
-            'controller' => 'required',
             'tipe' => 'required|alpha',
             'aktif' => 'numeric',
             'is_public' => 'required|numeric',
@@ -86,7 +85,7 @@ class M_menu extends \App\Controllers\PrivateController
                     $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
                     $safe['is_public'] = (isset($safe['is_public'])) ? (($safe['is_public'] == 1) ? 1 : 0) : 0;
                     $safe['url'] = '/' . trim($safe['url'], '/');
-                    $safe['controller'] = ucfirst($safe['controller']);
+                    $safe['controller'] = ($safe['tipe'] == 'MENU') ? null:ucfirst($safe['controller']);
 
                     if ($lastID = $this->MODEL->create($safe)) {
                         return $this->jsonSuccess('Data berhasil ditambahkan', ['id' => $lastID], null, 201);
@@ -173,7 +172,6 @@ class M_menu extends \App\Controllers\PrivateController
             'id_groupmenu' => 'required|numeric',
             'nama' => 'required|alpha_space',
             'url' => 'required',
-            'controller' => 'required',
             'tipe' => 'required|alpha',
             'aktif' => 'numeric',
             'is_public' => 'required|numeric',
@@ -210,6 +208,7 @@ class M_menu extends \App\Controllers\PrivateController
                     unset($safe['id']);
                     $safe['url'] = '/' . trim($safe['url'], '/');
                     $safe['aktif'] = (isset($safe['aktif'])) ? (($safe['aktif'] == 1) ? 1 : 0) : 0;
+                    $safe['controller'] = ($safe['tipe'] == 'MENU') ? null : ucfirst($safe['controller']);
                     if ($this->MODEL->update($safe, $id)) {
                         return $this->jsonSuccess('Perubahan data berhasil');
                     } else {

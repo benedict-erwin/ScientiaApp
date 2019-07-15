@@ -399,6 +399,19 @@ $('input[name=aktif]').on('change', function () {
     }
 });
 
+/* Tipe Change Event */
+$('#tipe').on('change', function(){
+    if (this.value == 'MENU') {
+        $('#tx_star').html('');
+        $('#tx_star').removeClass('required');
+        $('input[name=controller]').removeAttr('data-parsley-group');
+    }else{
+        $('#tx_star').html('*');
+        $('#tx_star').addClass('required');
+        $('input[name=controller]').attr('data-parsley-group', 'role');
+    }
+});
+
 /* Button Create Action */
 function btn_add() {
     id = '';
@@ -416,6 +429,7 @@ function btn_add() {
 /* Modal on show */
 $('.formEditorModal').on('shown.bs.modal', function () {
     $("input[name=nama]").focus();
+    $('#tipe').trigger('change');
 });
 
 /* Modal on dissmis */
