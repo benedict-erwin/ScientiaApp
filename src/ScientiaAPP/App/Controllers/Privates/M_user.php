@@ -251,7 +251,71 @@ class M_user extends \App\Controllers\PrivateController
     public function getProfile()
     {
         $userdata = $this->MODEL->getByID($this->user_data['ID_USER']);
-        return $this->jsonSuccess($userdata[0]);
+        return $this->jsonSuccess($userdata);
+    }
+
+    public function updateProfile()
+    {
+        $gump = new \GUMP('id');
+        $data = $this->param;
+        $gump->validation_rules([
+            'fp_nama' => 'required',
+            'fp_email' => 'required|valid_email',
+            'fp_telpon' => 'required|numeric',
+            'fp_password' => 'min_len,8',
+        ]);
+
+        $gump->filter_rules([
+            'fp_nama' => 'trim|sanitize_string',
+            'fp_email' => 'trim|sanitize_email',
+            'fp_telpon' => 'trim|sanitize_numbers',
+            'fp_password' => 'trim|sanitize_string',
+        ]);
+
+        try {
+            /* Sanitize parameter */
+            $gump->xss_clean($data);
+            $safe = $gump->run($data);
+
+            if ($safe === false) {
+                $ers = $gump->get_errors_array();
+                $err = implode(', ', array_values($ers));
+
+                /* Logger */
+                if ($this->container->get('settings')['mode'] != 'production') {
+                    $this->logger->error(__METHOD__, ['USER_REQUEST' => $this->user_data['USERNAME'], 'INFO' => $ers]);
+                }
+                throw new \Exception($err);
+            } else {
+                try {
+                    $data = [];
+                    if (isset($safe['fp_password']) && !empty($safe['fp_password'])) {
+                        $data = [
+                            'nama' => $safe['fp_nama'],
+                            'email' => $safe['fp_email'],
+                            'telpon' => $safe['fp_telpon'],
+                            'password' => $this->kripto->secure_passwd($safe['username'], $safe['password'], true),
+                        ];
+                    } else {
+                        $data = [
+                            'nama' => $safe['fp_nama'],
+                            'email' => $safe['fp_email'],
+                            'telpon' => $safe['fp_telpon']
+                        ];
+                    }
+
+                    if ($this->MODEL->update($data, $this->user_data['ID_USER'])) {
+                        return $this->jsonSuccess('Perubahan data berhasil');
+                    } else {
+                        throw new \Exception('Tidak ada perubahan data!');
+                    }
+                } catch (\Exception $e) {
+                    return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
+                }
+            }
+        } catch (\Exception $e) {
+            return $this->jsonFail('Invalid Request', ['error' => $e->getMessage()]);
+        }
     }
 
 }

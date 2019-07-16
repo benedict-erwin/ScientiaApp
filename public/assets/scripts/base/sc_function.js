@@ -904,7 +904,7 @@ function updateProfile() {
     if ($("form#formModalEditProfile").parsley().validate({ force: true, group: 'role' })) {
         $.ajax({
             "type": 'POST',
-            "url": SiteRoot + 'update_profile',
+            "url": SiteRoot + 'user/update_profile',
             "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "dataType": 'json',
             "data": formData,
@@ -919,7 +919,7 @@ function updateProfile() {
                 } else {
                     btn.button('reset');
                     btn.prop('disabled', false);
-                    notification((result.message.error) ? result.message.error : result.message, 'warn');
+                    notification((result.error) ? result.error : result.message, 'warn', 3, result.message);
                 }
             },
             "error": function (jqXHR, textStatus, errorThrown) {
@@ -957,18 +957,19 @@ $(document).on('click', '#show_password', function() {
 function getProfile() {
     setNprogressLoader("start");
     $.ajax({
-        "type": 'POST',
-        "url": SiteRoot + 'get_profile',
+        "type": 'GET',
+        "url": SiteRoot + 'user/profile',
         "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "dataType": 'json',
         "success": function (result, textStatus, jqXHR) {
             setNprogressLoader("done");
             set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
             if (result.success === true) {
-                $("input[name=fp_nama]").val(result.message.data.nama);
-                $("input[name=fp_email]").val(result.message.data.email);
-                $("input[name=fp_telpon]").val(result.message.data.telpon);
-                $("input[name=fp_username]").val(result.message.data.username);
+                $("input[name=fp_nama]").val(result.message.nama);
+                $("input[name=fp_email]").val(result.message.email);
+                $("input[name=fp_telpon]").val(result.message.telpon);
+                $("input[name=fp_username]").val(result.message.username);
+                $("input[name=fp_role]").val(strtoupper(result.message.role));
                 $("input[name=fp_password]").val('');
                 $('.formModalEditProfile').modal();
             } else {
