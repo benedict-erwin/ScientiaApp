@@ -52,6 +52,7 @@ switch ($_REQUEST['step_name']) {
         break;
 
     default:
+        var_dump(dirname(__DIR__));
         var_dump(getcwd());
         var_dump($_SESSION);
         die();
@@ -74,13 +75,13 @@ function reqCheck()
     system('composer -V', $composer);
 
     # php version
-    $phpver = version_compare(phpversion(), "7.0.0", ">=") ? true:false;
+    $phpver = version_compare(phpversion(), "7.0.0", ">=") ? true : false;
 
     # result
     $ver = phpversion();
     $ver = explode('-', $ver);
     $data = [
-        'composer' => ($composer==1) ? true:false,
+        'composer' => ($composer == 1) ? true : false,
         'php_70' => ['check' => $phpver, 'version' => $ver[0]]
     ];
 
@@ -91,29 +92,33 @@ function reqCheck()
 function downloadComposer()
 {
     putenv('COMPOSER_HOME=' . __DIR__);
-    $installerURL = 'https://getcomposer.org/installer';
-    $installerFile = 'installer.php';
-    if (!file_exists($installerFile)) {
-        echo 'Downloading ' . $installerURL . PHP_EOL;
-        flush();
-        $ch = curl_init($installerURL);
-        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($ch, CURLOPT_FILE, fopen($installerFile, 'w+'));
-        if (curl_exec($ch))
-            echo 'Success downloading ' . $installerURL . PHP_EOL;
-        else {
-            echo 'Error downloading ' . $installerURL . PHP_EOL;
-            die();
+    try {
+        $installerURL = 'https://getcomposer.org/installer';
+        $installerFile = 'installer.php';
+        if (!file_exists($installerFile)) {
+            echo 'Downloading ' . $installerURL . PHP_EOL;
+            flush();
+            $ch = curl_init($installerURL);
+            curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . DIRECTORY_SEPARATOR . 'cacert.pem');
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            curl_setopt($ch, CURLOPT_FILE, fopen($installerFile, 'w+'));
+            if (curl_exec($ch))
+                echo 'Success downloading ' . $installerURL . PHP_EOL;
+            else {
+                echo 'Error downloading ' . $installerURL . PHP_EOL;
+                die();
+            }
+            flush();
         }
+        echo 'Installer found : ' . $installerFile . PHP_EOL;
+        echo 'Starting installation...' . PHP_EOL;
         flush();
+        $argv = array();
+        include $installerFile;
+        flush();
+    } catch (\Exception $e) {
+        printJson(['success' => false, 'error' => $e->getMessage()]);
     }
-    echo 'Installer found : ' . $installerFile . PHP_EOL;
-    echo 'Starting installation...' . PHP_EOL;
-    flush();
-    $argv = array();
-    include $installerFile;
-    flush();
 }
 
 # Extract composher.phar
@@ -133,16 +138,24 @@ function extractComposer()
 function composerInstall()
 {
     putenv('COMPOSER_HOME=' . __DIR__);
-    $path = getcwd() . '/../../';
+    $path = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR;
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $path = str_replace('\\', '\\\\', $path);
+    }
+
     if (!file_exists('extracted')) {
         extractComposer();
     }
 
-    require_once(__DIR__ . '/extracted/vendor/autoload.php');
-    $input = new Symfony\Component\Console\Input\StringInput('install' . ' -vvv -d ' . $path);
-    $output = new Symfony\Component\Console\Output\StreamOutput(fopen('php://output', 'w'));
-    $app = new Composer\Console\Application();
-    $app->run($input, $output);
+    try {
+        require_once(__DIR__ . '/extracted/vendor/autoload.php');
+        $input = new Symfony\Component\Console\Input\StringInput('install' . ' -vvv -d ' . $path);
+        $output = new Symfony\Component\Console\Output\StreamOutput(fopen('php://output', 'w'));
+        $app = new Composer\Console\Application();
+        $app->run($input, $output);
+    } catch (\Exception $e) {
+        printJson(['success' => false, 'error' => $e->getMessage()]);
+    }
 }
 
 # Crate SUper User
@@ -160,10 +173,10 @@ function createSuperUser()
     $sec_pwd = $kripto->secure_passwd($_SESSION['APP_USER'], $_SESSION['APP_PASS'], true);
     $sql = "INSERT INTO `m_user` (`nama`, `email`, `idrole`, `telpon`, `username`, `password`) VALUES ('{$nama}', '{$email}', '1', '{$telp}', '{$uname}', '{$sec_pwd}')";
 
-    if (mysqli_query($conn, $sql)){
+    if (mysqli_query($conn, $sql)) {
         $data['success'] = true;
         $data['error'] = null;
-    }else {
+    } else {
         $data['success'] = true;
         $data['error'] = mysqli_error($conn);
     }
@@ -202,7 +215,7 @@ function createENV()
     $php .= "];\n";
 
     /* Generate env.php */
-    $path =  getcwd() . '/../../';
+    $path =  dirname(__DIR__, 2) . DIRECTORY_SEPARATOR;
     $envFile = $path . 'env.php';
     $handle = fopen($envFile, 'w') or die(json_encode(['success' => false, 'error' => 'cannot open file ' . $envFile]));
     if (!fwrite($handle, $php)) {
@@ -250,7 +263,7 @@ function createNewUserDB(Type $var = null)
 function importDatabase()
 {
     $data = [];
-    $sql = file_get_contents(getcwd() . '/data/database.sql');
+    $sql = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'database.sql');
     $mysqli = new mysqli($_SESSION['DBHOST'], $_SESSION['DBUSER'], $_SESSION['DBPASS'], $_SESSION['NEWDB']);
     if ($mysqli->connect_error) { /* check connection */
         $data['success'] = false;
@@ -284,7 +297,7 @@ function connetionTest($host, $user, $password)
     if (mysqli_connect_errno()) {
         $data['success'] = false;
         $data['error'] = mysqli_connect_error();
-    }else {
+    } else {
         $cek = strpos(strtoupper($row[0]), 'GRANT ALL PRIVILEGES ON *.*');
         if ($cek !== false) {
             $data['success'] = true;
@@ -292,7 +305,7 @@ function connetionTest($host, $user, $password)
             $_SESSION['DBHOST'] = $host;
             $_SESSION['DBUSER'] = $user;
             $_SESSION['DBPASS'] = $password;
-        }else {
+        } else {
             $data['success'] = false;
             $data['error'] = 'user must be root!';
         }
@@ -325,7 +338,7 @@ function saveWebConf($url, $fname, $email, $phone, $user, $pass)
 # Create default DIR
 function createDir()
 {
-    $path =  getcwd() . '/../../src/ScientiaAPP/';
+    $path =  dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'ScientiaAPP' . DIRECTORY_SEPARATOR;
 
     # Set default permission 755
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
@@ -334,25 +347,25 @@ function createDir()
     }
 
     # Create Cache & Log folder
-    if(!file_exists($path . 'App/Cache')) mkdir($path . 'App/Cache', 0777);
-    if(!file_exists($path . 'App/Log')) mkdir($path . 'App/Log', 0777);
+    if (!file_exists($path . 'App' . DIRECTORY_SEPARATOR . 'Cache')) mkdir($path . 'App' . DIRECTORY_SEPARATOR . 'Cache', 0777);
+    if (!file_exists($path . 'App' . DIRECTORY_SEPARATOR . 'Log')) mkdir($path . 'App' . DIRECTORY_SEPARATOR . 'Log', 0777);
 
     # Set permission for development mode
-    chmod($path . 'App/Controllers', 0777);
-    chmod($path . 'App/Controllers/Privates', 0777);
-    chmod($path . 'App/Controllers/Publics', 0777);
-    chmod($path . 'App/Models', 0777);
+    chmod($path . 'App' . DIRECTORY_SEPARATOR . 'Controllers', 0777);
+    chmod($path . 'App' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'Privates', 0777);
+    chmod($path . 'App' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'Publics', 0777);
+    chmod($path . 'App' . DIRECTORY_SEPARATOR . 'Models', 0777);
 
     $data = [
         'created' => [
-            $path . 'App/Cache' . ' (chmod: 777)',
-            $path . 'App/Log' . ' (chmod: 777)'
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Cache' . ' (chmod: 777)',
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Log' . ' (chmod: 777)'
         ],
         'permission' => [
-            $path . 'App/Controllers' . ' (chmod: 777)',
-            $path . 'App/Controllers/Privates' . ' (chmod: 777)',
-            $path . 'App/Controllers/Publics' . ' (chmod: 777)',
-            $path . 'App/Models' . ' (chmod: 777)'
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Controllers' . ' (chmod: 777)',
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'Privates' . ' (chmod: 777)',
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'Publics' . ' (chmod: 777)',
+            $path . 'App' . DIRECTORY_SEPARATOR . 'Models' . ' (chmod: 777)'
         ]
     ];
 

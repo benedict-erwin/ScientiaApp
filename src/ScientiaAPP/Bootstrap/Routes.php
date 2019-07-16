@@ -110,7 +110,6 @@ try {
                 $app->delete("{$url}{$act}", "\App\Controllers\\$controller");
                 break;
             default:
-                continue;
                 break;
         }
 
