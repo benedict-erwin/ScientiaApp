@@ -701,7 +701,7 @@ function kickAss() {
     setNprogressLoader("start");
     $.ajax({
         "type": 'GET',
-        "url": SiteRoot + 'clogout/1',
+        "url": SiteRoot + 'clogout',
         "dataType": 'json',
         "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "success": function (data, textStatus, jqXHR) {

@@ -206,7 +206,7 @@ class PrivateController extends \App\Controllers\BaseController
 
         $id_user = $this->kripto->decrypt($token->getClaim('ID_USER'));
         $userdata = $this->M_USER->getByID((int)$id_user);
-        $userdata = $userdata[0];
+        $userdata = $userdata;
         $this->user_data['ID_USER']  = $userdata['iduser'];
         $this->user_data['USERNAME'] = $userdata['username'];
         $this->user_data['NAME']     = $userdata['nama'];

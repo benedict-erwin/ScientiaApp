@@ -31,7 +31,7 @@ class M_groupmenu extends \App\Controllers\PrivateController
             if (!is_numeric($args['id'])) throw new \Exception('ID tidak valid!');
             $output = $this->MODEL->getByID($args['id']);
             if (!empty($output)) {
-                return $this->jsonSuccess($output[0]);
+                return $this->jsonSuccess($output);
             } else {
                 return $this->jsonFail('Data tidak ditemukan', [], 404);
             }
