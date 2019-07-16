@@ -46,4 +46,8 @@ git clone git@github.com:benedict-erwin/ScientiaApp.git
 * [Cache](https://github.com/benedict-erwin/ScientiaApp/wiki/3.-Cache)
 * [Database](https://github.com/benedict-erwin/ScientiaApp/wiki/4.-Database)
 * [CRUD Generator](https://github.com/benedict-erwin/ScientiaApp/wiki/5.-CRUD-Generator)
+* [Controller](https://github.com/benedict-erwin/ScientiaApp/wiki/6.-Controller)
+* [Model](https://github.com/benedict-erwin/ScientiaApp/wiki/7.-Model)
+* [Menu Akses](https://github.com/benedict-erwin/ScientiaApp/wiki/8.-Menu-Akses)
+* [Router](https://github.com/benedict-erwin/ScientiaApp/wiki/9.-Router)
 * [Screenshot](https://github.com/benedict-erwin/ScientiaApp/wiki/6.-Screenshot)
