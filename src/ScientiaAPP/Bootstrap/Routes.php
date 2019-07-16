@@ -95,19 +95,19 @@ try {
 
         switch ($method) {
             case 'GET': # Get data by id
-                $app->{$method}("$url/{id}", "\App\Controllers\\$controller");
+                $app->get("$url", "\App\Controllers\\$controller");
                 break;
             case 'POST': # Create, READ
-                $app->{$method}($url, "\App\Controllers\\$controller");
+                $app->post($url, "\App\Controllers\\$controller");
                 break;
             case 'PUT': # Update
-                $app->{$method}("$url/{id}", "\App\Controllers\\$controller");
+                $app->put("$url/{id}", "\App\Controllers\\$controller");
                 break;
             case 'DELETE': # Delete, Batch Delete
                 $act = explode('/', $url);
                 $act = end($act);
                 $act = ($act == 'batch') ? '/batch':'/{id}';
-                $app->{$method}("{$url}{$act}", "\App\Controllers\\$controller");
+                $app->delete("{$url}{$act}", "\App\Controllers\\$controller");
                 break;
             default:
                 continue;

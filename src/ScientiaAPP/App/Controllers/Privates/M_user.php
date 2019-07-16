@@ -245,6 +245,13 @@ class M_user extends \App\Controllers\PrivateController
         } catch (\Exception $e) {
             return $this->jsonFail('Execution Fail!', ['error' => $e->getMessage()]);
         }
-	}
+    }
+
+    /* Get User Profile */
+    public function getProfile()
+    {
+        $userdata = $this->MODEL->getByID($this->user_data['ID_USER']);
+        return $this->jsonSuccess($userdata[0]);
+    }
 
 }

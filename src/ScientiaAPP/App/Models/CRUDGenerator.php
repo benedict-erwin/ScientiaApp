@@ -253,7 +253,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                         'nama' => 'Api ' . $data['menu'] . ' Get By ID',
                         'icon' => null,
                         'controller' => $data['className'] . ':get',
-                        'url' => '/' . $data['url'],
+                        'url' => '/' . $data['url'] . '/{id}',
                         'tipe' => 'GET',
                         'aktif' => 1,
                         'urut' => 2
