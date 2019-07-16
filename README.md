@@ -38,7 +38,7 @@ git clone git@github.com:benedict-erwin/ScientiaApp.git
 ```
 * Buka browser dan arahkan ke http://ip-server-anda/lokasi-folder-scientiaapp/public/install/
 * Ikuti panduan pada wizard instalasi
-* Untuk panduan lengkap, lihat wiki [instalasi](https://github.com/benedict-erwin/ScientiaApp/wiki/Instalasi)
+* Untuk panduan lengkap, lihat wiki [instalasi](https://github.com/benedict-erwin/ScientiaApp/wiki/A.-Instalasi)
 
 ## Dokumentasi
 * [Instalasi](https://github.com/benedict-erwin/ScientiaApp/wiki/A.-Instalasi)
