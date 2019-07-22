@@ -71,8 +71,8 @@ function printJson(array $data)
 function reqCheck()
 {
     # composer
-    $composer = null;
-    system('composer -V', $composer);
+    #$composer = null;
+    #system('composer -V', $composer);
 
     # php version
     $phpver = version_compare(phpversion(), "7.0.0", ">=") ? true : false;
