@@ -22,7 +22,7 @@
     "require": {
         "slim/slim": "^3.0",
         "monolog/monolog": "^1.23",
-	    "wixel/gump": "dev-master",
+	"wixel/gump": "dev-master",
         "phpfastcache/phpfastcache": "^6.1",
         "slim/twig-view": "^2.3",
         "lcobucci/jwt": "^3.2",
