@@ -21,7 +21,6 @@ class DataTables extends \App\Controllers\PrivateController
     protected $COLUMN_ORDER  = [];
     protected $COLUMN_SEARCH = [];
     protected $ORDER = [];
-    protected $CASE_SENSITIVE = false;
     protected $AND_OR = "AND";
 
     /* Set property SQL */
@@ -70,13 +69,6 @@ class DataTables extends \App\Controllers\PrivateController
     protected function set_ORDER($order = array())
     {
         $this->ORDER = $order;
-        return $this;
-    }
-
-    /* Set property CASE_SENSITIVE */
-    protected function set_CASE_SENSITIVE($case_sensitive = false)
-    {
-        $this->CASE_SENSITIVE = $case_sensitive;
         return $this;
     }
 
@@ -153,7 +145,6 @@ class DataTables extends \App\Controllers\PrivateController
 
         //Loop column search
         $i = 0;
-        $binary = ($this->CASE_SENSITIVE) ? "BINARY" : "";
         foreach ($this->COLUMN_SEARCH as $item) {
             $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
             if ($safe['search']['value']) {
@@ -165,9 +156,9 @@ class DataTables extends \App\Controllers\PrivateController
                     }
 
                     $sql .= " ( "; //open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
-                    $sql .= "$item LIKE $binary :search_value ";
+                    $sql .= "$item LIKE :search_value ";
                 } else {
-                    $sql .= " OR $item LIKE $binary :search_value ";
+                    $sql .= " OR $item LIKE :search_value ";
                 }
                 if (count($this->COLUMN_SEARCH) - 1 == $i) { //last loop
                     $sql .= " ) "; //close bracket

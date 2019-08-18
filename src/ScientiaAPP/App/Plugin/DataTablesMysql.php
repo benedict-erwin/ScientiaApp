@@ -27,7 +27,6 @@ class DataTablesMysql
     private $COLUMN_ORDER  = [];
     private $COLUMN_SEARCH = [];
     private $ORDER = [];
-    private $CASE_SENSITIVE = false;
     private $AND_OR = "AND";
     private $SQL, $LAST_SQL;
 
@@ -116,13 +115,6 @@ class DataTablesMysql
        return $this->ORDER;
     }
 
-    /* Set property CASE_SENSITIVE */
-    protected function setCaseSentisive($case_sensitive = false)
-    {
-        $this->CASE_SENSITIVE = $case_sensitive;
-        return $this;
-    }
-
     /* Set property AND_OR */
     protected function setAndOr($and_or)
     {
@@ -156,8 +148,7 @@ class DataTablesMysql
        return $this->LAST_SQL;
     }
 
-    /* Function prepare query for DataTables */
-    protected function get_datatables_query(array $safe)
+    private function initiate_query()
     {
         //Generate Query
         if (!empty($this->SQL)) {
@@ -168,6 +159,14 @@ class DataTablesMysql
             }, $this->COLUMNS));
             $sql = "SELECT " . $backtick . " FROM " . "`" . $this->TABLE . "`";
         }
+
+        return $sql;
+    }
+
+    /* Function prepare query for DataTables */
+    protected function get_datatables_query(array $safe)
+    {
+        $sql = $this->initiate_query();
 
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             $x = 0;
@@ -221,7 +220,6 @@ class DataTablesMysql
 
         //Loop column search
         $i = 0;
-        $binary = ($this->CASE_SENSITIVE) ? "BINARY" : "";
         foreach ($this->COLUMN_SEARCH as $item) {
             $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
             if ($safe['search']['value']) {
@@ -233,9 +231,9 @@ class DataTablesMysql
                     }
 
                     $sql .= " ( "; //open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
-                    $sql .= "$item LIKE $binary :search_value ";
+                    $sql .= "$item LIKE :search_value ";
                 } else {
-                    $sql .= " OR $item LIKE $binary :search_value ";
+                    $sql .= " OR $item LIKE :search_value ";
                 }
                 if (count($this->COLUMN_SEARCH) - 1 == $i) { //last loop
                     $sql .= " ) "; //close bracket
@@ -422,7 +420,8 @@ class DataTablesMysql
     protected function count_all($safe = '')
     {
         /* Get AllData */
-        $data = $this->db->select($this->TABLE, "*");
+        $sql = $this->initiate_query();
+        $data = $this->db->pdo->query($sql)->fetchAll();
 
         /* Logger */
         if ($this->mode != 'production') {
