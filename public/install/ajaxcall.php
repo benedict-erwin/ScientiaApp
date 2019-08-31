@@ -284,10 +284,10 @@ function importDatabase()
 # Test Connection
 function connetionTest($host, $user, $password)
 {
-    $con = mysqli_connect($host, $user, $password);
-    $sql = mysqli_query($con, "SHOW GRANTS FOR {$user}@{$host};");
-    $row = mysqli_fetch_assoc($sql);
-    $row = array_values($row);
+    $con = @mysqli_connect($host, $user, $password);
+    $sql = @mysqli_query($con, "SHOW GRANTS FOR {$user}@{$host};");
+    $row = @mysqli_fetch_assoc($sql);
+    $row = @array_values($row);
 
     if (mysqli_connect_errno()) {
         $data['success'] = false;
