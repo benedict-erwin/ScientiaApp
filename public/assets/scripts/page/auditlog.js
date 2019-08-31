@@ -139,7 +139,7 @@ $(document).ready(function() {
 				}
 			},
 			"error": function (jqXHR, textStatus, errorThrown) {
-				notification(jqXHR . responseJSON . error, 'error', 3, 'ERROR');
+				notification(jqXHR.responseJSON.error, 'error', 3, 'ERROR');
 				console.log(jqXHR);
 				console.log(textStatus);
 				console.log(errorThrown);

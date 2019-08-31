@@ -31,7 +31,8 @@ class DataTablesMysql
     private $SQL, $LAST_SQL;
 
     /* Constructor */
-    public function __construct(\Slim\Container $container){
+    public function __construct(\Slim\Container $container)
+    {
         $this->db = $container->database;
         $this->mode = $container->get('settings')['mode'];
         $this->logger = $container->logger;
@@ -112,7 +113,7 @@ class DataTablesMysql
     /* Get property ORDER */
     protected function getDefaultOrder()
     {
-       return $this->ORDER;
+        return $this->ORDER;
     }
 
     /* Set property AND_OR */
@@ -132,20 +133,20 @@ class DataTablesMysql
     /* Get property SQL */
     protected function getQuery()
     {
-       return $this->SQL;
+        return $this->SQL;
     }
 
     /* Set property LAST SQL */
     protected function setLastQuery($sql)
     {
-       $this->LAST_SQL = $sql;
-       return $this->LAST_SQL;
+        $this->LAST_SQL = $sql;
+        return $this->LAST_SQL;
     }
 
     /* Get property LAST SQL */
     protected function getLastQuery()
     {
-       return $this->LAST_SQL;
+        return $this->LAST_SQL;
     }
 
     private function initiate_query()
@@ -170,7 +171,7 @@ class DataTablesMysql
 
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
             $x = 0;
-            foreach ($safe['opsional'] as $key => $nilai) {
+            foreach ((array) $safe['opsional'] as $key => $nilai) {
                 if ($nilai || is_numeric($nilai)) {
                     /* Clean key for safe sql */
                     $binder = $key;
@@ -220,7 +221,7 @@ class DataTablesMysql
 
         //Loop column search
         $i = 0;
-        foreach ($this->COLUMN_SEARCH as $item) {
+        foreach ((array) $this->COLUMN_SEARCH as $item) {
             $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
             if ($safe['search']['value']) {
                 if ($i === 0) { //first loop
@@ -248,9 +249,8 @@ class DataTablesMysql
             $ord = utf8_decode(urldecode($ord));
             $sql .= " ORDER BY {$ord}";
         }
-        /* Set Order from DataTables */
-        else {
-            $kolum = (int)$safe['order']['0']['column'];
+        /* Set Order from DataTables */ else {
+            $kolum = (int) $safe['order']['0']['column'];
             $ord = (empty($this->COLUMN_ORDER[$kolum])) ? 1 : $this->COLUMN_ORDER[$kolum];
             $sort = (strtoupper($safe['order']['0']['dir']) === "ASC") ? " ASC" : " DESC";
             $sql .= " ORDER BY " . $ord . $sort;
@@ -285,15 +285,15 @@ class DataTablesMysql
         /* Param Variables */
         $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
         $search_value = "%" . strtoupper($safe['search']['value']) . "%";
-        $length = (int)$safe['length'];
-        $start = (int)$safe['start'];
+        $length = (int) $safe['length'];
+        $start = (int) $safe['start'];
 
         /* bindParam & execute */
         $query = $this->db->pdo->prepare($sql);
 
         /* Opsional */
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
-            foreach ($safe['opsional'] as $key => $nilai) {
+            foreach ((array) $safe['opsional'] as $key => $nilai) {
                 if ($nilai || is_numeric($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.') !== false) {
@@ -323,7 +323,7 @@ class DataTablesMysql
             $arrRep = ["'" . $search_value . "'", $length, $start];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
-                foreach ($safe['opsional'] as $key => $nilai) {
+                foreach ((array) $safe['opsional'] as $key => $nilai) {
                     /* Clean key for safe sql */
                     $binder = $key;
                     implode(
@@ -374,7 +374,7 @@ class DataTablesMysql
 
         /* Opsional */
         if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
-            foreach ($safe['opsional'] as $key => $nilai) {
+            foreach ((array) $safe['opsional'] as $key => $nilai) {
                 if ($nilai || is_numeric($nilai)) {
                     $binder = $key;
                     if (strpos($key, '.') !== false) {
@@ -398,7 +398,7 @@ class DataTablesMysql
             $arrRep = ["'" . $search_value . "'"];
             $sql = str_replace($arrFind, $arrRep, $sql);
             if (array_key_exists('opsional', $safe) && !empty($safe['opsional'])) {
-                foreach ($safe['opsional'] as $key => $nilai) {
+                foreach ((array) $safe['opsional'] as $key => $nilai) {
                     if ($nilai || is_numeric($nilai)) {
                         $kolom = ':' . $key;
                         $sql = str_replace($kolom, $nilai, $sql);
@@ -425,7 +425,7 @@ class DataTablesMysql
 
         /* Logger */
         if ($this->mode != 'production') {
-            $this->logger->info(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'query' => $this->db->last()]);
+            $this->logger->info(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['query' => $this->db->last()]);
         }
 
         return count($data);
@@ -438,13 +438,13 @@ class DataTablesMysql
             $result = $this->db->insert($this->TABLE, $data);
             if ($result->rowCount() > 0) {
                 return $this->db->id();
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
             /* Logger */
             if ($this->mode != 'production') {
-                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'query' => $this->db->last()]);
+                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['query' => $this->db->last()]);
             }
 
             throw new \Exception($e->getMessage());
@@ -458,13 +458,13 @@ class DataTablesMysql
             $result = $this->db->update($this->TABLE, $data, $where);
             if ($result->rowCount() > 0) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
             /* Logger */
             if ($this->mode != 'production') {
-                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'query' => $this->db->last()]);
+                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['query' => $this->db->last()]);
             }
 
             throw new \Exception($e->getMessage());
@@ -478,13 +478,13 @@ class DataTablesMysql
             $result = $this->db->delete($this->TABLE, [$this->PKEY => $pkey]);
             if ($result->rowCount() > 0) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
             /* Logger */
             if ($this->mode != 'production') {
-                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'query' => $this->db->last()]);
+                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['query' => $this->db->last()]);
             }
 
             throw new \Exception($e->getMessage());
@@ -504,13 +504,13 @@ class DataTablesMysql
             $result = $this->db->delete($this->TABLE, $where);
             if ($result->rowCount() > 0) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
             /* Logger */
             if ($this->mode != 'production') {
-                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', [ 'query' => $this->db->last()]);
+                $this->logger->error(__CLASS__ . ' :: ' . __FUNCTION__ . ' :: ', ['query' => $this->db->last()]);
             }
 
             throw new \Exception($e->getMessage());
@@ -523,15 +523,15 @@ class DataTablesMysql
     protected function getDataById($id, $column = null)
     {
         if (!empty($this->SQL)) {
-            $where = ((strpos(strtoupper($this->SQL), 'WHERE') !== false) ? ' AND ':' WHERE ')  . $this->PKEY . '=:' . $this->PKEY;
+            $where = ((strpos(strtoupper($this->SQL), 'WHERE') !== false) ? ' AND ' : ' WHERE ')  . $this->PKEY . '=:' . $this->PKEY;
             $query = $this->db->pdo->prepare($this->SQL . $where);
             $query->bindParam(':' . $this->PKEY, $id, \PDO::PARAM_INT);
             $query->execute();
             $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-            $result = count($result > 0) ? $result[0]:null;
+            $result = count($result > 0) ? $result[0] : null;
             return $result;
         }
-        return $this->db->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*': $this->COLUMNS):$column), [$this->PKEY => $id]);
+        return $this->db->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*' : $this->COLUMNS) : $column), [$this->PKEY => $id]);
     }
 
     /* Override SQL Message */
@@ -544,7 +544,7 @@ class DataTablesMysql
             "integrity constraint violation: 1062 duplicate entry" => "Data/kode primer telah ada dalam database, silahkan coba dengan data/kode lain",
         ];
 
-        foreach ($find as $key => $value) {
+        foreach ((array) $find as $key => $value) {
             if (strpos($msgLower, $key) !== false) {
                 return $value;
             }

@@ -43,7 +43,7 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
     {
         $where = '';
         if (isset($data['periode_start']) && isset($data['periode_end'])) {
-            $where = "WHERE date_format(la.tanggal, '%Y-%m-%d') >='" . $data['periode_start'] . "' AND date_format(la.tanggal, '%Y-%m-%d') <='" . $data['periode_end'] . "'";
+            $where = "WHERE action NOT IN ('api/auditlog/read') AND date_format(la.tanggal, '%Y-%m-%d') >='" . $data['periode_start'] . "' AND date_format(la.tanggal, '%Y-%m-%d') <='" . $data['periode_end'] . "'";
         }
 
         return "SELECT la.*, mu.nama, mu.username

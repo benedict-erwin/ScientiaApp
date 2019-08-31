@@ -52,8 +52,8 @@ class PrivateController extends \App\Controllers\BaseController
     {
         // Generate jtid for one time token
         $jtid = null;
-        $userdata = (!empty($userdata)) ? $userdata:$this->user_data;
-        $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['ID_USER'] . (($this->isAjaxAndReferer() === false) ? '_'.rand(0, time()):''));
+        $userdata = (!empty($userdata)) ? $userdata : $this->user_data;
+        $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['ID_USER'] . (($this->isAjaxAndReferer() === false) ? '_' . rand(0, time()) : ''));
         $CachedString = $this->InstanceCache->getItem($ckey);
         if (is_null($CachedString->get())) {
             $jtid = $ckey;
@@ -107,21 +107,19 @@ class PrivateController extends \App\Controllers\BaseController
 
         /* Generate new JWT */
         $token = (string) $this->getTokenJWT();
-        // if (!in_array($this->uri_path, ['clogin', 'clogout'])) {
-        // }
 
+        /* Write Response */
         $response = $this->response->withHeader('Cache-Control', 'no-cache, must-revalidate');
         $response = $response->withAddedHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
 
         if ($token) {
             $response = $response->withAddedHeader('JWT', $token);
-            // $response = $response->withAddedHeader('Authorization', "Bearer {$token}");
         }
 
         $response = $response->withJson($output, $code);
 
         if ($this->container->get('settings')['mode'] != 'production') {
-            $this->logger->info(__METHOD__ . ' :: ', ['INFO'=>'status : ' . $status]);
+            $this->logger->info(__METHOD__ . ' :: ', ['INFO' => 'status : ' . $status]);
         }
 
         return $response;
@@ -136,7 +134,7 @@ class PrivateController extends \App\Controllers\BaseController
      */
     public function jsonFail($message = null, array $addl = [], int $code = null)
     {
-        $code = (is_int($code)) ? $code:200;
+        $code = (is_int($code)) ? $code : 200;
         return $this->jsonResponse(false, $message, $addl, null, $code);
     }
 
@@ -148,9 +146,9 @@ class PrivateController extends \App\Controllers\BaseController
      * @param string $token JWT token [optional]
      * @param int $code http status code [optional]
      */
-    public function jsonSuccess($message=null, $addl=null, $token=null, int $code=null)
+    public function jsonSuccess($message = null, $addl = null, $token = null, int $code = null)
     {
-        $code = (is_int($code)) ? $code:200;
+        $code = (is_int($code)) ? $code : 200;
         return $this->jsonResponse(true, $message, $addl, $token, $code);
     }
 
@@ -161,7 +159,7 @@ class PrivateController extends \App\Controllers\BaseController
         $urlink = str_replace('/' . $this->container->get('settings')['api_path'] . '/', '/', $urlink);
         $exp = explode('/', $urlink);
         $exp = trim(end($exp));
-        $urlink = is_numeric($exp) ? str_replace("/{$exp}", '',$urlink):$urlink;
+        $urlink = is_numeric($exp) ? str_replace("/{$exp}", '', $urlink) : $urlink;
         $query = $this->M_MENU->controllerAuth($this->user_data['ID_ROLE'], $urlink);
 
         /* Unauthorized! */
@@ -178,7 +176,7 @@ class PrivateController extends \App\Controllers\BaseController
     /* AuditLog Function */
     private function auditLog()
     {
-        if (!in_array($this->uri_path, ['cauth', 'cmenu'])) {
+        if (!in_array($this->uri_path, ['api/cauth', 'api/cmenu'])) {
             $ip = new Ipaddress();
             $this->L_AUDITLOG->create(
                 [
@@ -205,7 +203,7 @@ class PrivateController extends \App\Controllers\BaseController
         }
 
         $id_user = $this->kripto->decrypt($token->getClaim('ID_USER'));
-        $userdata = $this->M_USER->getByID((int)$id_user);
+        $userdata = $this->M_USER->getByID((int) $id_user);
         $userdata = $userdata;
         $this->user_data['ID_USER']  = $userdata['iduser'];
         $this->user_data['USERNAME'] = $userdata['username'];
@@ -242,13 +240,13 @@ class PrivateController extends \App\Controllers\BaseController
 
                 $this->jwtJTID = $jtid;
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->info("jwt_validate_jti :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
+                    $this->logger->info("jwt_validate_jti :: ", ['INFO' => 'JWTID : ' . $this->jwtJTID]);
                 }
 
-                if ($this->isAjax()===false) {
+                if ($this->isAjax() === false) {
                     //logger
                     if ($this->container->get('settings')['mode'] != 'production') {
-                        $this->logger->info("ONE_TIME-TOKEN :: ", ['INFO'=>'JWTID : ' . $this->jwtJTID]);
+                        $this->logger->info("ONE_TIME-TOKEN :: ", ['INFO' => 'JWTID : ' . $this->jwtJTID]);
                     }
                     // Remove cache for one time token
                     $this->InstanceCache->deleteItem($this->jwtJTID);
@@ -298,12 +296,12 @@ class PrivateController extends \App\Controllers\BaseController
     }
 
     /* Clear Cache */
-    protected function clearUserCache($idrole=null, $iduser=null)
+    protected function clearUserCache($idrole = null, $iduser = null)
     {
         try {
             /* Vars */
-            $idrole = ($idrole) ? $idrole:$this->user_data['ID_ROLE'];
-            $iduser = ($iduser) ? $iduser:$this->user_data['ID_USER'];
+            $idrole = ($idrole) ? $idrole : $this->user_data['ID_ROLE'];
+            $iduser = ($iduser) ? $iduser : $this->user_data['ID_USER'];
 
             /* getMenu */
             $getMenu = hash('md5', $this->sign . '_cmenu_' . $idrole);
@@ -339,7 +337,6 @@ class PrivateController extends \App\Controllers\BaseController
     public function isAjax()
     {
         return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true:false;
+            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') ? true : false;
     }
-
 }

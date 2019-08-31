@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @project    ScientiaAPP - Web Apps Skeleton & CRUD Generator
  * @package    ScientiaAPP/App/Plugin
@@ -172,12 +173,8 @@ class DataTables extends \App\Controllers\PrivateController
             $ord = str_replace('=', ' ', http_build_query($this->ORDER, '', ', '));
             $ord = utf8_decode(urldecode($ord));
             $sql .= " ORDER BY {$ord}";
-
-            // $column = key($this->ORDER);
-            // $direction = $this->ORDER[key($this->ORDER)];
-            // $sql .= " ORDER BY $column $direction";
         } else {
-            $kolum = (int)$safe['order']['0']['column'];
+            $kolum = (int) $safe['order']['0']['column'];
             $ord = (empty($this->COLUMN_ORDER[$kolum])) ? 1 : $this->COLUMN_ORDER[$kolum];
             $sort = (strtoupper($safe['order']['0']['dir']) === "ASC") ? " ASC" : " DESC";
             $sql .= " ORDER BY " . $ord . $sort;
@@ -207,8 +204,8 @@ class DataTables extends \App\Controllers\PrivateController
         /* Param Variables */
         $safe['search']['value'] = (isset($safe['search']['value']) ? $safe['search']['value'] : null);
         $search_value = "%" . strtoupper($safe['search']['value']) . "%";
-        $length = (int)$safe['length'];
-        $start = (int)$safe['start'];
+        $length = (int) $safe['length'];
+        $start = (int) $safe['start'];
 
         /* bindParam & execute */
         $query = $this->dbpdo->pdo->prepare($sql);
@@ -426,7 +423,7 @@ class DataTables extends \App\Controllers\PrivateController
      */
     protected function getDataById($id, $column = null)
     {
-        return $this->dbpdo->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*': $this->COLUMNS):$column), [$this->PKEY => $id]);
+        return $this->dbpdo->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*' : $this->COLUMNS) : $column), [$this->PKEY => $id]);
     }
 
     /* Override SQL Message */
