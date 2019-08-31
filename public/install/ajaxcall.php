@@ -70,10 +70,6 @@ function printJson(array $data)
 # Dependencies check
 function reqCheck()
 {
-    # composer
-    #$composer = null;
-    #system('composer -V', $composer);
-
     # php version
     $phpver = version_compare(phpversion(), "7.0.0", ">=") ? true : false;
 
@@ -81,7 +77,6 @@ function reqCheck()
     $ver = phpversion();
     $ver = explode('-', $ver);
     $data = [
-        'composer' => ($composer == 1) ? true : false,
         'php_70' => ['check' => $phpver, 'version' => $ver[0]]
     ];
 
