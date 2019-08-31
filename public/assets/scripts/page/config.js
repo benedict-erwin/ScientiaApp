@@ -108,14 +108,6 @@ $(document).ready(function() {
 
 			},
 			"dataSrc": function(json) {
-				/* stop_loader */
-				checkAuth(function(){
-					$("#tx_dtSpiner").text('Reload');
-					$("#dtSpiner").addClass('pause-spinner');
-					$("a.btn.btn-default.btn-sm").removeClass('disabled');
-					setNprogressLoader("done");
-
-				});
 				/* return variable */
 				var return_data = [];
 				if (json.success === true) {
@@ -181,6 +173,14 @@ $(document).ready(function() {
 			"style": "multi",
 			"selector": "td:first-child",
 		}
+	}).on('draw', function() {
+		/* stop_loader */
+		checkAuth(function(){
+			$("#tx_dtSpiner").text('Reload');
+			$("#dtSpiner").addClass('pause-spinner');
+			$("a.btn.btn-default.btn-sm").removeClass('disabled');
+			setNprogressLoader("done");
+		});
 	});
 
 	/* DataTable search on enter */

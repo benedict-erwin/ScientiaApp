@@ -165,7 +165,6 @@ class CRUDGenerator extends \App\Controllers\PrivateController
                 if (Stringer::is_like(['int'], $desc['Type'])) {
                     $gumpValidationRules .= "\n\t\t\t\"" . $desc['Field'] . '" => "numeric",';
                 }
-
             }
 
             /* Variable for generate backend */
@@ -379,7 +378,7 @@ class CRUDGenerator extends \App\Controllers\PrivateController
     private function filterTableTop(array $data = [])
     {
         $html = '';
-        $groups = Stringer::fill_chunck($data, ceil(count($data)/4));
+        $groups = Stringer::fill_chunck($data, ceil(count($data) / 4));
         foreach ($groups as $group) {
             $html .= "\n\t\t\t\t\t\t\t\t<div class=\"row margin-bt-20\">";
 
@@ -632,7 +631,6 @@ class CRUDGenerator extends \App\Controllers\PrivateController
             $php .= "\n\t\t\treturn \$this->jsonFail('Execution Fail!', ['error' => \$e->getMessage()]);";
             $php .= "\n\t\t}";
             $php .= "\n\t}\n";
-
         }
 
         /* Function Create */
@@ -1197,13 +1195,6 @@ class CRUDGenerator extends \App\Controllers\PrivateController
 
         $js .= "\n\t\t\t},";
         $js .= "\n\t\t\t\"dataSrc\": function(json) {";
-        $js .= "\n\t\t\t\t/* stop_loader */";
-        $js .= "\n\t\t\t\tcheckAuth(function(){";
-        $js .= "\n\t\t\t\t\t\$(\"#tx_dtSpiner\").text('Reload');";
-        $js .= "\n\t\t\t\t\t\$(\"#dtSpiner\").addClass('pause-spinner');";
-        $js .= "\n\t\t\t\t\t\$(\"a.btn.btn-default.btn-sm\").removeClass('disabled');";
-        $js .= "\n\t\t\t\t\tsetNprogressLoader(\"done\");\n";
-        $js .= "\n\t\t\t\t});";
 
         //start json reordering
         $js .= "\n\t\t\t\t/* return variable */";
@@ -1279,6 +1270,14 @@ class CRUDGenerator extends \App\Controllers\PrivateController
         $js .= "\n\t\t\t\"style\": \"multi\",";
         $js .= "\n\t\t\t\"selector\": \"td:first-child\",";
         $js .= "\n\t\t}";
+        $js .= "\n\t}).on('draw', function() {\n";
+        $js .= "\n\t\t/* stop_loader */\n";
+        $js .= "\n\t\tcheckAuth(function(){\n";
+        $js .= "\n\t\t\t\$(\"#tx_dtSpiner\").text('Reload');\n";
+        $js .= "\n\t\t\t\$(\"#dtSpiner\").addClass('pause-spinner');\n";
+        $js .= "\n\t\t\t\$(\"a.btn.btn-default.btn-sm\").removeClass('disabled');\n";
+        $js .= "\n\t\t\tsetNprogressLoader(\"done\");\n";
+        $js .= "\n\t\t});\n";
         $js .= "\n\t});\n";
         //end column definition
 
@@ -1304,7 +1303,7 @@ class CRUDGenerator extends \App\Controllers\PrivateController
 
         foreach ($data['dtcols'] as $idx => $cols) {
             if ($idx >= 1) {
-                if(Stringer::is_like(['date'], $data['describe'][$idx]['Type'])){
+                if (Stringer::is_like(['date'], $data['describe'][$idx]['Type'])) {
                     $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
                 } elseif (Stringer::is_like(['time'], $data['describe'][$idx]['Type'])) {
                     $js .= "\n\t\t\$(\"input[name=$cols]\").val(data[" . ($idx + 1) . "]);";
