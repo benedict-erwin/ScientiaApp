@@ -72,7 +72,7 @@ class J_menu extends \App\Plugin\DataTablesMysql
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -91,14 +91,14 @@ class J_menu extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
                     hash('sha256', $this->Sign . 'M_menu'),
                     $this->Sign . '_router',
                 ]);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
@@ -213,7 +213,7 @@ class J_menu extends \App\Plugin\DataTablesMysql
         }
     }
 
-    public function getPermission(string $url = null, int $idrole=null)
+    public function getPermission(string $url = null, int $idrole = null)
     {
         try {
             $output = null;
@@ -222,9 +222,9 @@ class J_menu extends \App\Plugin\DataTablesMysql
             if (!$CachedString->isHit()) {
                 //Controller
                 $res = $this->db->get('m_menu', ['id_menu', 'controller', 'tipe'], ['url' => $url, 'ORDER' => ['controller' => 'DESC']]);
-                if ($res['tipe']=='MENU') {
-                    $cond = "c.id_menu='" . $res['id_menu'] ."'";
-                }else {
+                if ($res['tipe'] == 'MENU') {
+                    $cond = "c.id_menu='" . $res['id_menu'] . "'";
+                } else {
                     $cond = "c.controller LIKE :controller";
                     $controller = explode(':', $res['controller']);
                     $controller = trim($controller[0]) . ':%';

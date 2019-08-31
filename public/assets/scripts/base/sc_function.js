@@ -758,11 +758,16 @@ function checkAuth(callback) {
 
                 /* Read */
                 if (perm.indexOf('read') != -1) {
-                    $('#datatable-responsive').css('display', '');
-                    $('#datatable-responsive').prop('disabled', false);
+                    $('#dtableDiv').css('display', '');
+                    $('#dtableDiv').prop('disabled', false);
                 } else {
-                    $('#datatable-responsive').css('display', 'none');
-                    $('#datatable-responsive').prop('disabled', true);
+                    if(perm.indexOf('index') != -1){
+                        $('#dtableDiv').css('display', '');
+                        $('#dtableDiv').prop('disabled', false);
+                    }else{
+                        $('#dtableDiv').css('display', 'none');
+                        $('#dtableDiv').prop('disabled', true);
+                    }
                 }
 
                 /* Update */

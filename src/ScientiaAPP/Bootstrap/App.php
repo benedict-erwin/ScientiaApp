@@ -10,11 +10,12 @@
 
 require_once BASE_PATH . '/env.php';
 
-use \phpFastCache\CacheManager;
+use Phpfastcache\CacheManager;
 use Medoo\Medoo;
 
 
 /* Configuration Parameter */
+
 $cache = null;
 $config = [
     'settings' => [
@@ -25,8 +26,8 @@ $config = [
         'api_path' => $conf['API_PATH'],
         'mode' => $conf['MODE'],
         'base_url' => $conf['BASE_URL'],
-        'jsversion' => ($conf['MODE']=='develop') ? date('Ymdhis'):date('Ym'), // force to reload JS
-        'displayErrorDetails' => ($conf['MODE']=='develop') ? true:false, // set to false in production
+        'jsversion' => ($conf['MODE'] == 'develop') ? date('Ymdhis') : date('Ym'), // force to reload JS
+        'displayErrorDetails' => ($conf['MODE'] == 'develop') ? true : false, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
         // Monolog settings
         'logger' => [
@@ -35,11 +36,11 @@ $config = [
             'level' => \Monolog\Logger::DEBUG,
         ],
         'dbnya' => [
-            'DB_HOST'=> $conf['DB_HOST'],
-            'DB_USER'=>$conf['DB_USER'],
-            'DB_PASS'=>$conf['DB_PASS'],
-            'DB_NAME'=>$conf['DB_NAME'],
-            'SIGNATURE'=>$conf['SIGNATURE']
+            'DB_HOST' => $conf['DB_HOST'],
+            'DB_USER' => $conf['DB_USER'],
+            'DB_PASS' => $conf['DB_PASS'],
+            'DB_NAME' => $conf['DB_NAME'],
+            'SIGNATURE' => $conf['SIGNATURE']
         ],
     ],
 ];
@@ -48,18 +49,20 @@ try {
     /* FastCachePHP - FileDriver
      * Setup cache File Path
      */
-    CacheManager::setDefaultConfig(["path" => APP_PATH . "/Cache/Api"]);
+    CacheManager::setDefaultConfig(new Phpfastcache\Config\Config([
+        "path" => APP_PATH . "/Cache/Api"
+    ]));
 
     /* Create Instance Cache */
     $cache = CacheManager::getInstance("files");
 
     /* FastCachePHP - RedisDriver */
-    // $cache = CacheManager::getInstance('redis', [
+    // $cache = CacheManager::getInstance('redis', new Phpfastcache\Drivers\Redis\Config([
     //     'host' => $conf['REDIS_HOST'],
     //     'port' => $conf['REDIS_PORT'],
     //     'password' => $conf['REDIS_PASS'],
     //     'database' => $conf['REDIS_DB']
-    // ]);
+    // ]));
 } catch (\Exception $e) {
     header("HTTP/1.0 500 Internal Server Error");
     header("Content-Type: application/json;charset=utf-8");
@@ -80,12 +83,12 @@ $container['logger'] = function ($container) {
 };
 
 /* FastCache setup */
-$container['cacher'] = function($container) use ($cache) {
+$container['cacher'] = function ($container) use ($cache) {
     return $cache;
 };
 
 /* Make the custom App autoloader */
-spl_autoload_register(function ($class) use ($container){
+spl_autoload_register(function ($class) use ($container) {
     $classFile = APP_PATH . '/../' . str_replace('\\', '/', $class) . '.php';
     $container['logger']->info('App::spl_autoload_register', ['autoload' => $class]);
     if (!is_file($classFile)) {
@@ -121,7 +124,7 @@ foreach (new DirectoryIterator(APP_PATH . '/Models') as $fileInfo) {
 /* Database Configuration */
 $container['database'] = function ($container) {
     $conf = $container->get('settings')['dbnya'];
-    $log = ($container->get('settings')['mode'] == 'production') ? false:true;
+    $log = ($container->get('settings')['mode'] == 'production') ? false : true;
     return new Medoo([
         'database_type' => 'mysql',
         'database_name' => $conf['DB_NAME'],
@@ -133,7 +136,7 @@ $container['database'] = function ($container) {
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ],
         'charset' => 'utf8',
-        'command' => [ 'SET SQL_MODE=ANSI_QUOTES' ]
+        'command' => ['SET SQL_MODE=ANSI_QUOTES']
     ]);
 };
 
@@ -174,7 +177,7 @@ $container['errorHandler'] = function ($container) {
             }
         } else {
             // Use this for debugging purposes
-            $container['logger']->error('App::container::errorHandler', ['error' => 'SC500', 'message' => $message.' in '.$exception->getFile().' - ('.$exception->getLine().', '.get_class($exception).')']);
+            $container['logger']->error('App::container::errorHandler', ['error' => 'SC500', 'message' => $message . ' in ' . $exception->getFile() . ' - (' . $exception->getLine() . ', ' . get_class($exception) . ')']);
             return $container['response']->withJson(['success' => false, 'error' => $message], $code);
         }
     };
@@ -193,7 +196,7 @@ $container['notAllowedHandler'] = function ($container) {
 /* Register component on container */
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig(APP_PATH . '/Templates', [
-        'cache' => ($container->get('settings')['mode'] == 'production') ? APP_PATH . '/Cache/Tpl':false
+        'cache' => ($container->get('settings')['mode'] == 'production') ? APP_PATH . '/Cache/Tpl' : false
     ]);
 
     // Instantiate and add Slim specific extension

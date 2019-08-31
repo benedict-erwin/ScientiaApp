@@ -67,7 +67,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                 $output = $query->fetchAll(\PDO::FETCH_ASSOC);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -110,7 +110,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                 $output = $query->fetchAll(\PDO::FETCH_ASSOC);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -168,7 +168,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                 $output = $CachedString->get();
             }
 
-            return ((int) $output +1);
+            return ((int) $output + 1);
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }
@@ -195,7 +195,7 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
                         'id_groupmenu' => $data['id_groupmenu'],
                         'nama' => $data['menu'],
                         'icon' => null,
-                        'controller' => '',
+                        'controller' => $data['className'] . ':index',
                         'url' => '/' . $data['url'],
                         'tipe' => 'MENU',
                         'aktif' => 1,
@@ -401,5 +401,4 @@ class CRUDGenerator extends \App\Plugin\DataTablesMysql
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }
     }
-
 }
