@@ -2,3 +2,4 @@ env.php
 src/ScientiaAPP/App/Cache/*
 src/ScientiaAPP/App/Log/*
 vendor/*
+public/install/.htaccess
