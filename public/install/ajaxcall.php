@@ -47,6 +47,12 @@ switch ($_REQUEST['step_name']) {
         sleep(2);
         break;
     case 'wedonehere':
+        @unlink('composer.phar');
+        @unlink('installer.php');
+        @unlink('keys.dev.pub');
+        @unlink('keys.tags.pub');
+        rrmdir('cache');
+        rrmdir('extracted');
         file_put_contents('.htaccess', 'Deny from all');
         session_destroy();
         break;
@@ -365,4 +371,21 @@ function createDir()
     ];
 
     printJson($data);
+}
+
+function rrmdir($src) {
+    $dir = opendir($src);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            $full = $src . DIRECTORY_SEPARATOR . $file;
+            if ( is_dir($full) ) {
+                rrmdir($full);
+            }
+            else {
+                unlink($full);
+            }
+        }
+    }
+    closedir($dir);
+    rmdir($src);
 }
