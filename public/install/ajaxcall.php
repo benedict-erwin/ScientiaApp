@@ -309,6 +309,7 @@ function connetionTest($host, $user, $password)
         } else {
             $data['success'] = false;
             $data['error'] = 'user must be root!';
+            $data['error'] .= PHP_EOL . mysqli_error($con);
         }
     }
 
