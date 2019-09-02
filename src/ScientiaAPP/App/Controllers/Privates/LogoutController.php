@@ -12,6 +12,7 @@ namespace App\Controllers\Privates;
 
 class LogoutController extends \App\Controllers\PrivateController
 {
+    private $L_AUDITLOG;
 
     /**
      * Call Parent Constructor
@@ -23,6 +24,8 @@ class LogoutController extends \App\Controllers\PrivateController
         /* Call Parent Constructor */
         parent::__construct($container);
 
+        /* Set Model */
+        $this->L_AUDITLOG = new \App\Models\L_auditlog($container);
     }
 
     /**
@@ -33,6 +36,7 @@ class LogoutController extends \App\Controllers\PrivateController
     public function logout()
     {
         try {
+            $this->L_AUDITLOG->deleteReadLog($this->user_data['ID_USER']);
             $this->clearUserCache();
             $this->rmEmptyCache();
             return $this->jsonSuccess("Thanks " . ucfirst($this->user_data['USERNAME']) . ", see You again 🙂");

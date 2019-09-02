@@ -164,4 +164,23 @@ class L_auditlog extends \App\Plugin\DataTablesMysql
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }
     }
+
+    /**
+     * Remove unused action log
+     * @param integer $iduser
+     * @return bool
+     */
+    public function deleteReadLog($iduser)
+    {
+        try {
+            $delete = $this->deleteBy([
+                'iduser' => $iduser,
+                'action' => 'api/auditlog/read'
+            ]);
+            $this->Cacher->deleteItemsByTag($this->TagName);
+            return $delete;
+        } catch (\Exception $e) {
+            throw new \Exception($this->overrideSQLMsg($e->getMessage()));
+        }
+    }
 }
