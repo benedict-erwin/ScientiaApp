@@ -11,10 +11,9 @@ let counter = stackContainer.children.length;
     /*----------------------------
     counterUp js active
     ------------------------------ */
-    console.log(ctr);
     $('.counter').counterUp({
         delay: 10,
-        time: 5000
+        time: 4000
     });
 
 })(jQuery);
@@ -33,6 +32,7 @@ card.addEventListener('animationend', function () {
 
 //after explode animation do a bunch of stuff
 perspec.addEventListener('animationend', function (e) {
+
     if (e.animationName === 'explode') {
         cardNodes.forEach(function (elem, index) {
 
@@ -56,7 +56,6 @@ perspec.addEventListener('animationend', function (e) {
 
             //generate random number of lines of code between 4 and 10 and add to each card
             let numLines = randomIntFromInterval(5, 10);
-            ctr = numLines;
 
             //loop through the lines and add them to the DOM
             for (let index = 0; index < numLines; index++) {
