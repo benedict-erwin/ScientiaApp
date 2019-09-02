@@ -13,7 +13,7 @@
 $app->redirect('/', 'scientia/', 301);
 
 ##> Forbidden
-$app->get('/api/forbidden', function(){
+$app->get('/api/forbidden', function () {
     header('Internal Server Error', true, 403);
     $msg = [
         'success' => false,
@@ -26,7 +26,7 @@ $app->get('/api/forbidden', function(){
 ##> Login Page
 $app->get('/scientia/login', function ($request, $response, $args) use ($container) {
     $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Login/default/layout.twig', $data);
+    return $this->view->render($response, 'Backend/' . $data['template'] . '/login.twig', $data);
 });
 
 ##> Default Page
@@ -34,7 +34,7 @@ $app->get('/scientia/', function ($request, $response, $args) use ($container) {
     $data['page'] = "home";
     $data['jsver'] = $this->get('settings')['jsversion'];
     $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Home/index.twig', $data);
+    return $this->view->render($response, 'Backend/index.twig', $data);
 });
 
 
@@ -43,7 +43,7 @@ $app->get('/scientia/{page}', function ($request, $response, $args) use ($contai
     $data['page'] = $args['page'];
     $data['jsver'] = $this->get('settings')['jsversion'];
     $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Home/index.twig', $data);
+    return $this->view->render($response, 'Backend/index.twig', $data);
 });
 
 /** REST API **/
@@ -53,7 +53,8 @@ try {
     $api_path = $container->get('settings')['api_path'];
     $CachedString = $container->cacher->getItem($ckey);
     if (!$CachedString->isHit()) {
-        $result = $container->database->select('m_menu (menu)',
+        $result = $container->database->select(
+            'm_menu (menu)',
             [
                 '[>]m_groupmenu (group)' => 'id_groupmenu'
             ],
@@ -84,13 +85,13 @@ try {
         );
         $CachedString->set($result)->expiresAfter(28800)->addTag($container->get('settings')['dbnya']['SIGNATURE'] . '_router'); //8jam
         $container->cacher->save($CachedString);
-    }else {
+    } else {
         $result = $CachedString->get();
     }
     foreach ($result as $res) {
         $method = strtoupper($res['tipe']);
         $exp = explode(':', $res['controller']);
-        $controller = (!in_array($exp[0], ['BaseController', 'PrivateController', 'PublicController'])) ? (($res['is_public'] == 0) ? "Privates\\":"Publics\\") . $res['controller']: $res['controller'];
+        $controller = (!in_array($exp[0], ['BaseController', 'PrivateController', 'PublicController'])) ? (($res['is_public'] == 0) ? "Privates\\" : "Publics\\") . $res['controller'] : $res['controller'];
         $url = "/{$api_path}" . strtolower($res['url']);
 
         switch ($method) {
@@ -106,19 +107,19 @@ try {
             case 'DELETE': # Delete, Batch Delete
                 $act = explode('/', $url);
                 $act = end($act);
-                $act = ($act == 'batch') ? '/batch':'/{id}';
+                $act = ($act == 'batch') ? '/batch' : '/{id}';
                 $app->delete("{$url}{$act}", "\App\Controllers\\$controller");
                 break;
             default:
                 break;
         }
-
     }
     $result = null;
     $res = null;
 } catch (\PDOException $e) {
     $code = 'SC502';
-    $container->logger->error('REST-API ROUTER ERROR :: ' . $e->getMessage(),
+    $container->logger->error(
+        'REST-API ROUTER ERROR :: ' . $e->getMessage(),
         [
             'code' => $code,
             'message' => $container->database->last()

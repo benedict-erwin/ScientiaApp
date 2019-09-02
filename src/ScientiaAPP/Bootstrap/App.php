@@ -144,7 +144,7 @@ $container['database'] = function ($container) {
 $container['notFoundHandler'] = function ($container) {
     return function ($request, $response) use ($container) {
         if ($container->get('settings')['mode'] == 'production') {
-            return $container['view']->render($response, 'Home/404.twig')->withStatus(404);
+            return $container['view']->render($response, 'Backend/404.twig')->withStatus(404);
         } else {
             // Use this for debugging purposes
             $container['logger']->error('App::container::notFoundHandler', ['code' => 'SC401', 'message' => 'Resource not valid', 'path' => $request->getUri()->getPath()]);
@@ -171,7 +171,7 @@ $container['errorHandler'] = function ($container) {
 
         if ($container->get('settings')['mode'] == 'production') {
             if (stripos($message, 'Unable to find template') !== false) {
-                return $container['view']->render($response, 'Home/500.twig')->withStatus($code);
+                return $container['view']->render($response, 'Backend/500.twig')->withStatus($code);
             } else {
                 return $container['response']->withJson(['success' => false], $code);
             }
