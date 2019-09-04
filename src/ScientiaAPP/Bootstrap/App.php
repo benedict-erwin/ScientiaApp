@@ -171,9 +171,10 @@ $container['errorHandler'] = function ($container) {
 
         if ($container->get('settings')['mode'] == 'production') {
             if (stripos($message, 'Unable to find template') !== false) {
-                return $container['view']->render($response, 'Backend/500.twig')->withStatus($code);
+                return $container['view']->render($response, 'Backend/404.twig')->withStatus(404);
             } else {
-                return $container['response']->withJson(['success' => false], $code);
+                $container['logger']->error('App::container::errorHandler::production', ['error' => 'SC500', 'message' => $message . ' in ' . $exception->getFile() . ' - (' . $exception->getLine() . ', ' . get_class($exception) . ')']);
+                return $container['view']->render($response, 'Backend/500.twig')->withStatus($code);
             }
         } else {
             // Use this for debugging purposes
