@@ -57,7 +57,7 @@
     <!-- main JS
     ============================================ -->
     <script src="{{ base_url }}assets/notika/js/main.js?v={{jsver}}"></script>
-    {% if mode == 'develop' %}
+    {% if mode == 'development' %}
     <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
     <script src="{{ base_url }}assets/scripts/base/sc_action.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
@@ -78,7 +78,7 @@
     <script type="text/javascript" src="{{ base_url }}assets/notika/vendor/jquery.json-viewer/json-viewer/jquery.json-viewer.js"></script>
     <script type="text/javascript" src="{{ base_url }}assets/notika/vendor/daterangepicker/daterangepicker.js"></script>
     <!-- PageJS -->
-    {% if mode == 'develop' %}
+    {% if mode == 'development' %}
     <script type="text/javascript" src="{{ base_url }}assets/scripts/page/{{page}}.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
     <script type="text/javascript" src="{{ base_url }}assets/scripts/page/{{page}}.min.js"></script>

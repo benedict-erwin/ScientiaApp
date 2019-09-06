@@ -26,8 +26,8 @@ $config = [
         'api_path' => $conf['API_PATH'],
         'mode' => $conf['MODE'],
         'base_url' => $conf['BASE_URL'],
-        'jsversion' => ($conf['MODE'] == 'develop') ? date('Ymdhis') : date('Ym'), // force to reload JS
-        'displayErrorDetails' => ($conf['MODE'] == 'develop') ? true : false, // set to false in production
+        'jsversion' => ($conf['MODE'] == 'development') ? date('Ymdhis') : date('Ym'), // force to reload JS
+        'displayErrorDetails' => ($conf['MODE'] == 'development') ? true : false, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
         // Monolog settings
         'logger' => [
@@ -187,7 +187,7 @@ $container['errorHandler'] = function ($container) {
 /* Not Allowed Handler */
 $container['notAllowedHandler'] = function ($container) {
     return function ($request, $response) use ($container) {
-        if ($container->get('settings')['mode'] == 'develop') {
+        if ($container->get('settings')['mode'] == 'development') {
             $container['logger']->error('App::container::notAllowedHandler', ['code' => 'SC503', 'message' => 'HTTP METHOD NOT ALLOWED HANDLER']);
         }
         return $container['response']->withJson(['error' => 'Method not allowed'], 405);
