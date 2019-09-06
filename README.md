@@ -52,3 +52,8 @@ git clone git@github.com:benedict-erwin/ScientiaApp.git
 * [Router](https://github.com/benedict-erwin/ScientiaApp/wiki/I.-Router)
 * [Mode Produksi](https://github.com/benedict-erwin/ScientiaApp/wiki/J.-Mode-Produksi)
 * [Screenshot](https://github.com/benedict-erwin/ScientiaApp/wiki/Screenshot)
+
+## Daftar Aset
+* [Notika](https://github.com/puikinsh/notika)
+* [CoreUI-bs-ajax](https://github.com/coreui/coreui-free-bootstrap-admin-template-ajax)
+* [Smashicon](https://www.flaticon.com/authors/smashicons)

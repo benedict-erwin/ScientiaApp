@@ -199,7 +199,7 @@ function createENV()
     $php .= "\$conf=[\n";
     $php .= "\t'APPVER'=>'v1.0', //application version\n";
     $php .= "\t'APPNAME'=>'ScientiaAPP', //application name\n";
-    $php .= "\t'MODE'=>'develop', //develop or production\n";
+    $php .= "\t'MODE'=>'development', //development or production\n";
     $php .= "\t'BASE_URL' => '{$site_url}', //URL with trailing slash: https://local.host/\n";
     $php .= "\t'DB_HOST' => '{$db_hostname}',\n";
     $php .= "\t'DB_USER' => '{$db_username}',\n";
@@ -374,15 +374,15 @@ function createDir()
     printJson($data);
 }
 
-function rrmdir($src) {
+function rrmdir($src)
+{
     $dir = opendir($src);
-    while(false !== ( $file = readdir($dir)) ) {
-        if (( $file != '.' ) && ( $file != '..' )) {
+    while (false !== ($file = readdir($dir))) {
+        if (($file != '.') && ($file != '..')) {
             $full = $src . DIRECTORY_SEPARATOR . $file;
-            if ( is_dir($full) ) {
+            if (is_dir($full)) {
                 rrmdir($full);
-            }
-            else {
+            } else {
                 unlink($full);
             }
         }

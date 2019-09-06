@@ -1,0 +1,244 @@
+#!/usr/bin/env php
+<?php
+/**
+ *  ____       _            _   _          _
+ * / ___|  ___(_) ___ _ __ | |_(_) __ _   / \   _ __  _ __
+ * \___ \ / __| |/ _ \ '_ \| __| |/ _` | / _ \ | '_ \| '_ \
+ *  ___) | (__| |  __/ | | | |_| | (_| |/ ___ \| |_) | |_) |
+ * |____/ \___|_|\___|_| |_|\__|_|\__,_/_/   \_\ .__/| .__/
+ *                                             |_|   |_|
+ * By: Benedict E. Pranata
+ *
+ */
+
+/* Define Path variable */
+define('BASE_PATH', __DIR__ . DIRECTORY_SEPARATOR . '..');
+define('APP_PATH', BASE_PATH . DIRECTORY_SEPARATOR . 'bin');
+define('JS_PATH', BASE_PATH . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'scripts');
+
+/* Load autoload and app first - most important */
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'env.php';
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+use League\CLImate\CLImate;
+use MatthiasMullie\Minify;
+
+/** Initate cli */
+$cli = new CLImate;
+
+/** Add resource banner */
+$cli->addArt(APP_PATH . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR . 'banner');
+
+main($cli, $conf);
+
+function main($cli, $conf)
+{
+    showBanner($cli, $conf);
+    showMenu($cli, $conf);
+}
+
+function showBanner($cli, $conf)
+{
+    $cli->clear();
+    $cli->lightGreen()->border('=', 57)->br();
+    $cli->lightGreen()->draw('banner');
+    $cli->lightGreen('Version: ' . $conf['APPVER'])->lightGreen()->border('=', 57)->br();
+}
+
+function showMenu($cli, $conf)
+{
+    $cli->lightBlue('Menu list:');
+    $cli->tab()->lightBlue('1. Current Mode');
+    $cli->tab()->lightBlue('2. Set to development');
+    $cli->tab()->lightBlue('3. Set to production');
+    $cli->tab()->lightBlue('4. Exit');
+    $input = $cli->br()->lightYellow()->input('Choose:');
+    $response = $input->prompt();
+    execMenu($cli, $conf, $response);
+}
+
+function execMenu($cli, $conf, $menu)
+{
+    switch ((int) $menu) {
+        case 1:
+            showBanner($cli, $conf);
+            currentMode($cli, $conf);
+            break;
+        case 2:
+            if ($conf['MODE'] != 'production') {
+                showBanner($cli, $conf);
+                currentMode($cli, $conf);
+            } else {
+                changeMode($cli, $conf, 0);
+            }
+            break;
+        case 3:
+            if ($conf['MODE'] == 'production') {
+                showBanner($cli, $conf);
+                currentMode($cli, $conf);
+            } else {
+                changeMode($cli, $conf, 1);
+            }
+            break;
+
+        case 4:
+            goodBye($cli, $conf);
+            break;
+
+        default:
+            main($cli, $conf);
+            break;
+    }
+}
+
+function currentMode($cli, $conf)
+{
+    $mode = ($conf['MODE'] == 'production') ? 'PRODUCTION' : 'DEVELOPMENT';
+    $color = ($conf['MODE'] == 'production') ? 'lightGreen' : 'lightYellow';
+    $cli->lightGrey('Current Mode : ')->tab()->{$color}()->bold()->out("• {$mode}")->br();
+}
+
+function goodBye($cli, $conf)
+{
+    $cli->lightYellow()->animation('bye')->speed(250)->scroll('right');
+    showBanner($cli, $conf);
+    $cli->lightGreen('Thanks for using ScientiaApp 🙂 ');
+}
+
+function changeMode($cli, $conf, $mode)
+{
+    showBanner($cli, $conf);
+    $modeText = ($mode === 1) ? 'production' : 'development';
+    $regexJS  = '/(?<!\.min)\.(js)$/';
+    $regexMin = '/(\.min\.js)$/';
+    $jsBasePath = JS_PATH . DIRECTORY_SEPARATOR . 'base';
+    $jsPagePath = JS_PATH . DIRECTORY_SEPARATOR . 'page';
+
+    if ($modeText == 'production') {
+        /** scripts/base */
+        $cli->lightYellow('Minifying all js in scripts/base:');
+        $base_iterator = new DirectoryIterator($jsBasePath);
+        $baseProgress  = $cli->progress()->total((int) iterator_count($base_iterator));
+        $baseCounter   = 0;
+        foreach ($base_iterator as $baseJs) {
+            $baseCounter++;
+            usleep(80000);
+            if ($baseJs->isDir()) continue;
+
+            // Remove *.min.js to update
+            if (preg_match($regexMin, $baseJs)) {
+                unlink($baseJs->getPathname());
+            }
+
+            // Minifying all js
+            if (preg_match($regexJS, $baseJs)) {
+                $baseProgress->current($baseCounter, 'Minifying ' . $baseJs->getFilename());
+                $name = explode('.', $baseJs->getFilename());
+                $name = $name[0] . '.min.js';
+                $jsBase = new Minify\JS($baseJs->getPathname());
+                $jsBase->minify($jsBasePath . DIRECTORY_SEPARATOR . $name);
+            }
+        }
+
+        /** scripts/page */
+        $cli->br()->br()->lightYellow('Minifying all js in scripts/page:');
+        $page_iterator = new DirectoryIterator($jsPagePath);
+        $pageProgress  = $cli->progress()->total((int) iterator_count($page_iterator));
+        $pageCounter   = 0;
+        foreach ($page_iterator as $pageJs) {
+            $pageCounter++;
+            usleep(80000);
+            if ($pageJs->isDir()) continue;
+
+            // Remove *.min.js to update
+            if (preg_match($regexMin, $pageJs)) {
+                unlink($pageJs->getPathname());
+            }
+
+            // Minifying all js
+            if (preg_match($regexJS, $pageJs)) {
+                $pageProgress->current($pageCounter, 'Minifying ' . $pageJs->getFilename());
+                $name = explode('.', $pageJs->getFilename());
+                $name = $name[0] . '.min.js';
+                $jsPage = new Minify\JS($pageJs->getPathname());
+                $jsPage->minify($jsPagePath . DIRECTORY_SEPARATOR . $name);
+            }
+        }
+    } else {
+        /** scripts/base */
+        $base_iterator = new DirectoryIterator($jsBasePath);
+        $cli->lightYellow('Removing all minified js in scripts/base:');
+        $baseProgress  = $cli->progress()->total((int) iterator_count($base_iterator));
+        $baseCounter   = 0;
+        foreach ($base_iterator as $baseJs) {
+            $baseCounter++;
+            usleep(80000);
+            if ($baseJs->isDir()) continue;
+
+            // Remove *.min.js to update
+            if (preg_match($regexMin, $baseJs)) {
+                $baseProgress->current($baseCounter, 'Removing ' . $baseJs->getFilename());
+                unlink($baseJs->getPathname());
+            }
+        }
+
+        /** scripts/page */
+        $page_iterator = new DirectoryIterator($jsPagePath);
+        $cli->br()->br()->lightYellow('Removing all minified js in scripts/page:');
+        $pageProgress  = $cli->progress()->total((int) iterator_count($page_iterator));
+        $pageCounter   = 0;
+        foreach ($page_iterator as $pageJs) {
+            $pageCounter++;
+            usleep(80000);
+            if ($pageJs->isDir()) continue;
+
+            // Remove *.min.js to update
+            if (preg_match($regexMin, $pageJs)) {
+                $pageProgress->current($pageCounter, 'Removing ' . $pageJs->getFilename());
+                unlink($pageJs->getPathname());
+            }
+        }
+    }
+
+    /**
+     * Setup env MODE
+     */
+    $cli->br()->lightYellow('Setting up environment mode...');
+    $oldEnv = BASE_PATH . DIRECTORY_SEPARATOR . 'env.php';
+    $newEnv = BASE_PATH . DIRECTORY_SEPARATOR . 'new_env.php';
+    $dataEnv = "<?php\n";
+    $dataEnv .= "\$conf = [\n";
+    foreach ($conf as $key => $val) {
+        if ($key == 'MODE') {
+            $dataEnv .= "\t'" . $key . "' => " . "'" . $modeText . "',\n";
+        } else {
+            $dataEnv .= "\t'" . $key . "' => " . "'" . $val . "',\n";
+        }
+    }
+    $dataEnv .= "];\n";
+    if (!$handle = fopen($newEnv, 'w')) {
+        $cli->lightRed('Failed to update environment (env) file!');
+        exit();
+    }
+
+    if (fwrite($handle, $dataEnv) === false) {
+        $cli->lightRed('Failed to update environment (env) file!');
+        exit();
+    }
+    fclose($handle);
+    @unlink($oldEnv);
+    @rename($newEnv, $oldEnv);
+
+    // Progressbar
+    $progress  = $cli->progress()->total(100);
+    for ($i = 0; $i < 100; $i++) {
+        $progress->current($i);
+        usleep(20000);
+    }
+
+    showBanner($cli, $conf);
+    $cli->lightGreen('Set to ' . $modeText);
+    $cli->lightGreen('Environment (env) file updated!');
+    $confNew = ['MODE' => $modeText];
+    currentMode($cli, $confNew);
+}
