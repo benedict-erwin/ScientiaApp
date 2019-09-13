@@ -233,7 +233,6 @@ function loadMenu() {
             } else {
                 notification((data.message.error) ? data.message.error : data.message, 'warn');
 			}
-			setNprogressLoader("done");
         },
         error: function (jqXHR, textStatus, errorThrown) {
             notification(errorThrown, 'error');
