@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.css" />
     <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.buttons.css" />
     <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.nonblock.css" />
-    {% if mode == 'develop' %}
+    {% if mode == 'development' %}
     <link rel="stylesheet" href="{{ base_url }}assets/fonts/fonts-ssp.css" />
     {% elseif mode == 'production' %}
     <!-- GOOGLE FONTS -->
@@ -44,7 +44,7 @@
 
     <!-- JavaScript -->
     <script src="{{ base_url }}assets/notika/vendor/jquery/jquery.min.js"></script>
-    {% if mode == 'develop' %}
+    {% if mode == 'development' %}
     <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
     <script src="{{ base_url }}assets/scripts/base/sc_function.min.js"></script>
@@ -116,7 +116,7 @@
     </div>
     <!-- END WRAPPER -->
 </body>
-{% if mode == 'develop' %}
+{% if mode == 'development' %}
 <script src="{{ base_url }}assets/scripts/page/login.js?v={{jsver}}"></script>
 {% elseif mode == 'production'%}
 <script src="{{ base_url }}assets/scripts/page/login.min.js"></script>

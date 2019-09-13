@@ -18,7 +18,7 @@ require_once BASE_PATH . '/src/ScientiaAPP/Bootstrap/App.php';
 require_once BASE_PATH . '/src/ScientiaAPP/Bootstrap/Routes.php';
 
 /* Set Error Reporting */
-if ($conf['MODE']=='develop') {
+if ($conf['MODE'] == 'development') {
     error_reporting(-1);
     ini_set('display_errors', 1);
 } else {
