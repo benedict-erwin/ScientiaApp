@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" class="fullscreen-bg">
+
 <head>
     <meta name="robots" content="noindex, nofollow" />
     <title>Login | {{ app_name }} {{ app_version }}</title>
@@ -8,31 +9,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <!-- favicon
     ============================================ -->
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ base_url }}assets/notika/icon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ base_url }}assets/notika/icon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ base_url }}assets/notika/icon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ base_url }}assets/notika/icon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ base_url }}assets/notika/icon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ base_url }}assets/notika/icon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ base_url }}assets/notika/icon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ base_url }}assets/notika/icon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url }}assets/notika/icon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ base_url }}assets/notika/icon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url }}assets/notika/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ base_url }}assets/notika/icon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ base_url }}assets/notika/icon/favicon-16x16.png">
-    <link rel="manifest" href="{{ base_url }}assets/notika/icon/manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ base_url }}assets/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ base_url }}assets/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ base_url }}assets/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ base_url }}assets/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ base_url }}assets/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ base_url }}assets/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ base_url }}assets/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ base_url }}assets/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url }}assets/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ base_url }}assets/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url }}assets/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ base_url }}assets/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ base_url }}assets/icon/favicon-16x16.png">
+    <link rel="manifest" href="{{ base_url }}assets/icon/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ base_url }}assets/notika/icon/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="{{ base_url }}assets/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <!-- VENDOR CSS -->
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/linearicons/style.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/templates/notika/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/templates/notika/vendor/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/templates/notika/vendor/linearicons/style.css" />
     <!-- PNotify -->
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.css" />
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.buttons.css" />
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.nonblock.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.buttons.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/vendor/pnotify/dist/pnotify.nonblock.css" />
     {% if mode == 'development' %}
     <link rel="stylesheet" href="{{ base_url }}assets/fonts/fonts-ssp.css" />
     {% elseif mode == 'production' %}
@@ -40,10 +41,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" />
     {% endif %}
     <!-- MAIN CSS -->
-    <link rel="stylesheet" href="{{ base_url }}assets/notika/css/login.css" />
+    <link rel="stylesheet" href="{{ base_url }}assets/templates/notika/css/login.css" />
 
     <!-- JavaScript -->
-    <script src="{{ base_url }}assets/notika/vendor/jquery/jquery.min.js"></script>
+    <script src="{{ base_url }}assets/templates/notika/vendor/jquery/jquery.min.js"></script>
     {% if mode == 'development' %}
     <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
     {% elseif mode == 'production' %}
@@ -58,9 +59,9 @@
             }
         }
     </script>
-    <script src="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.js"></script>
-    <script src="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.buttons.js"></script>
-    <script src="{{ base_url }}assets/notika/vendor/pnotify/dist/pnotify.nonblock.js"></script>
+    <script src="{{ base_url }}assets/vendor/pnotify/dist/pnotify.js"></script>
+    <script src="{{ base_url }}assets/vendor/pnotify/dist/pnotify.buttons.js"></script>
+    <script src="{{ base_url }}assets/vendor/pnotify/dist/pnotify.nonblock.js"></script>
 </head>
 
 <body>
@@ -74,12 +75,13 @@
                             <div class="header">
                                 <div style="display:inline-grid;" class="logo text-center">
                                     <img style="margin:0 auto 0 auto;"
-                                        src="{{ base_url }}assets/notika/img/logo/login.png" alt="CBT Logo" width="64"
+                                        src="{{ base_url }}assets/templates/notika/img/logo/login.png" alt="CBT Logo" width="64"
                                         height="64">
-                                    <span style="font-size:16pt;font-weight:bold;margin-top:10px;">{{ app_name }} {{ app_version }}</span>
+                                    <span style="font-size:16pt;font-weight:bold;margin-top:10px;">{{ app_name }}
+                                        {{ app_version }}</span>
                                 </div>
                             </div>
-                            <form class="form-auth-small" action="index.php">
+                            <form class="form-auth-small">
                                 <div class="form-group">
                                     <label for="tx_username" class="control-label sr-only">Username</label>
                                     <input type="text" name="tx_username" class="form-control" id="tx_username"
@@ -115,11 +117,11 @@
         </div>
     </div>
     <!-- END WRAPPER -->
-</body>
 {% if mode == 'development' %}
 <script src="{{ base_url }}assets/scripts/page/login.js?v={{jsver}}"></script>
 {% elseif mode == 'production'%}
 <script src="{{ base_url }}assets/scripts/page/login.min.js"></script>
 {% endif %}
+</body>
 
 </html>

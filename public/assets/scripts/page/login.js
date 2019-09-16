@@ -25,8 +25,8 @@ $(document).ready(function() {
                 klik = true;
                 return false;
             }
-            $(this.element).prop('disabled', true);
-            $('#tx_spin').html('<i class="fa fa-spinner fa-spin"></i> Please wait...');
+            $('#bt_login').prop('disabled', true);
+            $('#tx_spin').html('<i class="fa fa-spinner fa-spin"></i> Wait...');
             post_data = {
                 'tx_username': $('#tx_username').val(),
                 'tx_password': $('#tx_password').val()
@@ -46,13 +46,13 @@ $(document).ready(function() {
                     } else {
                         notification((data.message.error) ? data.message : data.error, 'warn');
                         $('#tx_spin').html('LOGIN');
-                        $(this.element).prop('disabled', false);
+                        $('#bt_login').prop('disabled', false);
                         klik = true;
                     }
                 },
                 "error": function(jqXHR, textStatus, errorThrown) {
                     klik = true;
-                    $(this.element).prop('disabled', false);
+                    $('#bt_login').prop('disabled', false);
                     $('#tx_spin').html('LOGIN');
                     notification(errorThrown, 'error');
                     console.log(jqXHR);
