@@ -50,8 +50,8 @@
     <script>
         var SiteRoot = "{{ base_url ~ api_path }}/";
         var API_TOKEN = "{{ api_token }}";
-        if (getKen = get_token(API_TOKEN)) {
-            if (getKen.length > 5) {
+        if (getToken = get_token(API_TOKEN)) {
+            if (getToken.length > 5) {
                 window.location.replace('./home');
             }
         }

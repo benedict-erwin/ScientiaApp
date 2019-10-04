@@ -100,8 +100,8 @@
     <script type="text/javascript">
         var SiteRoot = "{{ base_url ~ api_path }}/";
         var API_TOKEN = "{{ api_token }}";
-        if (getKen = window.localStorage.getItem(API_TOKEN)) {
-            if (getKen == 'null') {
+        if (getToken = window.localStorage.getItem(API_TOKEN)) {
+            if (getToken == 'null') {
                 window.location.replace('./login');
             }
         } else {

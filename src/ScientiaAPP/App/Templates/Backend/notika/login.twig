@@ -53,8 +53,8 @@
     <script>
         var SiteRoot = "{{ base_url ~ api_path }}/";
         var API_TOKEN = "{{ api_token }}";
-        if (getKen = get_token(API_TOKEN)) {
-            if (getKen.length > 5) {
+        if (getToken = get_token(API_TOKEN)) {
+            if (getToken.length > 5) {
                 window.location.replace('./home');
             }
         }
@@ -75,7 +75,7 @@
                             <div class="header">
                                 <div style="display:inline-grid;" class="logo text-center">
                                     <img style="margin:0 auto 0 auto;"
-                                        src="{{ base_url }}assets/templates/notika/img/logo/login.png" alt="CBT Logo" width="64"
+                                        src="{{ base_url }}assets/templates/notika/img/logo/login.png" alt="ScientiaApp Logo" width="64"
                                         height="64">
                                     <span style="font-size:16pt;font-weight:bold;margin-top:10px;">{{ app_name }}
                                         {{ app_version }}</span>
