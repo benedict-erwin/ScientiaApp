@@ -1,0 +1,24 @@
+    <footer class="app-footer">
+      <div>
+        <a href="https://coreui.io">CoreUI</a>
+        <span>&copy; 2018 creativeLabs.</span>
+      </div>
+      <div class="ml-auto">
+        <span>Powered by</span>
+        <a href="https://coreui.io">CoreUI</a>
+      </div>
+    </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script src="{{ base_url }}assets/templates/coreui/modules/jquery/dist/jquery.min.js"></script>
+    <script src="{{ base_url }}assets/templates/coreui/modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="{{ base_url }}assets/templates/coreui/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="{{ base_url }}assets/templates/coreui/modules/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+    <script src="{{ base_url }}assets/templates/coreui/modules/@coreui/coreui/dist/js/coreui.js"></script>
+    <script>
+      $('#ui-view').ajaxLoad();
+      $(document).ajaxComplete(function() {
+        //Pace.restart()
+      });
+    </script>
+  </body>
+</html>

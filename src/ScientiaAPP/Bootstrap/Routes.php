@@ -37,14 +37,30 @@ $app->get('/scientia/', function ($request, $response, $args) use ($container) {
     return $this->view->render($response, 'Backend/index.twig', $data);
 });
 
+if ($container->get('settings')['cms_template'] == 'coreui') {
+    ## Coreui main router template
+    $app->get('/scientia/main', function ($request, $response, $args) use ($container) {
+        $data['template'] = $container->get('settings')['cms_template'];
+        $data['page'] = '_main';
+        $data['jsver'] = $this->get('settings')['jsversion'];
+        return $this->view->render($response, 'Backend/index.twig', $data);
+    });
 
-## Dynamic Route load template
-$app->get('/scientia/{page}', function ($request, $response, $args) use ($container) {
-    $data['page'] = $args['page'];
-    $data['jsver'] = $this->get('settings')['jsversion'];
-    $data['template'] = $container->get('settings')['cms_template'];
-    return $this->view->render($response, 'Backend/index.twig', $data);
-});
+    ## Coreui views
+    $app->get('/scientia/views/{page}', function ($request, $response, $args) {
+        return $this->view->render($response, 'Backend/coreui/' . $args['page'] . '.twig');
+    });
+} else {
+    ## notika router template
+    $app->get('/scientia/{page}', function ($request, $response, $args) use ($container) {
+        $data['template'] = $container->get('settings')['cms_template'];
+        $data['page'] = ($data['template'] == 'coreui') ? '_main' : $args['page'];
+        $data['jsver'] = $this->get('settings')['jsversion'];
+        return $this->view->render($response, 'Backend/index.twig', $data);
+    });
+}
+
+
 
 /** REST API **/
 ##> Load from DataBase
