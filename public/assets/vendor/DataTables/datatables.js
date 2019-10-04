@@ -4,10 +4,10 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#bs/jszip-2.5.0/pdfmake-0.1.36/dt-1.10.18/b-1.5.4/b-colvis-1.5.4/b-flash-1.5.4/b-html5-1.5.4/b-print-1.5.4/cr-1.5.0/fc-3.2.5/fh-3.1.4/kt-2.5.0/r-2.2.2/rg-1.1.0/rr-1.2.4/sc-1.5.0/sl-1.2.6
+ *   https://datatables.net/download/#bs4/jszip-2.5.0/pdfmake-0.1.36/dt-1.10.18/af-2.3.3/b-1.5.6/b-colvis-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/cr-1.5.0/fc-3.2.5/fh-3.1.4/kt-2.5.0/r-2.2.2/rg-1.1.0/rr-1.2.4/sc-2.0.0/sl-1.3.0
  *
  * Included libraries:
- *   JSZip 2.5.0, pdfmake 0.1.36, DataTables 1.10.18, Buttons 1.5.4, Column visibility 1.5.4, Flash export 1.5.4, HTML5 export 1.5.4, Print view 1.5.4, ColReorder 1.5.0, FixedColumns 3.2.5, FixedHeader 3.1.4, KeyTable 2.5.0, Responsive 2.2.2, RowGroup 1.1.0, RowReorder 1.2.4, Scroller 1.5.0, Select 1.2.6
+ *   JSZip 2.5.0, pdfmake 0.1.36, DataTables 1.10.18, AutoFill 2.3.3, Buttons 1.5.6, Column visibility 1.5.6, Flash export 1.5.6, HTML5 export 1.5.6, Print view 1.5.6, ColReorder 1.5.0, FixedColumns 3.2.5, FixedHeader 3.1.4, KeyTable 2.5.0, Responsive 2.2.2, RowGroup 1.1.0, RowReorder 1.2.4, Scroller 2.0.0, Select 1.3.0
  */
 
 /*!
@@ -73530,7 +73530,7 @@ this.pdfMake = this.pdfMake || {}; this.pdfMake.vfs = {
 		 *
 		 *  @type string
 		 */
-		build:"bs/jszip-2.5.0/pdfmake-0.1.36/dt-1.10.18/b-1.5.4/b-colvis-1.5.4/b-flash-1.5.4/b-html5-1.5.4/b-print-1.5.4/cr-1.5.0/fc-3.2.5/fh-3.1.4/kt-2.5.0/r-2.2.2/rg-1.1.0/rr-1.2.4/sc-1.5.0/sl-1.2.6",
+		build:"bs4/jszip-2.5.0/pdfmake-0.1.36/dt-1.10.18/af-2.3.3/b-1.5.6/b-colvis-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/cr-1.5.0/fc-3.2.5/fh-3.1.4/kt-2.5.0/r-2.2.2/rg-1.1.0/rr-1.2.4/sc-2.0.0/sl-1.3.0",
 	
 	
 		/**
@@ -74940,12 +74940,12 @@ this.pdfMake = this.pdfMake || {}; this.pdfMake.vfs = {
 }));
 
 
-/*! DataTables Bootstrap 3 integration
- * ©2011-2015 SpryMedia Ltd - datatables.net/license
+/*! DataTables Bootstrap 4 integration
+ * ©2011-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
- * DataTables integration for Bootstrap 3. This requires Bootstrap 3 and
+ * DataTables integration for Bootstrap 4. This requires Bootstrap 4 and
  * DataTables 1.10 or newer.
  *
  * This file sets the defaults and adds options to DataTables to style its
@@ -74988,19 +74988,20 @@ var DataTable = $.fn.dataTable;
 /* Set the defaults for DataTables initialisation */
 $.extend( true, DataTable.defaults, {
 	dom:
-		"<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+		"<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
 		"<'row'<'col-sm-12'tr>>" +
-		"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+		"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
 	renderer: 'bootstrap'
 } );
 
 
 /* Default class modification */
 $.extend( DataTable.ext.classes, {
-	sWrapper:      "dataTables_wrapper form-inline dt-bootstrap",
-	sFilterInput:  "form-control input-sm",
-	sLengthSelect: "form-control input-sm",
-	sProcessing:   "dataTables_processing panel panel-default"
+	sWrapper:      "dataTables_wrapper dt-bootstrap4",
+	sFilterInput:  "form-control form-control-sm",
+	sLengthSelect: "custom-select custom-select-sm form-control form-control-sm",
+	sProcessing:   "dataTables_processing card",
+	sPageButton:   "paginate_button page-item"
 } );
 
 
@@ -75080,7 +75081,8 @@ DataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, bu
 								'aria-controls': settings.sTableId,
 								'aria-label': aria[ button ],
 								'data-dt-idx': counter,
-								'tabindex': settings.iTabIndex
+								'tabindex': settings.iTabIndex,
+								'class': 'page-link'
 							} )
 							.html( btnDisplay )
 						)
@@ -75124,8 +75126,1264 @@ return DataTable;
 }));
 
 
-/*! Buttons for DataTables 1.5.4
- * ©2016-2018 SpryMedia Ltd - datatables.net/license
+/*! AutoFill 2.3.3
+ * ©2008-2018 SpryMedia Ltd - datatables.net/license
+ */
+
+/**
+ * @summary     AutoFill
+ * @description Add Excel like click and drag auto-fill options to DataTables
+ * @version     2.3.3
+ * @file        dataTables.autoFill.js
+ * @author      SpryMedia Ltd (www.sprymedia.co.uk)
+ * @contact     www.sprymedia.co.uk/contact
+ * @copyright   Copyright 2010-2018 SpryMedia Ltd.
+ *
+ * This source file is free software, available under the following license:
+ *   MIT license - http://datatables.net/license/mit
+ *
+ * This source file is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
+ *
+ * For details please refer to: http://www.datatables.net
+ */
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+		// CommonJS
+		module.exports = function (root, $) {
+			if ( ! root ) {
+				root = window;
+			}
+
+			if ( ! $ || ! $.fn.dataTable ) {
+				$ = require('datatables.net')(root, $).$;
+			}
+
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery, window, document );
+	}
+}(function( $, window, document, undefined ) {
+'use strict';
+var DataTable = $.fn.dataTable;
+
+
+var _instance = 0;
+
+/** 
+ * AutoFill provides Excel like auto-fill features for a DataTable
+ *
+ * @class AutoFill
+ * @constructor
+ * @param {object} oTD DataTables settings object
+ * @param {object} oConfig Configuration object for AutoFill
+ */
+var AutoFill = function( dt, opts )
+{
+	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.8' ) ) {
+		throw( "Warning: AutoFill requires DataTables 1.10.8 or greater");
+	}
+
+	// User and defaults configuration object
+	this.c = $.extend( true, {},
+		DataTable.defaults.autoFill,
+		AutoFill.defaults,
+		opts
+	);
+
+	/**
+	 * @namespace Settings object which contains customisable information for AutoFill instance
+	 */
+	this.s = {
+		/** @type {DataTable.Api} DataTables' API instance */
+		dt: new DataTable.Api( dt ),
+
+		/** @type {String} Unique namespace for events attached to the document */
+		namespace: '.autoFill'+(_instance++),
+
+		/** @type {Object} Cached dimension information for use in the mouse move event handler */
+		scroll: {},
+
+		/** @type {integer} Interval object used for smooth scrolling */
+		scrollInterval: null,
+
+		handle: {
+			height: 0,
+			width: 0
+		},
+
+		/**
+		 * Enabled setting
+		 * @type {Boolean}
+		 */
+		enabled: false
+	};
+
+
+	/**
+	 * @namespace Common and useful DOM elements for the class instance
+	 */
+	this.dom = {
+		/** @type {jQuery} AutoFill handle */
+		handle: $('<div class="dt-autofill-handle"/>'),
+
+		/**
+		 * @type {Object} Selected cells outline - Need to use 4 elements,
+		 *   otherwise the mouse over if you back into the selected rectangle
+		 *   will be over that element, rather than the cells!
+		 */
+		select: {
+			top:    $('<div class="dt-autofill-select top"/>'),
+			right:  $('<div class="dt-autofill-select right"/>'),
+			bottom: $('<div class="dt-autofill-select bottom"/>'),
+			left:   $('<div class="dt-autofill-select left"/>')
+		},
+
+		/** @type {jQuery} Fill type chooser background */
+		background: $('<div class="dt-autofill-background"/>'),
+
+		/** @type {jQuery} Fill type chooser */
+		list: $('<div class="dt-autofill-list">'+this.s.dt.i18n('autoFill.info', '')+'<ul/></div>'),
+
+		/** @type {jQuery} DataTables scrolling container */
+		dtScroll: null,
+
+		/** @type {jQuery} Offset parent element */
+		offsetParent: null
+	};
+
+
+	/* Constructor logic */
+	this._constructor();
+};
+
+
+
+$.extend( AutoFill.prototype, {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Public methods (exposed via the DataTables API below)
+	 */
+	enabled: function ()
+	{
+		return this.s.enabled;
+	},
+
+
+	enable: function ( flag )
+	{
+		var that = this;
+
+		if ( flag === false ) {
+			return this.disable();
+		}
+
+		this.s.enabled = true;
+
+		this._focusListener();
+
+		this.dom.handle.on( 'mousedown', function (e) {
+			that._mousedown( e );
+			return false;
+		} );
+
+		return this;
+	},
+
+	disable: function ()
+	{
+		this.s.enabled = false;
+
+		this._focusListenerRemove();
+
+		return this;
+	},
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Constructor
+	 */
+
+	/**
+	 * Initialise the RowReorder instance
+	 *
+	 * @private
+	 */
+	_constructor: function ()
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var dtScroll = $('div.dataTables_scrollBody', this.s.dt.table().container());
+
+		// Make the instance accessible to the API
+		dt.settings()[0].autoFill = this;
+
+		if ( dtScroll.length ) {
+			this.dom.dtScroll = dtScroll;
+
+			// Need to scroll container to be the offset parent
+			if ( dtScroll.css('position') === 'static' ) {
+				dtScroll.css( 'position', 'relative' );
+			}
+		}
+
+		if ( this.c.enable !== false ) {
+			this.enable();
+		}
+
+		dt.on( 'destroy.autoFill', function () {
+			that._focusListenerRemove();
+		} );
+	},
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Private methods
+	 */
+
+	/**
+	 * Display the AutoFill drag handle by appending it to a table cell. This
+	 * is the opposite of the _detach method.
+	 *
+	 * @param  {node} node TD/TH cell to insert the handle into
+	 * @private
+	 */
+	_attach: function ( node )
+	{
+		var dt = this.s.dt;
+		var idx = dt.cell( node ).index();
+		var handle = this.dom.handle;
+		var handleDim = this.s.handle;
+
+		if ( ! idx || dt.columns( this.c.columns ).indexes().indexOf( idx.column ) === -1 ) {
+			this._detach();
+			return;
+		}
+
+		if ( ! this.dom.offsetParent ) {
+			// We attach to the table's offset parent
+			this.dom.offsetParent = $( dt.table().node() ).offsetParent();
+		}
+
+		if ( ! handleDim.height || ! handleDim.width ) {
+			// Append to document so we can get its size. Not expecting it to
+			// change during the life time of the page
+			handle.appendTo( 'body' );
+			handleDim.height = handle.outerHeight();
+			handleDim.width = handle.outerWidth();
+		}
+
+		// Might need to go through multiple offset parents
+		var offset = this._getPosition( node, this.dom.offsetParent );
+
+		this.dom.attachedTo = node;
+		handle
+			.css( {
+				top: offset.top + node.offsetHeight - handleDim.height,
+				left: offset.left + node.offsetWidth - handleDim.width
+			} )
+			.appendTo( this.dom.offsetParent );
+	},
+
+
+	/**
+	 * Determine can the fill type should be. This can be automatic, or ask the
+	 * end user.
+	 *
+	 * @param {array} cells Information about the selected cells from the key
+	 *     up function
+	 * @private
+	 */
+	_actionSelector: function ( cells )
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var actions = AutoFill.actions;
+		var available = [];
+
+		// "Ask" each plug-in if it wants to handle this data
+		$.each( actions, function ( key, action ) {
+			if ( action.available( dt, cells ) ) {
+				available.push( key );
+			}
+		} );
+
+		if ( available.length === 1 && this.c.alwaysAsk === false ) {
+			// Only one action available - enact it immediately
+			var result = actions[ available[0] ].execute( dt, cells );
+			this._update( result, cells );
+		}
+		else {
+			// Multiple actions available - ask the end user what they want to do
+			var list = this.dom.list.children('ul').empty();
+
+			// Add a cancel option
+			available.push( 'cancel' );
+
+			$.each( available, function ( i, name ) {
+				list.append( $('<li/>')
+					.append(
+						'<div class="dt-autofill-question">'+
+							actions[ name ].option( dt, cells )+
+						'<div>'
+					)
+					.append( $('<div class="dt-autofill-button">' )
+						.append( $('<button class="'+AutoFill.classes.btn+'">'+dt.i18n('autoFill.button', '&gt;')+'</button>')
+							.on( 'click', function () {
+								var result = actions[ name ].execute(
+									dt, cells, $(this).closest('li')
+								);
+								that._update( result, cells );
+
+								that.dom.background.remove();
+								that.dom.list.remove();
+							} )
+						)
+					)
+				);
+			} );
+
+			this.dom.background.appendTo( 'body' );
+			this.dom.list.appendTo( 'body' );
+
+			this.dom.list.css( 'margin-top', this.dom.list.outerHeight()/2 * -1 );
+		}
+	},
+
+
+	/**
+	 * Remove the AutoFill handle from the document
+	 *
+	 * @private
+	 */
+	_detach: function ()
+	{
+		this.dom.attachedTo = null;
+		this.dom.handle.detach();
+	},
+
+
+	/**
+	 * Draw the selection outline by calculating the range between the start
+	 * and end cells, then placing the highlighting elements to draw a rectangle
+	 *
+	 * @param  {node}   target End cell
+	 * @param  {object} e      Originating event
+	 * @private
+	 */
+	_drawSelection: function ( target, e )
+	{
+		// Calculate boundary for start cell to this one
+		var dt = this.s.dt;
+		var start = this.s.start;
+		var startCell = $(this.dom.start);
+		var end = {
+			row: this.c.vertical ?
+				dt.rows( { page: 'current' } ).nodes().indexOf( target.parentNode ) :
+				start.row,
+			column: this.c.horizontal ?
+				$(target).index() :
+				start.column
+		};
+		var colIndx = dt.column.index( 'toData', end.column );
+		var endRow =  dt.row( ':eq('+end.row+')', { page: 'current' } ); // Workaround for M581
+		var endCell = $( dt.cell( endRow.index(), colIndx ).node() );
+
+		// Be sure that is a DataTables controlled cell
+		if ( ! dt.cell( endCell ).any() ) {
+			return;
+		}
+
+		// if target is not in the columns available - do nothing
+		if ( dt.columns( this.c.columns ).indexes().indexOf( colIndx ) === -1 ) {
+			return;
+		}
+
+		this.s.end = end;
+
+		var top, bottom, left, right, height, width;
+
+		top    = start.row    < end.row    ? startCell : endCell;
+		bottom = start.row    < end.row    ? endCell   : startCell;
+		left   = start.column < end.column ? startCell : endCell;
+		right  = start.column < end.column ? endCell   : startCell;
+
+		top    = this._getPosition( top.get(0) ).top;
+		left   = this._getPosition( left.get(0) ).left;
+		height = this._getPosition( bottom.get(0) ).top + bottom.outerHeight() - top;
+		width  = this._getPosition( right.get(0) ).left + right.outerWidth() - left;
+
+		var select = this.dom.select;
+		select.top.css( {
+			top: top,
+			left: left,
+			width: width
+		} );
+
+		select.left.css( {
+			top: top,
+			left: left,
+			height: height
+		} );
+
+		select.bottom.css( {
+			top: top + height,
+			left: left,
+			width: width
+		} );
+
+		select.right.css( {
+			top: top,
+			left: left + width,
+			height: height
+		} );
+	},
+
+
+	/**
+	 * Use the Editor API to perform an update based on the new data for the
+	 * cells
+	 *
+	 * @param {array} cells Information about the selected cells from the key
+	 *     up function
+	 * @private
+	 */
+	_editor: function ( cells )
+	{
+		var dt = this.s.dt;
+		var editor = this.c.editor;
+
+		if ( ! editor ) {
+			return;
+		}
+
+		// Build the object structure for Editor's multi-row editing
+		var idValues = {};
+		var nodes = [];
+		var fields = editor.fields();
+
+		for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+			for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+				var cell = cells[i][j];
+
+				// Determine the field name for the cell being edited
+				var col = dt.settings()[0].aoColumns[ cell.index.column ];
+				var fieldName = col.editField;
+
+				if ( fieldName === undefined ) {
+					var dataSrc = col.mData;
+
+					// dataSrc is the `field.data` property, but we need to set
+					// using the field name, so we need to translate from the
+					// data to the name
+					for ( var k=0, ken=fields.length ; k<ken ; k++ ) {
+						var field = editor.field( fields[k] );
+
+						if ( field.dataSrc() === dataSrc ) {
+							fieldName = field.name();
+							break;
+						}
+					}
+				}
+
+				if ( ! fieldName ) {
+					throw 'Could not automatically determine field data. '+
+						'Please see https://datatables.net/tn/11';
+				}
+
+				if ( ! idValues[ fieldName ] ) {
+					idValues[ fieldName ] = {};
+				}
+
+				var id = dt.row( cell.index.row ).id();
+				idValues[ fieldName ][ id ] = cell.set;
+
+				// Keep a list of cells so we can activate the bubble editing
+				// with them
+				nodes.push( cell.index );
+			}
+		}
+
+		// Perform the edit using bubble editing as it allows us to specify
+		// the cells to be edited, rather than using full rows
+		editor
+			.bubble( nodes, false )
+			.multiSet( idValues )
+			.submit();
+	},
+
+
+	/**
+	 * Emit an event on the DataTable for listeners
+	 *
+	 * @param  {string} name Event name
+	 * @param  {array} args Event arguments
+	 * @private
+	 */
+	_emitEvent: function ( name, args )
+	{
+		this.s.dt.iterator( 'table', function ( ctx, i ) {
+			$(ctx.nTable).triggerHandler( name+'.dt', args );
+		} );
+	},
+
+
+	/**
+	 * Attach suitable listeners (based on the configuration) that will attach
+	 * and detach the AutoFill handle in the document.
+	 *
+	 * @private
+	 */
+	_focusListener: function ()
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var namespace = this.s.namespace;
+		var focus = this.c.focus !== null ?
+			this.c.focus :
+			dt.init().keys || dt.settings()[0].keytable ?
+				'focus' :
+				'hover';
+
+		// All event listeners attached here are removed in the `destroy`
+		// callback in the constructor
+		if ( focus === 'focus' ) {
+			dt
+				.on( 'key-focus.autoFill', function ( e, dt, cell ) {
+					that._attach( cell.node() );
+				} )
+				.on( 'key-blur.autoFill', function ( e, dt, cell ) {
+					that._detach();
+				} );
+		}
+		else if ( focus === 'click' ) {
+			$(dt.table().body()).on( 'click'+namespace, 'td, th', function (e) {
+				that._attach( this );
+			} );
+
+			$(document.body).on( 'click'+namespace, function (e) {
+				if ( ! $(e.target).parents().filter( dt.table().body() ).length ) {
+					that._detach();
+				}
+			} );
+		}
+		else {
+			$(dt.table().body())
+				.on( 'mouseenter'+namespace, 'td, th', function (e) {
+					that._attach( this );
+				} )
+				.on( 'mouseleave'+namespace, function (e) {
+					if ( $(e.relatedTarget).hasClass('dt-autofill-handle') ) {
+						return;
+					}
+
+					that._detach();
+				} );
+		}
+	},
+
+
+	_focusListenerRemove: function ()
+	{
+		var dt = this.s.dt;
+
+		dt.off( '.autoFill' );
+		$(dt.table().body()).off( this.s.namespace );
+		$(document.body).off( this.s.namespace );
+	},
+
+
+	/**
+	 * Get the position of a node, relative to another, including any scrolling
+	 * offsets.
+	 * @param  {Node}   node         Node to get the position of
+	 * @param  {jQuery} targetParent Node to use as the parent
+	 * @return {object}              Offset calculation
+	 * @private
+	 */
+	_getPosition: function ( node, targetParent )
+	{
+		var
+			currNode = node,
+			currOffsetParent,
+			top = 0,
+			left = 0;
+
+		if ( ! targetParent ) {
+			targetParent = $( $( this.s.dt.table().node() )[0].offsetParent );
+		}
+
+		do {
+			// Don't use jQuery().position() the behaviour changes between 1.x and 3.x for
+			// tables
+			var positionTop = currNode.offsetTop;
+			var positionLeft = currNode.offsetLeft;
+
+			// jQuery doesn't give a `table` as the offset parent oddly, so use DOM directly
+			currOffsetParent = $( currNode.offsetParent );
+
+			top += positionTop + currOffsetParent.scrollTop();
+			left += positionLeft + currOffsetParent.scrollLeft();
+
+			top += parseInt( currOffsetParent.css('margin-top') ) * 1;
+			top += parseInt( currOffsetParent.css('border-top-width') ) * 1;
+
+			// Emergency fall back. Shouldn't happen, but just in case!
+			if ( currNode.nodeName.toLowerCase() === 'body' ) {
+				break;
+			}
+
+			currNode = currOffsetParent.get(0); // for next loop
+		}
+		while ( currOffsetParent.get(0) !== targetParent.get(0) )
+
+		return {
+			top: top,
+			left: left
+		};
+	},
+
+
+	/**
+	 * Start mouse drag - selects the start cell
+	 *
+	 * @param  {object} e Mouse down event
+	 * @private
+	 */
+	_mousedown: function ( e )
+	{
+		var that = this;
+		var dt = this.s.dt;
+
+		this.dom.start = this.dom.attachedTo;
+		this.s.start = {
+			row: dt.rows( { page: 'current' } ).nodes().indexOf( $(this.dom.start).parent()[0] ),
+			column: $(this.dom.start).index()
+		};
+
+		$(document.body)
+			.on( 'mousemove.autoFill', function (e) {
+				that._mousemove( e );
+			} )
+			.on( 'mouseup.autoFill', function (e) {
+				that._mouseup( e );
+			} );
+
+		var select = this.dom.select;
+		var offsetParent = $( dt.table().node() ).offsetParent();
+		select.top.appendTo( offsetParent );
+		select.left.appendTo( offsetParent );
+		select.right.appendTo( offsetParent );
+		select.bottom.appendTo( offsetParent );
+
+		this._drawSelection( this.dom.start, e );
+
+		this.dom.handle.css( 'display', 'none' );
+
+		// Cache scrolling information so mouse move doesn't need to read.
+		// This assumes that the window and DT scroller will not change size
+		// during an AutoFill drag, which I think is a fair assumption
+		var scrollWrapper = this.dom.dtScroll;
+		this.s.scroll = {
+			windowHeight: $(window).height(),
+			windowWidth:  $(window).width(),
+			dtTop:        scrollWrapper ? scrollWrapper.offset().top : null,
+			dtLeft:       scrollWrapper ? scrollWrapper.offset().left : null,
+			dtHeight:     scrollWrapper ? scrollWrapper.outerHeight() : null,
+			dtWidth:      scrollWrapper ? scrollWrapper.outerWidth() : null
+		};
+	},
+
+
+	/**
+	 * Mouse drag - selects the end cell and update the selection display for
+	 * the end user
+	 *
+	 * @param  {object} e Mouse move event
+	 * @private
+	 */
+	_mousemove: function ( e )
+	{	
+		var that = this;
+		var dt = this.s.dt;
+		var name = e.target.nodeName.toLowerCase();
+		if ( name !== 'td' && name !== 'th' ) {
+			return;
+		}
+
+		this._drawSelection( e.target, e );
+		this._shiftScroll( e );
+	},
+
+
+	/**
+	 * End mouse drag - perform the update actions
+	 *
+	 * @param  {object} e Mouse up event
+	 * @private
+	 */
+	_mouseup: function ( e )
+	{
+		$(document.body).off( '.autoFill' );
+
+		var that = this;
+		var dt = this.s.dt;
+		var select = this.dom.select;
+		select.top.remove();
+		select.left.remove();
+		select.right.remove();
+		select.bottom.remove();
+
+		this.dom.handle.css( 'display', 'block' );
+
+		// Display complete - now do something useful with the selection!
+		var start = this.s.start;
+		var end = this.s.end;
+
+		// Haven't selected multiple cells, so nothing to do
+		if ( start.row === end.row && start.column === end.column ) {
+			return;
+		}
+
+		var startDt = dt.cell( ':eq('+start.row+')', start.column+':visible', {page:'current'} );
+
+		// If Editor is active inside this cell (inline editing) we need to wait for Editor to
+		// submit and then we can loop back and trigger the fill.
+		if ( $('div.DTE', startDt.node()).length ) {
+			var editor = dt.editor();
+
+			editor
+				.on( 'submitSuccess.dtaf close.dtaf', function () {
+					editor.off( '.dtaf');
+
+					setTimeout( function () {
+						that._mouseup( e );
+					}, 100 );
+				} )
+				.on( 'submitComplete.dtaf preSubmitCancelled.dtaf close.dtaf', function () {
+					editor.off( '.dtaf');
+				} );
+
+			// Make the current input submit
+			editor.submit();
+
+			return;
+		}
+
+		// Build a matrix representation of the selected rows
+		var rows       = this._range( start.row, end.row );
+		var columns    = this._range( start.column, end.column );
+		var selected   = [];
+		var dtSettings = dt.settings()[0];
+		var dtColumns  = dtSettings.aoColumns;
+
+		// Can't use Array.prototype.map as IE8 doesn't support it
+		// Can't use $.map as jQuery flattens 2D arrays
+		// Need to use a good old fashioned for loop
+		for ( var rowIdx=0 ; rowIdx<rows.length ; rowIdx++ ) {
+			selected.push(
+				$.map( columns, function (column) {
+					var row = dt.row( ':eq('+rows[rowIdx]+')', {page:'current'} ); // Workaround for M581
+					var cell = dt.cell( row.index(), column+':visible' );
+					var data = cell.data();
+					var cellIndex = cell.index();
+					var editField = dtColumns[ cellIndex.column ].editField;
+
+					if ( editField !== undefined ) {
+						data = dtSettings.oApi._fnGetObjectDataFn( editField )( dt.row( cellIndex.row ).data() );
+					}
+
+					return {
+						cell:  cell,
+						data:  data,
+						label: cell.data(),
+						index: cellIndex
+					};
+				} )
+			);
+		}
+
+		this._actionSelector( selected );
+		
+		// Stop shiftScroll
+		clearInterval( this.s.scrollInterval );
+		this.s.scrollInterval = null;
+	},
+
+
+	/**
+	 * Create an array with a range of numbers defined by the start and end
+	 * parameters passed in (inclusive!).
+	 * 
+	 * @param  {integer} start Start
+	 * @param  {integer} end   End
+	 * @private
+	 */
+	_range: function ( start, end )
+	{
+		var out = [];
+		var i;
+
+		if ( start <= end ) {
+			for ( i=start ; i<=end ; i++ ) {
+				out.push( i );
+			}
+		}
+		else {
+			for ( i=start ; i>=end ; i-- ) {
+				out.push( i );
+			}
+		}
+
+		return out;
+	},
+
+
+	/**
+	 * Move the window and DataTables scrolling during a drag to scroll new
+	 * content into view. This is done by proximity to the edge of the scrolling
+	 * container of the mouse - for example near the top edge of the window
+	 * should scroll up. This is a little complicated as there are two elements
+	 * that can be scrolled - the window and the DataTables scrolling view port
+	 * (if scrollX and / or scrollY is enabled).
+	 *
+	 * @param  {object} e Mouse move event object
+	 * @private
+	 */
+	_shiftScroll: function ( e )
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var scroll = this.s.scroll;
+		var runInterval = false;
+		var scrollSpeed = 5;
+		var buffer = 65;
+		var
+			windowY = e.pageY - document.body.scrollTop,
+			windowX = e.pageX - document.body.scrollLeft,
+			windowVert, windowHoriz,
+			dtVert, dtHoriz;
+
+		// Window calculations - based on the mouse position in the window,
+		// regardless of scrolling
+		if ( windowY < buffer ) {
+			windowVert = scrollSpeed * -1;
+		}
+		else if ( windowY > scroll.windowHeight - buffer ) {
+			windowVert = scrollSpeed;
+		}
+
+		if ( windowX < buffer ) {
+			windowHoriz = scrollSpeed * -1;
+		}
+		else if ( windowX > scroll.windowWidth - buffer ) {
+			windowHoriz = scrollSpeed;
+		}
+
+		// DataTables scrolling calculations - based on the table's position in
+		// the document and the mouse position on the page
+		if ( scroll.dtTop !== null && e.pageY < scroll.dtTop + buffer ) {
+			dtVert = scrollSpeed * -1;
+		}
+		else if ( scroll.dtTop !== null && e.pageY > scroll.dtTop + scroll.dtHeight - buffer ) {
+			dtVert = scrollSpeed;
+		}
+
+		if ( scroll.dtLeft !== null && e.pageX < scroll.dtLeft + buffer ) {
+			dtHoriz = scrollSpeed * -1;
+		}
+		else if ( scroll.dtLeft !== null && e.pageX > scroll.dtLeft + scroll.dtWidth - buffer ) {
+			dtHoriz = scrollSpeed;
+		}
+
+		// This is where it gets interesting. We want to continue scrolling
+		// without requiring a mouse move, so we need an interval to be
+		// triggered. The interval should continue until it is no longer needed,
+		// but it must also use the latest scroll commands (for example consider
+		// that the mouse might move from scrolling up to scrolling left, all
+		// with the same interval running. We use the `scroll` object to "pass"
+		// this information to the interval. Can't use local variables as they
+		// wouldn't be the ones that are used by an already existing interval!
+		if ( windowVert || windowHoriz || dtVert || dtHoriz ) {
+			scroll.windowVert = windowVert;
+			scroll.windowHoriz = windowHoriz;
+			scroll.dtVert = dtVert;
+			scroll.dtHoriz = dtHoriz;
+			runInterval = true;
+		}
+		else if ( this.s.scrollInterval ) {
+			// Don't need to scroll - remove any existing timer
+			clearInterval( this.s.scrollInterval );
+			this.s.scrollInterval = null;
+		}
+
+		// If we need to run the interval to scroll and there is no existing
+		// interval (if there is an existing one, it will continue to run)
+		if ( ! this.s.scrollInterval && runInterval ) {
+			this.s.scrollInterval = setInterval( function () {
+				// Don't need to worry about setting scroll <0 or beyond the
+				// scroll bound as the browser will just reject that.
+				if ( scroll.windowVert ) {
+					document.body.scrollTop += scroll.windowVert;
+				}
+				if ( scroll.windowHoriz ) {
+					document.body.scrollLeft += scroll.windowHoriz;
+				}
+
+				// DataTables scrolling
+				if ( scroll.dtVert || scroll.dtHoriz ) {
+					var scroller = that.dom.dtScroll[0];
+
+					if ( scroll.dtVert ) {
+						scroller.scrollTop += scroll.dtVert;
+					}
+					if ( scroll.dtHoriz ) {
+						scroller.scrollLeft += scroll.dtHoriz;
+					}
+				}
+			}, 20 );
+		}
+	},
+
+
+	/**
+	 * Update the DataTable after the user has selected what they want to do
+	 *
+	 * @param  {false|undefined} result Return from the `execute` method - can
+	 *   be false internally to do nothing. This is not documented for plug-ins
+	 *   and is used only by the cancel option.
+	 * @param {array} cells Information about the selected cells from the key
+	 *     up function, argumented with the set values
+	 * @private
+	 */
+	_update: function ( result, cells )
+	{
+		// Do nothing on `false` return from an execute function
+		if ( result === false ) {
+			return;
+		}
+
+		var dt = this.s.dt;
+		var cell;
+		var columns = dt.columns( this.c.columns ).indexes();
+
+		// Potentially allow modifications to the cells matrix
+		this._emitEvent( 'preAutoFill', [ dt, cells ] );
+
+		this._editor( cells );
+
+		// Automatic updates are not performed if `update` is null and the
+		// `editor` parameter is passed in - the reason being that Editor will
+		// update the data once submitted
+		var update = this.c.update !== null ?
+			this.c.update :
+			this.c.editor ?
+				false :
+				true;
+
+		if ( update ) {
+			for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+				for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+					cell = cells[i][j];
+
+					if ( columns.indexOf(cell.index.column) !== -1 ) {
+						cell.cell.data( cell.set );
+					}
+				}
+			}
+
+			dt.draw(false);
+		}
+
+		this._emitEvent( 'autoFill', [ dt, cells ] );
+	}
+} );
+
+
+/**
+ * AutoFill actions. The options here determine how AutoFill will fill the data
+ * in the table when the user has selected a range of cells. Please see the
+ * documentation on the DataTables site for full details on how to create plug-
+ * ins.
+ *
+ * @type {Object}
+ */
+AutoFill.actions = {
+	increment: {
+		available: function ( dt, cells ) {
+			var d = cells[0][0].label;
+
+			// is numeric test based on jQuery's old `isNumeric` function
+			return !isNaN( d - parseFloat( d ) );
+		},
+
+		option: function ( dt, cells ) {
+			return dt.i18n(
+				'autoFill.increment',
+				'Increment / decrement each cell by: <input type="number" value="1">'
+			);
+		},
+
+		execute: function ( dt, cells, node ) {
+			var value = cells[0][0].data * 1;
+			var increment = $('input', node).val() * 1;
+
+			for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+				for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+					cells[i][j].set = value;
+
+					value += increment;
+				}
+			}
+		}
+	},
+
+	fill: {
+		available: function ( dt, cells ) {
+			return true;
+		},
+
+		option: function ( dt, cells ) {
+			return dt.i18n('autoFill.fill', 'Fill all cells with <i>'+cells[0][0].label+'</i>' );
+		},
+
+		execute: function ( dt, cells, node ) {
+			var value = cells[0][0].data;
+
+			for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+				for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+					cells[i][j].set = value;
+				}
+			}
+		}
+	},
+
+	fillHorizontal: {
+		available: function ( dt, cells ) {
+			return cells.length > 1 && cells[0].length > 1;
+		},
+
+		option: function ( dt, cells ) {
+			return dt.i18n('autoFill.fillHorizontal', 'Fill cells horizontally' );
+		},
+
+		execute: function ( dt, cells, node ) {
+			for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+				for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+					cells[i][j].set = cells[i][0].data;
+				}
+			}
+		}
+	},
+
+	fillVertical: {
+		available: function ( dt, cells ) {
+			return cells.length > 1 && cells[0].length > 1;
+		},
+
+		option: function ( dt, cells ) {
+			return dt.i18n('autoFill.fillVertical', 'Fill cells vertically' );
+		},
+
+		execute: function ( dt, cells, node ) {
+			for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+				for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
+					cells[i][j].set = cells[0][j].data;
+				}
+			}
+		}
+	},
+
+	// Special type that does not make itself available, but is added
+	// automatically by AutoFill if a multi-choice list is shown. This allows
+	// sensible code reuse
+	cancel: {
+		available: function () {
+			return false;
+		},
+
+		option: function ( dt ) {
+			return dt.i18n('autoFill.cancel', 'Cancel' );
+		},
+
+		execute: function () {
+			return false;
+		}
+	}
+};
+
+
+/**
+ * AutoFill version
+ * 
+ * @static
+ * @type      String
+ */
+AutoFill.version = '2.3.3';
+
+
+/**
+ * AutoFill defaults
+ * 
+ * @namespace
+ */
+AutoFill.defaults = {
+	/** @type {Boolean} Ask user what they want to do, even for a single option */
+	alwaysAsk: false,
+
+	/** @type {string|null} What will trigger a focus */
+	focus: null, // focus, click, hover
+
+	/** @type {column-selector} Columns to provide auto fill for */
+	columns: '', // all
+
+	/** @type {Boolean} Enable AutoFill on load */
+	enable: true,
+
+	/** @type {boolean|null} Update the cells after a drag */
+	update: null, // false is editor given, true otherwise
+
+	/** @type {DataTable.Editor} Editor instance for automatic submission */
+	editor: null,
+
+	/** @type {boolean} Enable vertical fill */
+	vertical: true,
+
+	/** @type {boolean} Enable horizontal fill */
+	horizontal: true
+};
+
+
+/**
+ * Classes used by AutoFill that are configurable
+ * 
+ * @namespace
+ */
+AutoFill.classes = {
+	/** @type {String} Class used by the selection button */
+	btn: 'btn'
+};
+
+
+/*
+ * API
+ */
+var Api = $.fn.dataTable.Api;
+
+// Doesn't do anything - Not documented
+Api.register( 'autoFill()', function () {
+	return this;
+} );
+
+Api.register( 'autoFill().enabled()', function () {
+	var ctx = this.context[0];
+
+	return ctx.autoFill ?
+		ctx.autoFill.enabled() :
+		false;
+} );
+
+Api.register( 'autoFill().enable()', function ( flag ) {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx.autoFill ) {
+			ctx.autoFill.enable( flag );
+		}
+	} );
+} );
+
+Api.register( 'autoFill().disable()', function () {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx.autoFill ) {
+			ctx.autoFill.disable();
+		}
+	} );
+} );
+
+
+// Attach a listener to the document which listens for DataTables initialisation
+// events so we can automatically initialise
+$(document).on( 'preInit.dt.autofill', function (e, settings, json) {
+	if ( e.namespace !== 'dt' ) {
+		return;
+	}
+
+	var init = settings.oInit.autoFill;
+	var defaults = DataTable.defaults.autoFill;
+
+	if ( init || defaults ) {
+		var opts = $.extend( {}, init, defaults );
+
+		if ( init !== false ) {
+			new AutoFill( settings, opts  );
+		}
+	}
+} );
+
+
+// Alias for access
+DataTable.AutoFill = AutoFill;
+DataTable.AutoFill = AutoFill;
+
+
+return AutoFill;
+}));
+
+
+/*! Bootstrap integration for DataTables' AutoFill
+ * ©2015 SpryMedia Ltd - datatables.net/license
+ */
+
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net-bs4', 'datatables.net-autofill'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+		// CommonJS
+		module.exports = function (root, $) {
+			if ( ! root ) {
+				root = window;
+			}
+
+			if ( ! $ || ! $.fn.dataTable ) {
+				$ = require('datatables.net-bs4')(root, $).$;
+			}
+
+			if ( ! $.fn.dataTable.AutoFill ) {
+				require('datatables.net-autofill')(root, $);
+			}
+
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery, window, document );
+	}
+}(function( $, window, document, undefined ) {
+'use strict';
+var DataTable = $.fn.dataTable;
+
+
+DataTable.AutoFill.classes.btn = 'btn btn-primary';
+
+
+return DataTable;
+}));
+
+/*! Buttons for DataTables 1.5.6
+ * ©2016-2019 SpryMedia Ltd - datatables.net/license
  */
 
 (function( factory ){
@@ -75174,6 +76432,15 @@ var _dtButtons = DataTable.ext.buttons;
  */
 var Buttons = function( dt, config )
 {
+	// If not created with a `new` keyword then we return a wrapper function that
+	// will take the settings object for a DT. This allows easy use of new instances
+	// with the `layout` option - e.g. `topLeft: $.fn.dataTable.Buttons( ... )`.
+	if ( !(this instanceof Buttons) ) {
+		return function (settings) {
+			return new Buttons( settings, dt ).container();
+		};
+	}
+
 	// If there is no config set it to an empty object
 	if ( typeof( config ) === 'undefined' ) {
 		config = {};	
@@ -75374,12 +76641,16 @@ $.extend( Buttons.prototype, {
 	},
 
 	/**
-	 * Get a button's node
-	 * @param  {node} node Button node
-	 * @return {jQuery} Button element
+	 * Get a button's node of the buttons container if no button is given
+	 * @param  {node} [node] Button node
+	 * @return {jQuery} Button element, or container
 	 */
 	node: function ( node )
 	{
+		if ( ! node ) {
+			return this.dom.container;
+		}
+
 		var button = this._nodeToButton( node );
 		return $(button.node);
 	},
@@ -75673,6 +76944,7 @@ $.extend( Buttons.prototype, {
 		};
 
 		var tag = config.tag || buttonDom.tag;
+		var clickBlurs = config.clickBlurs === undefined ? true : config.clickBlurs
 		var button = $('<'+tag+'/>')
 			.addClass( buttonDom.className )
 			.attr( 'tabindex', this.s.dt.settings()[0].iTabIndex )
@@ -75683,8 +76955,9 @@ $.extend( Buttons.prototype, {
 				if ( ! button.hasClass( buttonDom.disabled ) && config.action ) {
 					action( e, dt, button, config );
 				}
-
-				button.blur();
+				if( clickBlurs ) {
+					button.blur();
+				}
 			} )
 			.on( 'keyup.dtb', function (e) {
 				if ( e.keyCode === 13 ) {
@@ -75751,6 +77024,13 @@ $.extend( Buttons.prototype, {
 		}
 
 		this._addKey( config );
+
+		// Style integration callback for DOM manipulation
+		// Note that this is _not_ documented. It is currently
+		// for style integration only
+		if( this.c.buttonCreated ) {
+			inserter = this.c.buttonCreated( config, inserter );
+		}
 
 		return {
 			conf:         config,
@@ -76047,10 +77327,12 @@ Buttons.background = function ( show, className, fade, insertPoint ) {
 			.addClass( className )
 			.css( 'display', 'none' )
 			.insertAfter( insertPoint )
+			.stop()
 			.fadeIn( fade );
 	}
 	else {
 		$('div.'+className)
+			.stop()
 			.fadeOut( fade, function () {
 				$(this)
 					.removeClass( className )
@@ -76294,7 +77576,7 @@ Buttons.defaults = {
  * @type {string}
  * @static
  */
-Buttons.version = '1.5.4';
+Buttons.version = '1.5.6';
 
 
 $.extend( _dtButtons, {
@@ -76303,101 +77585,22 @@ $.extend( _dtButtons, {
 			return dt.i18n( 'buttons.collection', 'Collection' );
 		},
 		className: 'buttons-collection',
+		init: function ( dt, button, config ) {
+			button.attr( 'aria-expanded', false );
+		},
 		action: function ( e, dt, button, config ) {
-			var host = button;
-			var collectionParent = $(button).parents('div.dt-button-collection');
-			var hostPosition = host.position();
-			var tableContainer = $( dt.table().container() );
-			var multiLevel = false;
-			var insertPoint = host;
-
-			// Remove any old collection
-			if ( collectionParent.length ) {
-				multiLevel = $('.dt-button-collection').position();
-				insertPoint = collectionParent;
-				$('body').trigger( 'click.dtb-collection' );
-			}
-
-			if ( insertPoint.parents('body')[0] !== document.body ) {
-				insertPoint = document.body.lastChild;
-			}
-
-			config._collection.find('.dt-button-collection-title').remove();
-			config._collection.prepend('<div class="dt-button-collection-title">'+config.collectionTitle+'</div>');
-
-			config._collection
-				.addClass( config.collectionLayout )
-				.css( 'display', 'none' )
-				.insertAfter( insertPoint )
-				.fadeIn( config.fade );
-
-			var position = config._collection.css( 'position' );
-
-			if ( multiLevel && position === 'absolute' ) {
-				config._collection.css( {
-					top: multiLevel.top,
-					left: multiLevel.left
-				} );
-			}
-			else if ( position === 'absolute' ) {
-				config._collection.css( {
-					top: hostPosition.top + host.outerHeight(),
-					left: hostPosition.left
-				} );
-
-				// calculate overflow when positioned beneath
-				var tableBottom = tableContainer.offset().top + tableContainer.height();
-				var listBottom = hostPosition.top + host.outerHeight() + config._collection.outerHeight();
-				var bottomOverflow = listBottom - tableBottom;
-				
-				// calculate overflow when positioned above
-				var listTop = hostPosition.top - config._collection.outerHeight();
-				var tableTop = tableContainer.offset().top;
-				var topOverflow = tableTop - listTop;
-				
-				// if bottom overflow is larger, move to the top because it fits better, or if dropup is requested
-				if (bottomOverflow > topOverflow || config.dropup) {
-					config._collection.css( 'top', hostPosition.top - config._collection.outerHeight() - 5);
-				}
-
-				// Right alignment is enabled on a class, e.g. bootstrap:
-				// $.fn.dataTable.Buttons.defaults.dom.collection.className += " dropdown-menu-right"; 
-				if ( config._collection.hasClass( config.rightAlignClassName ) ) {
-					config._collection.css( 'left', hostPosition.left + host.outerWidth() - config._collection.outerWidth() );
-				}
-
-				// Right alignment in table container
-				var listRight = hostPosition.left + config._collection.outerWidth();
-				var tableRight = tableContainer.offset().left + tableContainer.width();
-				if ( listRight > tableRight ) {
-					config._collection.css( 'left', hostPosition.left - ( listRight - tableRight ) );
-				}
-
-				// Right alignment to window
-				var listOffsetRight = host.offset().left + config._collection.outerWidth();
-				if ( listOffsetRight > $(window).width() ) {
-					config._collection.css( 'left', hostPosition.left - (listOffsetRight-$(window).width()) );
-				}
-			}
-			else {
-				// Fix position - centre on screen
-				var top = config._collection.height() / 2;
-				if ( top > $(window).height() / 2 ) {
-					top = $(window).height() / 2;
-				}
-
-				config._collection.css( 'marginTop', top*-1 );
-			}
-
-			if ( config.background ) {
-				Buttons.background( true, config.backgroundClassName, config.fade, insertPoint );
-			}
-
 			var close = function () {
-				config._collection
-				.fadeOut( config.fade, function () {
-					config._collection.detach();
-				} );
+				dt.buttons( '[aria-haspopup="true"][aria-expanded="true"]' ).nodes().each( function() {
+					var collection = $(this).siblings('.dt-button-collection');
+
+					if ( collection.length ) {
+						collection.stop().fadeOut( config.fade, function () {
+							collection.detach();
+						} );
+					}
+
+					$(this).attr( 'aria-expanded', 'false' );
+				});
 
 				$('div.dt-button-background').off( 'click.dtb-collection' );
 				Buttons.background( false, config.backgroundClassName, config.fade, insertPoint );
@@ -76406,36 +77609,134 @@ $.extend( _dtButtons, {
 				dt.off( 'buttons-action.b-internal' );
 			};
 
-			// Need to break the 'thread' for the collection button being
-			// activated by a click - it would also trigger this event
-			setTimeout( function () {
-				// This is bonkers, but if we don't have a click listener on the
-				// background element, iOS Safari will ignore the body click
-				// listener below. An empty function here is all that is
-				// required to make it work...
-				$('div.dt-button-background').on( 'click.dtb-collection', function () {} );
+			var wasExpanded = button.attr( 'aria-expanded' ) === 'true';
 
-				$('body')
-					.on( 'click.dtb-collection', function (e) {
-						// andSelf is deprecated in jQ1.8, but we want 1.7 compat
-						var back = $.fn.addBack ? 'addBack' : 'andSelf';
+			close();
 
-						if ( ! $(e.target).parents()[back]().filter( config._collection ).length ) {
-							close();
-						}
-					} )
-					.on( 'keyup.dtb-collection', function (e) {
-						if ( e.keyCode === 27 ) {
-							close();
-						}
-					} );
+			if (!wasExpanded) {
+				var host = button;
+				var collectionParent = $(button).parents('div.dt-button-collection');
+				var hostPosition = host.position();
+				var tableContainer = $( dt.table().container() );
+				var multiLevel = false;
+				var insertPoint = host;
 
-				if ( config.autoClose ) {
-					dt.on( 'buttons-action.b-internal', function () {
-						close();
+				button.attr( 'aria-expanded', 'true' );
+
+				// Remove any old collection
+				if ( collectionParent.length ) {
+					multiLevel = $('.dt-button-collection').position();
+					insertPoint = collectionParent;
+					$('body').trigger( 'click.dtb-collection' );
+				}
+
+				if ( insertPoint.parents('body')[0] !== document.body ) {
+					insertPoint = document.body.lastChild;
+				}
+
+				config._collection.find('.dt-button-collection-title').remove();
+				config._collection.prepend('<div class="dt-button-collection-title">'+config.collectionTitle+'</div>');
+
+				config._collection
+					.addClass( config.collectionLayout )
+					.css( 'display', 'none' )
+					.insertAfter( insertPoint )
+					.stop()
+					.fadeIn( config.fade );
+
+				var position = config._collection.css( 'position' );
+
+				if ( multiLevel && position === 'absolute' ) {
+					config._collection.css( {
+						top: multiLevel.top,
+						left: multiLevel.left
 					} );
 				}
-			}, 10 );
+				else if ( position === 'absolute' ) {
+					config._collection.css( {
+						top: hostPosition.top + host.outerHeight(),
+						left: hostPosition.left
+					} );
+
+					// calculate overflow when positioned beneath
+					var tableBottom = tableContainer.offset().top + tableContainer.height();
+					var listBottom = hostPosition.top + host.outerHeight() + config._collection.outerHeight();
+					var bottomOverflow = listBottom - tableBottom;
+
+					// calculate overflow when positioned above
+					var listTop = hostPosition.top - config._collection.outerHeight();
+					var tableTop = tableContainer.offset().top;
+					var topOverflow = tableTop - listTop;
+
+					// if bottom overflow is larger, move to the top because it fits better, or if dropup is requested
+					if (bottomOverflow > topOverflow || config.dropup) {
+						config._collection.css( 'top', hostPosition.top - config._collection.outerHeight() - 5);
+					}
+
+					// Right alignment is enabled on a class, e.g. bootstrap:
+					// $.fn.dataTable.Buttons.defaults.dom.collection.className += " dropdown-menu-right"; 
+					if ( config._collection.hasClass( config.rightAlignClassName ) ) {
+						config._collection.css( 'left', hostPosition.left + host.outerWidth() - config._collection.outerWidth() );
+					}
+
+					// Right alignment in table container
+					var listRight = hostPosition.left + config._collection.outerWidth();
+					var tableRight = tableContainer.offset().left + tableContainer.width();
+					if ( listRight > tableRight ) {
+						config._collection.css( 'left', hostPosition.left - ( listRight - tableRight ) );
+					}
+
+					// Right alignment to window
+					var listOffsetRight = host.offset().left + config._collection.outerWidth();
+					if ( listOffsetRight > $(window).width() ) {
+						config._collection.css( 'left', hostPosition.left - (listOffsetRight-$(window).width()) );
+					}
+				}
+				else {
+					// Fix position - centre on screen
+					var top = config._collection.height() / 2;
+					if ( top > $(window).height() / 2 ) {
+						top = $(window).height() / 2;
+					}
+
+					config._collection.css( 'marginTop', top*-1 );
+				}
+
+				if ( config.background ) {
+					Buttons.background( true, config.backgroundClassName, config.fade, insertPoint );
+				}
+
+				// Need to break the 'thread' for the collection button being
+				// activated by a click - it would also trigger this event
+				setTimeout( function () {
+					// This is bonkers, but if we don't have a click listener on the
+					// background element, iOS Safari will ignore the body click
+					// listener below. An empty function here is all that is
+					// required to make it work...
+					$('div.dt-button-background').on( 'click.dtb-collection', function () {} );
+
+					$('body')
+						.on( 'click.dtb-collection', function (e) {
+							// andSelf is deprecated in jQ1.8, but we want 1.7 compat
+							var back = $.fn.addBack ? 'addBack' : 'andSelf';
+
+							if ( ! $(e.target).parents()[back]().filter( config._collection ).length ) {
+								close();
+							}
+						} )
+						.on( 'keyup.dtb-collection', function (e) {
+							if ( e.keyCode === 27 ) {
+								close();
+							}
+						} );
+
+					if ( config.autoClose ) {
+						dt.on( 'buttons-action.b-internal', function () {
+							close();
+						} );
+					}
+				}, 10 );
+			}
 		},
 		background: true,
 		collectionLayout: '',
@@ -76523,7 +77824,7 @@ $.extend( _dtButtons, {
 			init: function ( dt, node, conf ) {
 				var that = this;
 				dt.on( 'length.dt'+conf.namespace, function () {
-					that.text( text( dt ) );
+					that.text( conf.text );
 				} );
 			},
 			destroy: function ( dt, node, conf ) {
@@ -77026,16 +78327,23 @@ $(document).on( 'init.dt plugin-init.dt', function (e, settings) {
 	}
 } );
 
+function _init ( settings ) {
+	var api = new DataTable.Api( settings );
+	var opts = api.init().buttons || DataTable.defaults.buttons;
+
+	return new Buttons( api, opts ).container();
+}
+
 // DataTables `dom` feature option
 DataTable.ext.feature.push( {
-	fnInit: function( settings ) {
-		var api = new DataTable.Api( settings );
-		var opts = api.init().buttons || DataTable.defaults.buttons;
-
-		return new Buttons( api, opts ).container();
-	},
+	fnInit: _init,
 	cFeature: "B"
 } );
+
+// DataTables 2 layout feature
+if ( DataTable.ext.features ) {
+	DataTable.ext.features.register( 'buttons', _init );
+}
 
 
 return Buttons;
@@ -77049,7 +78357,7 @@ return Buttons;
 (function( factory ){
 	if ( typeof define === 'function' && define.amd ) {
 		// AMD
-		define( ['jquery', 'datatables.net-bs', 'datatables.net-buttons'], function ( $ ) {
+		define( ['jquery', 'datatables.net-bs4', 'datatables.net-buttons'], function ( $ ) {
 			return factory( $, window, document );
 		} );
 	}
@@ -77061,7 +78369,7 @@ return Buttons;
 			}
 
 			if ( ! $ || ! $.fn.dataTable ) {
-				$ = require('datatables.net-bs')(root, $).$;
+				$ = require('datatables.net-bs4')(root, $).$;
 			}
 
 			if ( ! $.fn.dataTable.Buttons ) {
@@ -77079,36 +78387,34 @@ return Buttons;
 'use strict';
 var DataTable = $.fn.dataTable;
 
-
 $.extend( true, DataTable.Buttons.defaults, {
 	dom: {
 		container: {
 			className: 'dt-buttons btn-group'
 		},
 		button: {
-			className: 'btn btn-default'
+			className: 'btn btn-secondary'
 		},
 		collection: {
-			tag: 'ul',
+			tag: 'div',
 			className: 'dt-button-collection dropdown-menu',
 			button: {
-				tag: 'li',
-				className: 'dt-button',
+				tag: 'a',
+				className: 'dt-button dropdown-item',
 				active: 'active',
 				disabled: 'disabled'
-			},
-			buttonLiner: {
-				tag: 'a',
-				className: ''
 			}
 		}
+	},
+	buttonCreated: function ( config, button ) {
+		return config.buttons ?
+			$('<div class="btn-group"/>').append(button) :
+			button;
 	}
 } );
 
-DataTable.ext.buttons.collection.text = function ( dt ) {
-	return dt.i18n('buttons.collection', 'Collection <span class="caret"/>');
-};
-
+DataTable.ext.buttons.collection.className += ' dropdown-toggle';
+DataTable.ext.buttons.collection.rightAlignClassName = 'dropdown-menu-right';
 
 return DataTable.Buttons;
 }));
@@ -80001,19 +81307,19 @@ DataTable.ext.buttons.excelHtml5 = {
 			} ) );
 		}
 
-		// Auto filter for columns
-		$('mergeCells', rels).before( _createNode( rels, 'autoFilter', {
-			attr: {
-				ref: 'A'+dataStartRow+':'+createCellPos(data.header.length-1)+dataEndRow
-			}
-		} ) );
-
 		// Workbook modifications
 		var workbook = xlsx.xl['workbook.xml'];
 
 		$( 'sheets sheet', workbook ).attr( 'name', _sheetname( config ) );
 
+		// Auto filter for columns
 		if ( config.autoFilter ) {
+			$('mergeCells', rels).before( _createNode( rels, 'autoFilter', {
+				attr: {
+					ref: 'A'+dataStartRow+':'+createCellPos(data.header.length-1)+dataEndRow
+				}
+			} ) );
+
 			$('definedNames', workbook).append( _createNode( workbook, 'definedName', {
 				attr: {
 					name: '_xlnm._FilterDatabase',
@@ -88065,14 +89371,14 @@ return RowReorder;
 }));
 
 
-/*! Scroller 1.5.0
+/*! Scroller 2.0.0
  * ©2011-2018 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Scroller
  * @description Virtual rendering for DataTables
- * @version     1.5.0
+ * @version     2.0.0
  * @file        dataTables.scroller.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -88160,7 +89466,7 @@ var DataTable = $.fn.dataTable;
  *        $('#example').DataTable( {
  *            "scrollY": "200px",
  *            "ajax": "media/dataset/large.txt",
- *            "dom": "frtiS",
+ *            "scroller": true,
  *            "deferRender": true
  *        } );
  *    } );
@@ -88190,27 +89496,27 @@ var Scroller = function ( dt, opts ) {
 		 *  @type     object
 		 *  @default  Passed in as first parameter to constructor
 		 */
-		"dt": dtApi.settings()[0],
+		dt: dtApi.settings()[0],
 
 		/**
 		 * DataTables API instance
 		 *  @type     DataTable.Api
 		 */
-		"dtApi": dtApi,
+		dtApi: dtApi,
 
 		/**
 		 * Pixel location of the top of the drawn table in the viewport
 		 *  @type     int
 		 *  @default  0
 		 */
-		"tableTop": 0,
+		tableTop: 0,
 
 		/**
 		 * Pixel location of the bottom of the drawn table in the viewport
 		 *  @type     int
 		 *  @default  0
 		 */
-		"tableBottom": 0,
+		tableBottom: 0,
 
 		/**
 		 * Pixel location of the boundary for when the next data set should be loaded and drawn
@@ -88219,7 +89525,7 @@ var Scroller = function ( dt, opts ) {
 		 *  @default  0
 		 *  @private
 		 */
-		"redrawTop": 0,
+		redrawTop: 0,
 
 		/**
 		 * Pixel location of the boundary for when the next data set should be loaded and drawn
@@ -88229,21 +89535,21 @@ var Scroller = function ( dt, opts ) {
 		 *  @default  0
 		 *  @private
 		 */
-		"redrawBottom": 0,
+		redrawBottom: 0,
 
 		/**
 		 * Auto row height or not indicator
 		 *  @type     bool
 		 *  @default  0
 		 */
-		"autoHeight": true,
+		autoHeight: true,
 
 		/**
 		 * Number of rows calculated as visible in the visible viewport
 		 *  @type     int
 		 *  @default  0
 		 */
-		"viewportRows": 0,
+		viewportRows: 0,
 
 		/**
 		 * setTimeout reference for state saving, used when state saving is enabled in the DataTable
@@ -88252,7 +89558,7 @@ var Scroller = function ( dt, opts ) {
 		 *  @type     int
 		 *  @default  0
 		 */
-		"stateTO": null,
+		stateTO: null,
 
 		/**
 		 * setTimeout reference for the redraw, used when server-side processing is enabled in the
@@ -88260,7 +89566,7 @@ var Scroller = function ( dt, opts ) {
 		 *  @type     int
 		 *  @default  null
 		 */
-		"drawTO": null,
+		drawTO: null,
 
 		heights: {
 			jump: null,
@@ -88280,13 +89586,18 @@ var Scroller = function ( dt, opts ) {
 			 *  @type     int
 			 *  @default  0
 			 */
-			viewport: null
+			viewport: null,
+			labelFactor: 1
 		},
 
 		topRowFloat: 0,
 		scrollDrawDiff: null,
 		loaderVisible: false,
-		forceReposition: false
+		forceReposition: false,
+		baseRowTop: 0,
+		baseScrollTop: 0,
+		mousedown: false,
+		lastScrollTop: 0
 	};
 
 	// @todo The defaults should extend a `c` property and the internal settings
@@ -88304,6 +89615,7 @@ var Scroller = function ( dt, opts ) {
 	 */
 	this.dom = {
 		"force":    document.createElement('div'),
+		"label":    $('<div class="dts_label">0</div>'),
 		"scroller": null,
 		"table":    null,
 		"loader":   null
@@ -88318,36 +89630,113 @@ var Scroller = function ( dt, opts ) {
 	this.s.dt.oScroller = this;
 
 	/* Let's do it */
-	this._fnConstruct();
+	this.construct();
 };
 
 
 
 $.extend( Scroller.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * Public methods
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	 * Public methods - to be exposed via the DataTables API
+	 */
+
+	/**
+	 * Calculate and store information about how many rows are to be displayed
+	 * in the scrolling viewport, based on current dimensions in the browser's
+	 * rendering. This can be particularly useful if the table is initially
+	 * drawn in a hidden element - for example in a tab.
+	 *  @param {bool} [redraw=true] Redraw the table automatically after the recalculation, with
+	 *    the new dimensions forming the basis for the draw.
+	 *  @returns {void}
+	 */
+	measure: function ( redraw )
+	{
+		if ( this.s.autoHeight )
+		{
+			this._calcRowHeight();
+		}
+
+		var heights = this.s.heights;
+
+		if ( heights.row ) {
+			heights.viewport = $.contains(document, this.dom.scroller) ?
+				this.dom.scroller.clientHeight :
+				this._parseHeight($(this.dom.scroller).css('height'));
+
+			// If collapsed (no height) use the max-height parameter
+			if ( ! heights.viewport ) {
+				heights.viewport = this._parseHeight($(this.dom.scroller).css('max-height'));
+			}
+
+			this.s.viewportRows = parseInt( heights.viewport / heights.row, 10 )+1;
+			this.s.dt._iDisplayLength = this.s.viewportRows * this.s.displayBuffer;
+		}
+
+		var label = this.dom.label.outerHeight();
+		heights.labelFactor = (heights.viewport-label) / heights.scroll;
+
+		if ( redraw === undefined || redraw )
+		{
+			this.s.dt.oInstance.fnDraw( false );
+		}
+	},
+
+	/**
+	 * Get information about current displayed record range. This corresponds to
+	 * the information usually displayed in the "Info" block of the table.
+	 *
+	 * @returns {object} info as an object:
+	 *  {
+	 *      start: {int}, // the 0-indexed record at the top of the viewport
+	 *      end:   {int}, // the 0-indexed record at the bottom of the viewport
+	 *  }
+	*/
+	pageInfo: function()
+	{
+		var 
+			dt = this.s.dt,
+			iScrollTop = this.dom.scroller.scrollTop,
+			iTotal = dt.fnRecordsDisplay(),
+			iPossibleEnd = Math.ceil(this.pixelsToRow(iScrollTop + this.s.heights.viewport, false, this.s.ani));
+
+		return {
+			start: Math.floor(this.pixelsToRow(iScrollTop, false, this.s.ani)),
+			end: iTotal < iPossibleEnd ? iTotal-1 : iPossibleEnd-1
+		};
+	},
+
+	/**
+	 * Calculate the row number that will be found at the given pixel position
+	 * (y-scroll).
+	 *
+	 * Please note that when the height of the full table exceeds 1 million
+	 * pixels, Scroller switches into a non-linear mode for the scrollbar to fit
+	 * all of the records into a finite area, but this function returns a linear
+	 * value (relative to the last non-linear positioning).
+	 *  @param {int} pixels Offset from top to calculate the row number of
+	 *  @param {int} [intParse=true] If an integer value should be returned
+	 *  @param {int} [virtual=false] Perform the calculations in the virtual domain
+	 *  @returns {int} Row index
+	 */
+	pixelsToRow: function ( pixels, intParse, virtual )
+	{
+		var diff = pixels - this.s.baseScrollTop;
+		var row = virtual ?
+			(this._domain( 'physicalToVirtual', this.s.baseScrollTop ) + diff) / this.s.heights.row :
+			( diff / this.s.heights.row ) + this.s.baseRowTop;
+
+		return intParse || intParse === undefined ?
+			parseInt( row, 10 ) :
+			row;
+	},
 
 	/**
 	 * Calculate the pixel position from the top of the scrolling container for
 	 * a given row
 	 *  @param {int} iRow Row number to calculate the position of
 	 *  @returns {int} Pixels
-	 *  @example
-	 *    $(document).ready(function() {
-	 *      $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sAjaxSource": "media/dataset/large.txt",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "fnInitComplete": function (o) {
-	 *          // Find where row 25 is
-	 *          alert( o.oScroller.fnRowToPixels( 25 ) );
-	 *        }
-	 *      } );
-	 *    } );
 	 */
-	"fnRowToPixels": function ( rowIdx, intParse, virtual )
+	rowToPixels: function ( rowIdx, intParse, virtual )
 	{
 		var pixels;
 		var diff = rowIdx - this.s.baseRowTop;
@@ -88368,72 +89757,16 @@ $.extend( Scroller.prototype, {
 
 
 	/**
-	 * Calculate the row number that will be found at the given pixel position
-	 * (y-scroll).
-	 *
-	 * Please note that when the height of the full table exceeds 1 million
-	 * pixels, Scroller switches into a non-linear mode for the scrollbar to fit
-	 * all of the records into a finite area, but this function returns a linear
-	 * value (relative to the last non-linear positioning).
-	 *  @param {int} iPixels Offset from top to calculate the row number of
-	 *  @param {int} [intParse=true] If an integer value should be returned
-	 *  @param {int} [virtual=false] Perform the calculations in the virtual domain
-	 *  @returns {int} Row index
-	 *  @example
-	 *    $(document).ready(function() {
-	 *      $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sAjaxSource": "media/dataset/large.txt",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "fnInitComplete": function (o) {
-	 *          // Find what row number is at 500px
-	 *          alert( o.oScroller.fnPixelsToRow( 500 ) );
-	 *        }
-	 *      } );
-	 *    } );
-	 */
-	"fnPixelsToRow": function ( pixels, intParse, virtual )
-	{
-		var diff = pixels - this.s.baseScrollTop;
-		var row = virtual ?
-			(this._domain( 'physicalToVirtual', this.s.baseScrollTop ) + diff) / this.s.heights.row :
-			( diff / this.s.heights.row ) + this.s.baseRowTop;
-
-		return intParse || intParse === undefined ?
-			parseInt( row, 10 ) :
-			row;
-	},
-
-
-	/**
 	 * Calculate the row number that will be found at the given pixel position (y-scroll)
-	 *  @param {int} iRow Row index to scroll to
-	 *  @param {bool} [bAnimate=true] Animate the transition or not
+	 *  @param {int} row Row index to scroll to
+	 *  @param {bool} [animate=true] Animate the transition or not
 	 *  @returns {void}
-	 *  @example
-	 *    $(document).ready(function() {
-	 *      $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sAjaxSource": "media/dataset/large.txt",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "fnInitComplete": function (o) {
-	 *          // Immediately scroll to row 1000
-	 *          o.oScroller.fnScrollToRow( 1000 );
-	 *        }
-	 *      } );
-	 *     
-	 *      // Sometime later on use the following to scroll to row 500...
-	 *          var oSettings = $('#example').dataTable().fnSettings();
-	 *      oSettings.oScroller.fnScrollToRow( 500 );
-	 *    } );
 	 */
-	"fnScrollToRow": function ( iRow, bAnimate )
+	scrollToRow: function ( row, animate )
 	{
 		var that = this;
 		var ani = false;
-		var px = this.fnRowToPixels( iRow );
+		var px = this.rowToPixels( row );
 
 		// We need to know if the table will redraw or not before doing the
 		// scroll. If it will not redraw, then we need to use the currently
@@ -88441,25 +89774,25 @@ $.extend( Scroller.prototype, {
 		// need to calculate the table's new position from the virtual
 		// transform.
 		var preRows = ((this.s.displayBuffer-1)/2) * this.s.viewportRows;
-		var drawRow = iRow - preRows;
+		var drawRow = row - preRows;
 		if ( drawRow < 0 ) {
 			drawRow = 0;
 		}
 
 		if ( (px > this.s.redrawBottom || px < this.s.redrawTop) && this.s.dt._iDisplayStart !== drawRow ) {
 			ani = true;
-			px = this._domain( 'virtualToPhysical', iRow * this.s.heights.row );
+			px = this._domain( 'virtualToPhysical', row * this.s.heights.row );
 
 			// If we need records outside the current draw region, but the new
 			// scrolling position is inside that (due to the non-linear nature
 			// for larger numbers of records), we need to force position update.
 			if ( this.s.redrawTop < px && px < this.s.redrawBottom ) {
 				this.s.forceReposition = true;
-				bAnimate = false;
+				animate = false;
 			}
 		}
 
-		if ( typeof bAnimate == 'undefined' || bAnimate )
+		if ( typeof animate == 'undefined' || animate )
 		{
 			this.s.ani = ani;
 			$(this.dom.scroller).animate( {
@@ -88479,100 +89812,16 @@ $.extend( Scroller.prototype, {
 	},
 
 
-	/**
-	 * Calculate and store information about how many rows are to be displayed
-	 * in the scrolling viewport, based on current dimensions in the browser's
-	 * rendering. This can be particularly useful if the table is initially
-	 * drawn in a hidden element - for example in a tab.
-	 *  @param {bool} [bRedraw=true] Redraw the table automatically after the recalculation, with
-	 *    the new dimensions forming the basis for the draw.
-	 *  @returns {void}
-	 *  @example
-	 *    $(document).ready(function() {
-	 *      // Make the example container hidden to throw off the browser's sizing
-	 *      document.getElementById('container').style.display = "none";
-	 *      var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sAjaxSource": "media/dataset/large.txt",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "fnInitComplete": function (o) {
-	 *          // Immediately scroll to row 1000
-	 *          o.oScroller.fnScrollToRow( 1000 );
-	 *        }
-	 *      } );
-	 *     
-	 *      setTimeout( function () {
-	 *        // Make the example container visible and recalculate the scroller sizes
-	 *        document.getElementById('container').style.display = "block";
-	 *        oTable.fnSettings().oScroller.fnMeasure();
-	 *      }, 3000 );
-	 */
-	"fnMeasure": function ( bRedraw )
-	{
-		if ( this.s.autoHeight )
-		{
-			this._fnCalcRowHeight();
-		}
-
-		var heights = this.s.heights;
-
-		if ( heights.row ) {
-			heights.viewport = $.contains(document, this.dom.scroller) ?
-				$(this.dom.scroller).height() :
-				this._parseHeight($(this.dom.scroller).css('height'));
-
-			// If collapsed (no height) use the max-height parameter
-			if ( ! heights.viewport ) {
-				heights.viewport = this._parseHeight($(this.dom.scroller).css('max-height'));
-			}
-
-			this.s.viewportRows = parseInt( heights.viewport / heights.row, 10 )+1;
-			this.s.dt._iDisplayLength = this.s.viewportRows * this.s.displayBuffer;
-		}
-
-		if ( bRedraw === undefined || bRedraw )
-		{
-			this.s.dt.oInstance.fnDraw( false );
-		}
-	},
-
-
-	/**
-	 * Get information about current displayed record range. This corresponds to
-	 * the information usually displayed in the "Info" block of the table.
-	 *
-	 * @returns {object} info as an object:
-	 *  {
-	 *      start: {int}, // the 0-indexed record at the top of the viewport
-	 *      end:   {int}, // the 0-indexed record at the bottom of the viewport
-	 *  }
-	*/
-	"fnPageInfo": function()
-	{
-		var 
-			dt = this.s.dt,
-			iScrollTop = this.dom.scroller.scrollTop,
-			iTotal = dt.fnRecordsDisplay(),
-			iPossibleEnd = Math.ceil(this.fnPixelsToRow(iScrollTop + this.s.heights.viewport, false, this.s.ani));
-
-		return {
-			start: Math.floor(this.fnPixelsToRow(iScrollTop, false, this.s.ani)),
-			end: iTotal < iPossibleEnd ? iTotal-1 : iPossibleEnd-1
-		};
-	},
-
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * Private methods (they are of course public in JS, but recommended as private)
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	 * Constructor
+	 */
 
 	/**
 	 * Initialisation for Scroller
 	 *  @returns {void}
 	 *  @private
 	 */
-	"_fnConstruct": function ()
+	construct: function ()
 	{
 		var that = this;
 		var dt = this.s.dtApi;
@@ -88601,12 +89850,12 @@ $.extend( Scroller.prototype, {
 		this.dom.table.style.left = "0px";
 
 		// Add class to 'announce' that we are a Scroller table
-		$(dt.table().container()).addClass('DTS');
+		$(dt.table().container()).addClass('dts DTS');
 
 		// Add a 'loading' indicator
 		if ( this.s.loadingIndicator )
 		{
-			this.dom.loader = $('<div class="dataTables_processing DTS_Loading">'+this.s.dt.oLanguage.sLoadingRecords+'</div>')
+			this.dom.loader = $('<div class="dataTables_processing dts_loading">'+this.s.dt.oLanguage.sLoadingRecords+'</div>')
 				.css('display', 'none');
 
 			$(this.dom.scroller.parentNode)
@@ -88614,12 +89863,14 @@ $.extend( Scroller.prototype, {
 				.append( this.dom.loader );
 		}
 
+		this.dom.label.appendTo(this.dom.scroller);
+
 		/* Initial size calculations */
 		if ( this.s.heights.row && this.s.heights.row != 'auto' )
 		{
 			this.s.autoHeight = false;
 		}
-		this.fnMeasure( false );
+		this.measure( false );
 
 		// Scrolling callback to see if a page change is needed - use a throttled
 		// function for the save save callback so we aren't hitting it on every
@@ -88629,19 +89880,28 @@ $.extend( Scroller.prototype, {
 			that.s.dtApi.state.save();
 		}, 500 );
 		$(this.dom.scroller).on( 'scroll.dt-scroller', function (e) {
-			that._fnScroll.call( that );
+			that._scroll.call( that );
 		} );
 
 		// In iOS we catch the touchstart event in case the user tries to scroll
 		// while the display is already scrolling
 		$(this.dom.scroller).on('touchstart.dt-scroller', function () {
-			that._fnScroll.call( that );
+			that._scroll.call( that );
 		} );
+
+		$(this.dom.scroller)
+			.on('mousedown.dt-scroller', function () {
+				that.s.mousedown = true;
+			})
+			.on('mouseup.dt-scroller', function () {
+				that.s.mouseup = false;
+				that.dom.label.css('display', 'none');
+			});
 
 		// On resize, update the information element, since the number of rows shown might change
 		$(window).on( 'resize.dt-scroller', function () {
-			that.fnMeasure( false );
-			that._fnInfo();
+			that.measure( false );
+			that._info();
 		} );
 
 		// Add a state saving parameter to the DT state saving so we can restore the exact
@@ -88671,20 +89931,20 @@ $.extend( Scroller.prototype, {
 		}
 
 		dt.on( 'init.scroller', function () {
-			that.fnMeasure( false );
+			that.measure( false );
 
-			that._fnDrawCallback();
+			that._draw();
 
 			// Update the scroller when the DataTable is redrawn
 			dt.on( 'draw.scroller', function () {
-				that._fnDrawCallback();
+				that._draw();
 			});
 		} );
 
 		// Set height before the draw happens, allowing everything else to update
 		// on draw complete without worry for roder.
 		dt.on( 'preDraw.dt.scroller', function () {
-			that._fnScrollForce();
+			that._scrollForce();
 		} );
 
 		// Destructor
@@ -88703,216 +89963,61 @@ $.extend( Scroller.prototype, {
 	},
 
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Private methods
+	 */
+
 	/**
-	 * Scrolling function - fired whenever the scrolling position is changed.
-	 * This method needs to use the stored values to see if the table should be
-	 * redrawn as we are moving towards the end of the information that is
-	 * currently drawn or not. If needed, then it will redraw the table based on
-	 * the new position.
+	 * Automatic calculation of table row height. This is just a little tricky here as using
+	 * initialisation DataTables has tale the table out of the document, so we need to create
+	 * a new table and insert it into the document, calculate the row height and then whip the
+	 * table out.
 	 *  @returns {void}
 	 *  @private
 	 */
-	"_fnScroll": function ()
+	_calcRowHeight: function ()
 	{
-		var
-			that = this,
-			heights = this.s.heights,
-			iScrollTop = this.dom.scroller.scrollTop,
-			iTopRow;
+		var dt = this.s.dt;
+		var origTable = dt.nTable;
+		var nTable = origTable.cloneNode( false );
+		var tbody = $('<tbody/>').appendTo( nTable );
+		var container = $(
+			'<div class="'+dt.oClasses.sWrapper+' DTS">'+
+				'<div class="'+dt.oClasses.sScrollWrapper+'">'+
+					'<div class="'+dt.oClasses.sScrollBody+'"></div>'+
+				'</div>'+
+			'</div>'
+		);
 
-		if ( this.s.skip ) {
-			return;
-		}
+		// Want 3 rows in the sizing table so :first-child and :last-child
+		// CSS styles don't come into play - take the size of the middle row
+		$('tbody tr:lt(4)', origTable).clone().appendTo( tbody );
+        var rowsCount = $('tr', tbody).length;
 
-		if ( this.s.ingnoreScroll ) {
-			return;
-		}
-
-		/* If the table has been sorted or filtered, then we use the redraw that
-		 * DataTables as done, rather than performing our own
-		 */
-		if ( this.s.dt.bFiltered || this.s.dt.bSorted ) {
-			this.s.lastScrollTop = 0;
-			return;
-		}
-
-		/* Update the table's information display for what is now in the viewport */
-		this._fnInfo();
-
-		/* We don't want to state save on every scroll event - that's heavy
-		 * handed, so use a timeout to update the state saving only when the
-		 * scrolling has finished
-		 */
-		clearTimeout( this.s.stateTO );
-		this.s.stateTO = setTimeout( function () {
-			that.s.dtApi.state.save();
-		}, 250 );
-
-		/* Check if the scroll point is outside the trigger boundary which would required
-		 * a DataTables redraw
-		 */
-		if ( this.s.forceReposition || iScrollTop < this.s.redrawTop || iScrollTop > this.s.redrawBottom ) {
-
-			var preRows = Math.ceil( ((this.s.displayBuffer-1)/2) * this.s.viewportRows );
-
-			iTopRow = parseInt(this._domain( 'physicalToVirtual', iScrollTop ) / heights.row, 10) - preRows;
-			this.s.topRowFloat = this._domain( 'physicalToVirtual', iScrollTop ) / heights.row;
-			this.s.forceReposition = false;
-
-			if ( iTopRow <= 0 ) {
-				/* At the start of the table */
-				iTopRow = 0;
-			}
-			else if ( iTopRow + this.s.dt._iDisplayLength > this.s.dt.fnRecordsDisplay() ) {
-				/* At the end of the table */
-				iTopRow = this.s.dt.fnRecordsDisplay() - this.s.dt._iDisplayLength;
-				if ( iTopRow < 0 ) {
-					iTopRow = 0;
-				}
-			}
-			else if ( iTopRow % 2 !== 0 ) {
-				// For the row-striping classes (odd/even) we want only to start
-				// on evens otherwise the stripes will change between draws and
-				// look rubbish
-				iTopRow++;
-			}
-
-			if ( iTopRow != this.s.dt._iDisplayStart ) {
-				/* Cache the new table position for quick lookups */
-				this.s.tableTop = $(this.s.dt.nTable).offset().top;
-				this.s.tableBottom = $(this.s.dt.nTable).height() + this.s.tableTop;
-
-				var draw =  function () {
-					if ( that.s.scrollDrawReq === null ) {
-						that.s.scrollDrawReq = iScrollTop;
-					}
-
-					that.s.dt._iDisplayStart = iTopRow;
-					that.s.dt.oApi._fnDraw( that.s.dt );
-				};
-
-				/* Do the DataTables redraw based on the calculated start point - note that when
-				 * using server-side processing we introduce a small delay to not DoS the server...
-				 */
-				if ( this.s.dt.oFeatures.bServerSide ) {
-					clearTimeout( this.s.drawTO );
-					this.s.drawTO = setTimeout( draw, this.s.serverWait );
-				}
-				else {
-					draw();
-				}
-
-				if ( this.dom.loader && ! this.s.loaderVisible ) {
-					this.dom.loader.css( 'display', 'block' );
-					this.s.loaderVisible = true;
-				}
-			}
+        if ( rowsCount === 1 ) {
+            tbody.prepend('<tr><td>&#160;</td></tr>');
+            tbody.append('<tr><td>&#160;</td></tr>');
 		}
 		else {
-			this.s.topRowFloat = this.fnPixelsToRow( iScrollTop, false, true );
+            for (; rowsCount < 3; rowsCount++) {
+                tbody.append('<tr><td>&#160;</td></tr>');
+            }
+		}
+	
+		$('div.'+dt.oClasses.sScrollBody, container).append( nTable );
+
+		// If initialised using `dom`, use the holding element as the insert point
+		var insertEl = this.s.dt.nHolding || origTable.parentNode;
+
+		if ( ! $(insertEl).is(':visible') ) {
+			insertEl = 'body';
 		}
 
-		this.s.lastScrollTop = iScrollTop;
-		this.s.stateSaveThrottle();
+		container.appendTo( insertEl );
+		this.s.heights.row = $('tr', tbody).eq(1).outerHeight();
+
+		container.remove();
 	},
-
-
-	/**
-	 * Convert from one domain to another. The physical domain is the actual
-	 * pixel count on the screen, while the virtual is if we had browsers which
-	 * had scrolling containers of infinite height (i.e. the absolute value)
-	 *
-	 *  @param {string} dir Domain transform direction, `virtualToPhysical` or
-	 *    `physicalToVirtual` 
-	 *  @returns {number} Calculated transform
-	 *  @private
-	 */
-	_domain: function ( dir, val )
-	{
-		var heights = this.s.heights;
-		var coeff;
-
-		// If the virtual and physical height match, then we use a linear
-		// transform between the two, allowing the scrollbar to be linear
-		if ( heights.virtual === heights.scroll ) {
-			return val;
-		}
-
-		// Otherwise, we want a non-linear scrollbar to take account of the
-		// redrawing regions at the start and end of the table, otherwise these
-		// can stutter badly - on large tables 30px (for example) scroll might
-		// be hundreds of rows, so the table would be redrawing every few px at
-		// the start and end. Use a simple quadratic to stop this. It does mean
-		// the scrollbar is non-linear, but with such massive data sets, the
-		// scrollbar is going to be a best guess anyway
-		var xMax = (heights.scroll - heights.viewport) / 2;
-		var yMax = (heights.virtual - heights.viewport) / 2;
-
-		coeff = yMax / ( xMax * xMax );
-
-		if ( dir === 'virtualToPhysical' ) {
-			if ( val < yMax ) {
-				return Math.pow(val / coeff, 0.5);
-			}
-			else {
-				val = (yMax*2) - val;
-				return val < 0 ?
-					heights.scroll :
-					(xMax*2) - Math.pow(val / coeff, 0.5);
-			}
-		}
-		else if ( dir === 'physicalToVirtual' ) {
-			if ( val < xMax ) {
-				return val * val * coeff;
-			}
-			else {
-				val = (xMax*2) - val;
-				return val < 0 ?
-					heights.virtual :
-					(yMax*2) - (val * val * coeff);
-			}
-		}
-	},
-
-	/**
-	 * Parse CSS height property string as number
-	 *
-	 * An attempt is made to parse the string as a number. Currently supported units are 'px',
-	 * 'vh', and 'rem'. 'em' is partially supported; it works as long as the parent element's
-	 * font size matches the body element. Zero is returned for unrecognized strings.
-	 *  @param {string} cssHeight CSS height property string
-	 *  @returns {number} height
-	 *  @private
-	 */
-	_parseHeight: function(cssHeight) {
-		var height;
-		var matches = /^([+-]?(?:\d+(?:\.\d+)?|\.\d+))(px|em|rem|vh)$/.exec(cssHeight);
-
-		if (matches === null) {
-			return 0;
-		}
-
-		var value = parseFloat(matches[1]);
-		var unit = matches[2];
-
-		if ( unit === 'px' ) {
-			height = value;
-		}
-		else if ( unit === 'vh' ) {
-			height = ( value / 100 ) * $(window).height();
-		}
-		else if ( unit === 'rem' ) {
-			height = value * parseFloat($(':root').css('font-size'));
-		}
-		else if ( unit === 'em' ) {
-			height = value * parseFloat($('body').css('font-size'));
-		}
-
-		return height ?
-			height :
-			0;
-	},
-
 
 	/**
 	 * Draw callback function which is fired when the DataTable is redrawn. The main function of
@@ -88921,7 +90026,7 @@ $.extend( Scroller.prototype, {
 	 *  @returns {void}
 	 *  @private
 	 */
-	"_fnDrawCallback": function ()
+	_draw: function ()
 	{
 		var
 			that = this,
@@ -88938,25 +90043,16 @@ $.extend( Scroller.prototype, {
 		this.s.skip = true;
 
 		// If paging is reset
-		if ( (this.s.dt.bSorted || this.s.dt.bFiltered) && displayStart === 0 ) {
+		if ( (this.s.dt.bSorted || this.s.dt.bFiltered) && displayStart === 0 && !this.s.dt._drawHold ) {
 			this.s.topRowFloat = 0;
 		}
 
-		// Reposition the scrolling for the updated virtual position if needed
-		if ( displayStart === 0 ) {
-			// Linear calculation at the top of the table
-			iScrollTop = this.s.topRowFloat * heights.row;
-		}
-		else if ( displayStart + displayLen >= displayEnd ) {
-			// Linear calculation that the bottom as well
-			iScrollTop = heights.scroll - ((displayEnd - this.s.topRowFloat) * heights.row);
-		}
-		else {
-			// Domain scaled in the middle
-			iScrollTop = this._domain( 'virtualToPhysical', this.s.topRowFloat * heights.row );
-		}
+		iScrollTop = this.scrollType === 'jump' ?
+			this._domain( 'physicalToVirtual', this.s.topRowFloat * heights.row ) :
+			iScrollTop;
 
-		this.dom.scroller.scrollTop = iScrollTop;
+		// This doesn't work when scrolling with the mouse wheel
+		$(that.dom.scroller).scrollTop(iScrollTop);
 
 		// Store positional information so positional calculations can be based
 		// upon the current table draw position
@@ -89024,7 +90120,7 @@ $.extend( Scroller.prototype, {
 		// needed.  Only add the thread break if bInfo is set
 		if ( this.s.dt.oFeatures.bInfo ) {
 			setTimeout( function () {
-				that._fnInfo.call( that );
+				that._info.call( that );
 			}, 0 );
 		}
 
@@ -89035,82 +90131,63 @@ $.extend( Scroller.prototype, {
 		}
 	},
 
-
 	/**
-	 * Force the scrolling container to have height beyond that of just the
-	 * table that has been drawn so the user can scroll the whole data set.
+	 * Convert from one domain to another. The physical domain is the actual
+	 * pixel count on the screen, while the virtual is if we had browsers which
+	 * had scrolling containers of infinite height (i.e. the absolute value)
 	 *
-	 * Note that if the calculated required scrolling height exceeds a maximum
-	 * value (1 million pixels - hard-coded) the forcing element will be set
-	 * only to that maximum value and virtual / physical domain transforms will
-	 * be used to allow Scroller to display tables of any number of records.
-	 *  @returns {void}
+	 *  @param {string} dir Domain transform direction, `virtualToPhysical` or
+	 *    `physicalToVirtual` 
+	 *  @returns {number} Calculated transform
 	 *  @private
 	 */
-	_fnScrollForce: function ()
+	_domain: function ( dir, val )
 	{
 		var heights = this.s.heights;
-		var max = 1000000;
+		var diff;
+		var magic = 10000; // the point at which the non-linear calculations start to happen
 
-		heights.virtual = heights.row * this.s.dt.fnRecordsDisplay();
-		heights.scroll = heights.virtual;
-
-		if ( heights.scroll > max ) {
-			heights.scroll = max;
+		// If the virtual and physical height match, then we use a linear
+		// transform between the two, allowing the scrollbar to be linear
+		if ( heights.virtual === heights.scroll ) {
+			return val;
 		}
 
-		// Minimum height so there is always a row visible (the 'no rows found'
-		// if reduced to zero filtering)
-		this.dom.force.style.height = heights.scroll > this.s.heights.row ?
-			heights.scroll+'px' :
-			this.s.heights.row+'px';
+		// In the first 10k pixels and the last 10k pixels, we want the scrolling
+		// to be linear. After that it can be non-linear. It would be unusual for
+		// anyone to mouse wheel through that much.
+		if ( val < magic ) {
+			return val;
+		}
+		else if ( dir === 'virtualToPhysical' && val > heights.virtual - magic ) {
+			diff = heights.virtual - val;
+			return heights.scroll - diff;
+		}
+		else if ( dir === 'physicalToVirtual' && val > heights.scroll - magic ) {
+			diff = heights.scroll - val;
+			return heights.virtual - diff;
+		}
+
+		// Otherwise, we want a non-linear scrollbar to take account of the
+		// redrawing regions at the start and end of the table, otherwise these
+		// can stutter badly - on large tables 30px (for example) scroll might
+		// be hundreds of rows, so the table would be redrawing every few px at
+		// the start and end. Use a simple linear eq. to stop this, effectively
+		// causing a kink in the scrolling ratio. It does mean the scrollbar is
+		// non-linear, but with such massive data sets, the scrollbar is going
+		// to be a best guess anyway
+		var xMax = dir === 'virtualToPhysical' ?
+			heights.virtual :
+			heights.scroll;
+		var yMax = dir === 'virtualToPhysical' ?
+			heights.scroll :
+			heights.virtual;
+
+		var m = (yMax - magic) / (xMax - magic);
+		var c = magic - (m*magic);
+
+		return (m*val) + c;
 	},
-
-
-	/**
-	 * Automatic calculation of table row height. This is just a little tricky here as using
-	 * initialisation DataTables has tale the table out of the document, so we need to create
-	 * a new table and insert it into the document, calculate the row height and then whip the
-	 * table out.
-	 *  @returns {void}
-	 *  @private
-	 */
-	"_fnCalcRowHeight": function ()
-	{
-		var dt = this.s.dt;
-		var origTable = dt.nTable;
-		var nTable = origTable.cloneNode( false );
-		var tbody = $('<tbody/>').appendTo( nTable );
-		var container = $(
-			'<div class="'+dt.oClasses.sWrapper+' DTS">'+
-				'<div class="'+dt.oClasses.sScrollWrapper+'">'+
-					'<div class="'+dt.oClasses.sScrollBody+'"></div>'+
-				'</div>'+
-			'</div>'
-		);
-
-		// Want 3 rows in the sizing table so :first-child and :last-child
-		// CSS styles don't come into play - take the size of the middle row
-		$('tbody tr:lt(4)', origTable).clone().appendTo( tbody );
-		while( $('tr', tbody).length < 3 ) {
-			tbody.append( '<tr><td>&nbsp;</td></tr>' );
-		}
-
-		$('div.'+dt.oClasses.sScrollBody, container).append( nTable );
-
-		// If initialised using `dom`, use the holding element as the insert point
-		var insertEl = this.s.dt.nHolding || origTable.parentNode;
-
-		if ( ! $(insertEl).is(':visible') ) {
-			insertEl = 'body';
-		}
-
-		container.appendTo( insertEl );
-		this.s.heights.row = $('tr', tbody).eq(1).outerHeight();
-
-		container.remove();
-	},
-
 
 	/**
 	 * Update any information elements that are controlled by the DataTable based on the scrolling
@@ -89119,7 +90196,7 @@ $.extend( Scroller.prototype, {
 	 *  @returns {void}
 	 *  @private
 	 */
-	"_fnInfo": function ()
+	_info: function ()
 	{
 		if ( !this.s.dt.oFeatures.bInfo )
 		{
@@ -89130,10 +90207,10 @@ $.extend( Scroller.prototype, {
 			dt = this.s.dt,
 			language = dt.oLanguage,
 			iScrollTop = this.dom.scroller.scrollTop,
-			iStart = Math.floor( this.fnPixelsToRow(iScrollTop, false, this.s.ani)+1 ),
+			iStart = Math.floor( this.pixelsToRow(iScrollTop, false, this.s.ani)+1 ),
 			iMax = dt.fnRecordsTotal(),
 			iTotal = dt.fnRecordsDisplay(),
-			iPossibleEnd = Math.ceil( this.fnPixelsToRow(iScrollTop+this.s.heights.viewport, false, this.s.ani) ),
+			iPossibleEnd = Math.ceil( this.pixelsToRow(iScrollTop+this.s.heights.viewport, false, this.s.ani) ),
 			iEnd = iTotal < iPossibleEnd ? iTotal : iPossibleEnd,
 			sStart = dt.fnFormatNumber( iStart ),
 			sEnd = dt.fnFormatNumber( iEnd ),
@@ -89197,6 +90274,210 @@ $.extend( Scroller.prototype, {
 
 		// DT doesn't actually (yet) trigger this event, but it will in future
 		$(dt.nTable).triggerHandler( 'info.dt' );
+	},
+
+	/**
+	 * Parse CSS height property string as number
+	 *
+	 * An attempt is made to parse the string as a number. Currently supported units are 'px',
+	 * 'vh', and 'rem'. 'em' is partially supported; it works as long as the parent element's
+	 * font size matches the body element. Zero is returned for unrecognized strings.
+	 *  @param {string} cssHeight CSS height property string
+	 *  @returns {number} height
+	 *  @private
+	 */
+	_parseHeight: function(cssHeight) {
+		var height;
+		var matches = /^([+-]?(?:\d+(?:\.\d+)?|\.\d+))(px|em|rem|vh)$/.exec(cssHeight);
+
+		if (matches === null) {
+			return 0;
+		}
+
+		var value = parseFloat(matches[1]);
+		var unit = matches[2];
+
+		if ( unit === 'px' ) {
+			height = value;
+		}
+		else if ( unit === 'vh' ) {
+			height = ( value / 100 ) * $(window).height();
+		}
+		else if ( unit === 'rem' ) {
+			height = value * parseFloat($(':root').css('font-size'));
+		}
+		else if ( unit === 'em' ) {
+			height = value * parseFloat($('body').css('font-size'));
+		}
+
+		return height ?
+			height :
+			0;
+	},
+
+	/**
+	 * Scrolling function - fired whenever the scrolling position is changed.
+	 * This method needs to use the stored values to see if the table should be
+	 * redrawn as we are moving towards the end of the information that is
+	 * currently drawn or not. If needed, then it will redraw the table based on
+	 * the new position.
+	 *  @returns {void}
+	 *  @private
+	 */
+	_scroll: function ()
+	{
+		var
+			that = this,
+			heights = this.s.heights,
+			iScrollTop = this.dom.scroller.scrollTop,
+			iTopRow;
+
+		if ( this.s.skip ) {
+			return;
+		}
+
+		if ( this.s.ingnoreScroll ) {
+			return;
+		}
+
+		if ( iScrollTop === this.s.lastScrollTop ) {
+			return;
+		}
+
+		/* If the table has been sorted or filtered, then we use the redraw that
+		 * DataTables as done, rather than performing our own
+		 */
+		if ( this.s.dt.bFiltered || this.s.dt.bSorted ) {
+			this.s.lastScrollTop = 0;
+			return;
+		}
+
+		/* Update the table's information display for what is now in the viewport */
+		this._info();
+
+		/* We don't want to state save on every scroll event - that's heavy
+		 * handed, so use a timeout to update the state saving only when the
+		 * scrolling has finished
+		 */
+		clearTimeout( this.s.stateTO );
+		this.s.stateTO = setTimeout( function () {
+			that.s.dtApi.state.save();
+		}, 250 );
+
+		this.s.scrollType = Math.abs(iScrollTop - this.s.lastScrollTop) > heights.viewport ?
+			'jump' :
+			'cont';
+
+		this.s.topRowFloat = this.s.scrollType === 'cont' ?
+			this.pixelsToRow( iScrollTop, false, false ) :
+			this._domain( 'physicalToVirtual', iScrollTop ) / heights.row;
+
+		if ( this.s.topRowFloat < 0 ) {
+			this.s.topRowFloat = 0;
+		}
+
+		/* Check if the scroll point is outside the trigger boundary which would required
+		 * a DataTables redraw
+		 */
+		if ( this.s.forceReposition || iScrollTop < this.s.redrawTop || iScrollTop > this.s.redrawBottom ) {
+			var preRows = Math.ceil( ((this.s.displayBuffer-1)/2) * this.s.viewportRows );
+
+			iTopRow = parseInt(this.s.topRowFloat, 10) - preRows;
+			this.s.forceReposition = false;
+
+			if ( iTopRow <= 0 ) {
+				/* At the start of the table */
+				iTopRow = 0;
+			}
+			else if ( iTopRow + this.s.dt._iDisplayLength > this.s.dt.fnRecordsDisplay() ) {
+				/* At the end of the table */
+				iTopRow = this.s.dt.fnRecordsDisplay() - this.s.dt._iDisplayLength;
+				if ( iTopRow < 0 ) {
+					iTopRow = 0;
+				}
+			}
+			else if ( iTopRow % 2 !== 0 ) {
+				// For the row-striping classes (odd/even) we want only to start
+				// on evens otherwise the stripes will change between draws and
+				// look rubbish
+				iTopRow++;
+			}
+
+
+			if ( iTopRow != this.s.dt._iDisplayStart ) {
+				/* Cache the new table position for quick lookups */
+				this.s.tableTop = $(this.s.dt.nTable).offset().top;
+				this.s.tableBottom = $(this.s.dt.nTable).height() + this.s.tableTop;
+
+				var draw =  function () {
+					if ( that.s.scrollDrawReq === null ) {
+						that.s.scrollDrawReq = iScrollTop;
+					}
+
+					that.s.dt._iDisplayStart = iTopRow;
+					that.s.dt.oApi._fnDraw( that.s.dt );
+				};
+
+				/* Do the DataTables redraw based on the calculated start point - note that when
+				 * using server-side processing we introduce a small delay to not DoS the server...
+				 */
+				if ( this.s.dt.oFeatures.bServerSide ) {
+					clearTimeout( this.s.drawTO );
+					this.s.drawTO = setTimeout( draw, this.s.serverWait );
+				}
+				else {
+					draw();
+				}
+
+				if ( this.dom.loader && ! this.s.loaderVisible ) {
+					this.dom.loader.css( 'display', 'block' );
+					this.s.loaderVisible = true;
+				}
+			}
+		}
+		else {
+			this.s.topRowFloat = this.pixelsToRow( iScrollTop, false, true );
+		}
+
+		this.s.lastScrollTop = iScrollTop;
+		this.s.stateSaveThrottle();
+
+		if ( this.s.scrollType === 'jump' && this.s.mousedown ) {
+			this.dom.label
+				.html( this.s.dt.fnFormatNumber( parseInt( this.s.topRowFloat, 10 )+1 ) )
+				.css( 'top', iScrollTop + (iScrollTop * heights.labelFactor ) )
+				.css( 'display', 'block' );
+		}
+	},
+
+	/**
+	 * Force the scrolling container to have height beyond that of just the
+	 * table that has been drawn so the user can scroll the whole data set.
+	 *
+	 * Note that if the calculated required scrolling height exceeds a maximum
+	 * value (1 million pixels - hard-coded) the forcing element will be set
+	 * only to that maximum value and virtual / physical domain transforms will
+	 * be used to allow Scroller to display tables of any number of records.
+	 *  @returns {void}
+	 *  @private
+	 */
+	_scrollForce: function ()
+	{
+		var heights = this.s.heights;
+		var max = 1000000;
+
+		heights.virtual = heights.row * this.s.dt.fnRecordsDisplay();
+		heights.scroll = heights.virtual;
+
+		if ( heights.scroll > max ) {
+			heights.scroll = max;
+		}
+
+		// Minimum height so there is always a row visible (the 'no rows found'
+		// if reduced to zero filtering)
+		this.dom.force.style.height = heights.scroll > this.s.heights.row ?
+			heights.scroll+'px' :
+			this.s.heights.row+'px';
 	}
 } );
 
@@ -89213,62 +90494,19 @@ $.extend( Scroller.prototype, {
  *  @name Scroller.defaults
  *  @static
  */
-Scroller.defaults = /** @lends Scroller.defaults */{
+Scroller.defaults = {
 	/**
-	 * Indicate if Scroller show show trace information on the console or not. This can be
-	 * useful when debugging Scroller or if just curious as to what it is doing, but should
-	 * be turned off for production.
-	 *  @type     bool
-	 *  @default  false
+	 * Scroller uses the boundary scaling factor to decide when to redraw the table - which it
+	 * typically does before you reach the end of the currently loaded data set (in order to
+	 * allow the data to look continuous to a user scrolling through the data). If given as 0
+	 * then the table will be redrawn whenever the viewport is scrolled, while 1 would not
+	 * redraw the table until the currently loaded data has all been shown. You will want
+	 * something in the middle - the default factor of 0.5 is usually suitable.
+	 *  @type     float
+	 *  @default  0.5
 	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "trace": true
-	 *        }
-	 *    } );
 	 */
-	"trace": false,
-
-	/**
-	 * Scroller will attempt to automatically calculate the height of rows for it's internal
-	 * calculations. However the height that is used can be overridden using this parameter.
-	 *  @type     int|string
-	 *  @default  auto
-	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "rowHeight": 30
-	 *        }
-	 *    } );
-	 */
-	"rowHeight": "auto",
-
-	/**
-	 * When using server-side processing, Scroller will wait a small amount of time to allow
-	 * the scrolling to finish before requesting more data from the server. This prevents
-	 * you from DoSing your own server! The wait time can be configured by this parameter.
-	 *  @type     int
-	 *  @default  200
-	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "serverWait": 100
-	 *        }
-	 *    } );
-	 */
-	"serverWait": 200,
+	boundaryScale: 0.5,
 
 	/**
 	 * The display buffer is what Scroller uses to calculate how many rows it should pre-fetch
@@ -89283,39 +90521,8 @@ Scroller.defaults = /** @lends Scroller.defaults */{
 	 *  @type     int
 	 *  @default  7
 	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "displayBuffer": 10
-	 *        }
-	 *    } );
 	 */
-	"displayBuffer": 9,
-
-	/**
-	 * Scroller uses the boundary scaling factor to decide when to redraw the table - which it
-	 * typically does before you reach the end of the currently loaded data set (in order to
-	 * allow the data to look continuous to a user scrolling through the data). If given as 0
-	 * then the table will be redrawn whenever the viewport is scrolled, while 1 would not
-	 * redraw the table until the currently loaded data has all been shown. You will want
-	 * something in the middle - the default factor of 0.5 is usually suitable.
-	 *  @type     float
-	 *  @default  0.5
-	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "boundaryScale": 0.75
-	 *        }
-	 *    } );
-	 */
-	"boundaryScale": 0.5,
+	displayBuffer: 9,
 
 	/**
 	 * Show (or not) the loading element in the background of the table. Note that you should
@@ -89323,17 +90530,27 @@ Scroller.defaults = /** @lends Scroller.defaults */{
 	 *  @type     boolean
 	 *  @default  false
 	 *  @static
-	 *  @example
-	 *    var oTable = $('#example').dataTable( {
-	 *        "sScrollY": "200px",
-	 *        "sDom": "frtiS",
-	 *        "bDeferRender": true,
-	 *        "oScroller": {
-	 *          "loadingIndicator": true
-	 *        }
-	 *    } );
 	 */
-	"loadingIndicator": false
+	loadingIndicator: false,
+
+	/**
+	 * Scroller will attempt to automatically calculate the height of rows for it's internal
+	 * calculations. However the height that is used can be overridden using this parameter.
+	 *  @type     int|string
+	 *  @default  auto
+	 *  @static
+	 */
+	rowHeight: "auto",
+
+	/**
+	 * When using server-side processing, Scroller will wait a small amount of time to allow
+	 * the scrolling to finish before requesting more data from the server. This prevents
+	 * you from DoSing your own server! The wait time can be configured by this parameter.
+	 *  @type     int
+	 *  @default  200
+	 *  @static
+	 */
+	serverWait: 200
 };
 
 Scroller.oDefaults = Scroller.defaults;
@@ -89351,34 +90568,13 @@ Scroller.oDefaults = Scroller.defaults;
  *  @name      Scroller.version
  *  @static
  */
-Scroller.version = "1.5.0";
+Scroller.version = "2.0.0";
 
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Initialisation
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// Legacy `dom` parameter initialisation support
-if ( typeof $.fn.dataTable == "function" &&
-     typeof $.fn.dataTableExt.fnVersionCheck == "function" &&
-     $.fn.dataTableExt.fnVersionCheck('1.10.0') )
-{
-	$.fn.dataTableExt.aoFeatures.push( {
-		"fnInit": function( oDTSettings ) {
-			var init = oDTSettings.oInit;
-			var opts = init.scroller || init.oScroller || {};
-			
-			new Scroller( oDTSettings, opts );
-		},
-		"cFeature": "S",
-		"sFeature": "Scroller"
-	} );
-}
-else
-{
-	alert( "Warning: Scroller requires DataTables 1.10.0 or greater - www.datatables.net/download");
-}
 
 // Attach a listener to the document which listens for DataTables initialisation
 // events so we can automatically initialise
@@ -89417,7 +90613,7 @@ Api.register( 'scroller().rowToPixels()', function ( rowIdx, intParse, virtual )
 	var ctx = this.context;
 
 	if ( ctx.length && ctx[0].oScroller ) {
-		return ctx[0].oScroller.fnRowToPixels( rowIdx, intParse, virtual );
+		return ctx[0].oScroller.rowToPixels( rowIdx, intParse, virtual );
 	}
 	// undefined
 } );
@@ -89427,7 +90623,7 @@ Api.register( 'scroller().pixelsToRow()', function ( pixels, intParse, virtual )
 	var ctx = this.context;
 
 	if ( ctx.length && ctx[0].oScroller ) {
-		return ctx[0].oScroller.fnPixelsToRow( pixels, intParse, virtual );
+		return ctx[0].oScroller.pixelsToRow( pixels, intParse, virtual );
 	}
 	// undefined
 } );
@@ -89436,7 +90632,7 @@ Api.register( 'scroller().pixelsToRow()', function ( pixels, intParse, virtual )
 Api.register( ['scroller().scrollToRow()', 'scroller.toPosition()'], function ( idx, ani ) {
 	this.iterator( 'table', function ( ctx ) {
 		if ( ctx.oScroller ) {
-			ctx.oScroller.fnScrollToRow( idx, ani );
+			ctx.oScroller.scrollToRow( idx, ani );
 		}
 	} );
 
@@ -89453,7 +90649,7 @@ Api.register( 'row().scrollTo()', function ( ani ) {
 				.indexes()
 				.indexOf( rowIdx );
 
-			ctx.oScroller.fnScrollToRow( displayIdx, ani );
+			ctx.oScroller.scrollToRow( displayIdx, ani );
 		}
 	} );
 
@@ -89463,7 +90659,7 @@ Api.register( 'row().scrollTo()', function ( ani ) {
 Api.register( 'scroller.measure()', function ( redraw ) {
 	this.iterator( 'table', function ( ctx ) {
 		if ( ctx.oScroller ) {
-			ctx.oScroller.fnMeasure( redraw );
+			ctx.oScroller.measure( redraw );
 		}
 	} );
 
@@ -89474,7 +90670,7 @@ Api.register( 'scroller.page()', function() {
 	var ctx = this.context;
 
 	if ( ctx.length && ctx[0].oScroller ) {
-		return ctx[0].oScroller.fnPageInfo();
+		return ctx[0].oScroller.pageInfo();
 	}
 	// undefined
 } );
@@ -89483,7 +90679,7 @@ return Scroller;
 }));
 
 
-/*! Select for DataTables 1.2.6
+/*! Select for DataTables 1.3.0
  * 2015-2018 SpryMedia Ltd - datatables.net/license/mit
  */
 
@@ -89491,7 +90687,7 @@ return Scroller;
  * @summary     Select for DataTables
  * @description A collection of API methods, events and buttons for DataTables
  *   that provides selection options of the items in a DataTable
- * @version     1.2.6
+ * @version     1.3.0
  * @file        dataTables.select.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     datatables.net/forums
@@ -89539,7 +90735,7 @@ var DataTable = $.fn.dataTable;
 // Version information for debugger
 DataTable.select = {};
 
-DataTable.select.version = '1.2.6';
+DataTable.select.version = '1.3.0';
 
 DataTable.select.init = function ( dt ) {
 	var ctx = dt.settings()[0];
@@ -89584,6 +90780,10 @@ DataTable.select.init = function ( dt ) {
 
 		if ( opts.style !== undefined ) {
 			style = opts.style;
+			setStyle = true;
+		}
+		else {
+			style = 'os';
 			setStyle = true;
 		}
 
@@ -89838,7 +91038,7 @@ function enableMouseSelection ( dt )
 
 			// If text was selected (click and drag), then we shouldn't change
 			// the row's selected state
-			if ( window.getSelection ) {
+			if ( matchSelection ) {
 				var selection = window.getSelection();
 
 				// If the element that contains the selection is not in the table, we can ignore it
@@ -89851,7 +91051,7 @@ function enableMouseSelection ( dt )
 			}
 
 			var ctx = dt.settings()[0];
-			var wrapperClass = dt.settings()[0].oClasses.sWrapper.replace(/ /g, '.');
+			var wrapperClass = $.trim(dt.settings()[0].oClasses.sWrapper).replace(/ +/g, '.');
 
 			// Ignore clicks inside a sub-table
 			if ( $(e.target).closest('div.'+wrapperClass)[0] != dt.table().container() ) {
