@@ -3,4 +3,5 @@ src/ScientiaAPP/App/Cache/*
 src/ScientiaAPP/App/Log/*
 vendor/*
 public/install/.htaccess
+public/install/cacert.pem
 public/assets/templates/coreui/node_modules
