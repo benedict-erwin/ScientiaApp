@@ -51,6 +51,7 @@ switch ($_REQUEST['step_name']) {
         @unlink('installer.php');
         @unlink('keys.dev.pub');
         @unlink('keys.tags.pub');
+        @unlink('cacert.pem');
         rrmdir('cache');
         rrmdir('extracted');
         file_put_contents('.htaccess', 'Deny from all');
@@ -77,7 +78,7 @@ function printJson(array $data)
 function reqCheck()
 {
     # php version
-    $phpver = version_compare(phpversion(), "7.0.0", ">=") ? true : false;
+    $phpver = version_compare(phpversion(), "7.2.0", ">=") ? true : false;
 
     # result
     $ver = phpversion();
