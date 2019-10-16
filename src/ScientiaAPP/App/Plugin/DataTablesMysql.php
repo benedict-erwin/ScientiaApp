@@ -528,7 +528,7 @@ class DataTablesMysql
             $query->bindParam(':' . $this->PKEY, $id, \PDO::PARAM_INT);
             $query->execute();
             $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-            $result = count($result > 0) ? $result[0] : null;
+            $result = count($result) > 0 ? $result[0] : null;
             return $result;
         }
         return $this->db->get($this->TABLE, (empty($column) ? (empty($this->COLUMNS) ? '*' : $this->COLUMNS) : $column), [$this->PKEY => $id]);

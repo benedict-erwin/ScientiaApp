@@ -9,8 +9,8 @@
  */
 
 /* Define Path variable */
-define('BASE_PATH', __DIR__ . '/..');
-define('APP_PATH', BASE_PATH . '/src/ScientiaAPP/App');
+define('BASE_PATH', __DIR__ . DIRECTORY_SEPARATOR . '..');
+define('APP_PATH', BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'ScientiaAPP' . DIRECTORY_SEPARATOR . 'App');
 
 /* Load autoload and app first - most important */
 require_once BASE_PATH . '/vendor/autoload.php';

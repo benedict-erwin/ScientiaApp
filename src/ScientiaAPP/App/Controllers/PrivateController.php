@@ -16,6 +16,8 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use App\Lib\Ipaddress;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class PrivateController extends \App\Controllers\BaseController
 {
@@ -330,7 +332,17 @@ class PrivateController extends \App\Controllers\BaseController
     /* Remove Empty Cache Directory */
     protected function rmEmptyCache()
     {
-        exec("find '" . APP_PATH    . "/Cache' -empty -type d -delete");
+        // exec("find '" . APP_PATH    . "/Cache' -empty -type d -delete");
+        $dirs = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APP_PATH . DIRECTORY_SEPARATOR . 'Cache'), RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($dirs as $dir) {
+            if (is_dir($dir) && !$dirs->isDot()) {
+                if (count(scandir($dir)) <= 2) {
+                    if (file_exists($dir)) {
+                        @unlink($dir);
+                    }
+                }
+            }
+        }
     }
 
     /* isAjax */

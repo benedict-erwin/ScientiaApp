@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2dada9dfa0e101a760c90997da98842e",
+    "content-hash": "04e81f1c05877510994268248a58819e",
     "packages": [
         {
             "name": "catfan/medoo",
-            "version": "v1.7.3",
+            "version": "v1.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/catfan/Medoo.git",
-                "reference": "113519d8032044a1d7b0852740e8f8d210b4dee2"
+                "reference": "3b28d9469fd3f6f6e9c1106ec4342111ab2b50c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/catfan/Medoo/zipball/113519d8032044a1d7b0852740e8f8d210b4dee2",
-                "reference": "113519d8032044a1d7b0852740e8f8d210b4dee2",
+                "url": "https://api.github.com/repos/catfan/Medoo/zipball/3b28d9469fd3f6f6e9c1106ec4342111ab2b50c4",
+                "reference": "3b28d9469fd3f6f6e9c1106ec4342111ab2b50c4",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "sql",
                 "sqlite"
             ],
-            "time": "2019-08-14T13:47:48+00:00"
+            "time": "2019-10-12T13:13:11+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -154,16 +154,16 @@
         },
         {
             "name": "league/climate",
-            "version": "3.5.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/thephpleague/climate.git",
-                "reference": "0d2fdbf8829f60f6ba6433df68d6f3fe1271b8e6"
+                "url": "https://github.com/benedict-erwin/climate.git",
+                "reference": "e69c20ed32d97629cfdf9c3712d26b12f335eefd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/climate/zipball/0d2fdbf8829f60f6ba6433df68d6f3fe1271b8e6",
-                "reference": "0d2fdbf8829f60f6ba6433df68d6f3fe1271b8e6",
+                "url": "https://api.github.com/repos/benedict-erwin/climate/zipball/e69c20ed32d97629cfdf9c3712d26b12f335eefd",
+                "reference": "e69c20ed32d97629cfdf9c3712d26b12f335eefd",
                 "shasum": ""
             },
             "require": {
@@ -185,22 +185,32 @@
                     "League\\CLImate\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "League\\CLImate\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit",
+                    "@composer validate --strict"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Craig Duncan",
-                    "role": "Developer",
-                    "email": "git@duncanc.co.uk",
-                    "homepage": "https://github.com/duncan3dc"
+                    "name": "Joe Tannenbaum",
+                    "email": "hey@joe.codes",
+                    "homepage": "http://joe.codes/",
+                    "role": "Developer"
                 },
                 {
-                    "name": "Joe Tannenbaum",
-                    "role": "Developer",
-                    "email": "hey@joe.codes",
-                    "homepage": "http://joe.codes/"
+                    "name": "Craig Duncan",
+                    "email": "git@duncanc.co.uk",
+                    "homepage": "https://github.com/duncan3dc",
+                    "role": "Developer"
                 }
             ],
             "description": "PHP's best friend for the terminal. CLImate allows you to easily output colored text, special formats, and more.",
@@ -211,7 +221,10 @@
                 "php",
                 "terminal"
             ],
-            "time": "2019-02-10T18:25:19+00:00"
+            "support": {
+                "source": "https://github.com/benedict-erwin/climate/tree/master"
+            },
+            "time": "2019-09-05T08:03:07+00:00"
         },
         {
             "name": "matthiasmullie/minify",
@@ -324,16 +337,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.24.0",
+            "version": "1.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266"
+                "reference": "70e65a5470a42cfec1a7da00d30edb6e617e8dcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
-                "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/70e65a5470a42cfec1a7da00d30edb6e617e8dcf",
+                "reference": "70e65a5470a42cfec1a7da00d30edb6e617e8dcf",
                 "shasum": ""
             },
             "require": {
@@ -398,7 +411,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2018-11-05T09:00:11+00:00"
+            "time": "2019-09-06T13:49:17+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -448,16 +461,16 @@
         },
         {
             "name": "phpfastcache/phpfastcache",
-            "version": "7.0.5",
+            "version": "7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPSocialNetwork/phpfastcache.git",
-                "reference": "64638b27f473aa26603e84288d91a2b80a4aa388"
+                "reference": "11c7b17a824925c2b99dce10df15ba67cbef132a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/64638b27f473aa26603e84288d91a2b80a4aa388",
-                "reference": "64638b27f473aa26603e84288d91a2b80a4aa388",
+                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/11c7b17a824925c2b99dce10df15ba67cbef132a",
+                "reference": "11c7b17a824925c2b99dce10df15ba67cbef132a",
                 "shasum": ""
             },
             "require": {
@@ -501,15 +514,15 @@
             "authors": [
                 {
                     "name": "Georges.L",
-                    "role": "Actual Project Manager/Developer",
                     "email": "contact@geolim4.com",
-                    "homepage": "https://github.com/Geolim4"
+                    "homepage": "https://github.com/Geolim4",
+                    "role": "Actual Project Manager/Developer"
                 },
                 {
                     "name": "Khoa Bui",
-                    "role": "Former Project Developer/Original Creator",
                     "email": "khoaofgod@gmail.com",
-                    "homepage": "https://www.phpfastcache.com"
+                    "homepage": "https://www.phpfastcache.com",
+                    "role": "Former Project Developer/Original Creator"
                 }
             ],
             "description": "PHP Abstract Cache Class - Reduce your database call using cache system. PhpFastCache handles a lot of drivers such as Apc(u), Cassandra, CouchBase, Couchdb, Mongodb, Files, (P)redis, Leveldb, Memcache(d), Ssdb, Sqlite, Wincache, Xcache, Zend Data Cache.",
@@ -544,7 +557,7 @@
                 "zend memory cache",
                 "zend server"
             ],
-            "time": "2019-03-03T14:39:16+00:00"
+            "time": "2019-09-15T15:11:18+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -1128,16 +1141,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v2.11.3",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "699ed2342557c88789a15402de5eb834dedd6792"
+                "reference": "c7a85fd08348ca04b4d8f234f49583d9910906aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/699ed2342557c88789a15402de5eb834dedd6792",
-                "reference": "699ed2342557c88789a15402de5eb834dedd6792",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c7a85fd08348ca04b4d8f234f49583d9910906aa",
+                "reference": "c7a85fd08348ca04b4d8f234f49583d9910906aa",
                 "shasum": ""
             },
             "require": {
@@ -1147,13 +1160,13 @@
             },
             "require-dev": {
                 "psr/container": "^1.0",
-                "symfony/debug": "^2.7",
-                "symfony/phpunit-bridge": "^3.4.19|^4.1.8|^5.0"
+                "symfony/debug": "^3.4|^4.2",
+                "symfony/phpunit-bridge": "^4.4@dev|^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.11-dev"
+                    "dev-master": "2.12-dev"
                 }
             },
             "autoload": {
@@ -1176,14 +1189,14 @@
                     "role": "Lead Developer"
                 },
                 {
-                    "name": "Armin Ronacher",
-                    "email": "armin.ronacher@active-4.com",
-                    "role": "Project Founder"
-                },
-                {
                     "name": "Twig Team",
                     "homepage": "https://twig.symfony.com/contributors",
                     "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
                 }
             ],
             "description": "Twig, the flexible, fast, and secure template language for PHP",
@@ -1191,7 +1204,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-06-18T15:37:11+00:00"
+            "time": "2019-10-05T16:42:38+00:00"
         },
         {
             "name": "wixel/gump",
@@ -1238,7 +1251,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "wixel/gump": 20
+        "wixel/gump": 20,
+        "league/climate": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
