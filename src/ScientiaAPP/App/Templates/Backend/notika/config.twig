@@ -95,8 +95,16 @@
 					<div class="form-group-15">
 						<label>Scope<span class="required">*</span></label>
 						<div class="nk-int-st">
-							<input type="number" class="form-control input-sm" name="scope" placeholder="Scope" data-parsley-group="role" required="required">
-						</div>
+                            <span style="margin-left: 10px;"><i class="fa fa-spinner fa-spin"></i> Please wait...</span>
+                            <div class="chosen-select-act fm-cmp-mg" style="display:none;">
+                                <select id="scope" name="scope" class="chosen scope" required="required"
+                                    data-parsley-group="role">
+                                    <option value="0">Private</option>
+                                    <option value="1">Public</option>
+                                    <option value="2">Global</option>
+                                </select>
+                            </div>
+                        </div>
 					</div>
 				</form>
 			</div>

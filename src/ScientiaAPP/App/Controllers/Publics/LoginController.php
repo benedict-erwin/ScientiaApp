@@ -17,7 +17,9 @@ use App\Lib\Ipaddress;
 
 class LoginController extends \App\Controllers\PublicController
 {
-    private $M_USER, $L_AUDITLOG;
+    private $M_USER;
+    private $L_AUDITLOG;
+    private $maxLoginAttempt;
 
     /**
      * Call Parent Constructor
@@ -32,6 +34,9 @@ class LoginController extends \App\Controllers\PublicController
         /* Load Model */
         $this->M_USER = new \App\Models\M_user($container);
         $this->L_AUDITLOG = new \App\Models\L_auditlog($container);
+
+        /* Login Config */
+        $this->maxLoginAttempt = 3;
     }
 
     /**
@@ -62,7 +67,7 @@ class LoginController extends \App\Controllers\PublicController
 
                 /* Logger */
                 if ($this->container->get('settings')['mode'] != 'production') {
-                    $this->logger->error(__METHOD__ . ' :: ', [ 'USER_REQUEST' => $this->param[ 'tx_username'], 'INFO' => $ers]);
+                    $this->logger->error(__METHOD__ . ' :: ', ['USER_REQUEST' => $this->param['tx_username'], 'INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
@@ -86,6 +91,8 @@ class LoginController extends \App\Controllers\PublicController
             $ip = new Ipaddress();
             $output['success'] = true;
             $output['message'] = '';
+
+            $this->checkFailLogin($userpass['tx_username']);
             $userdata = $this->M_USER->usernameCheck($userpass['tx_username']);
 
             if ($userdata) {
@@ -115,7 +122,7 @@ class LoginController extends \App\Controllers\PublicController
                     $jtid = null;
                     $ckey = hash('md5', $this->sign . '_13ened1ctu5_' . $userdata['iduser'] . (($this->isAjaxAndReferer() === false) ? '_' . rand(0, time()) : ''));
                     $CachedString = $this->InstanceCache->getItem($ckey);
-                    if (is_null($CachedString->get())) {
+                    if (!$CachedString->isHit()) {
                         $jtid = $ckey;
                         $CachedString->set($jtid)->expiresAfter($this->jwtExp)->addTag($this->sign . "_userSession_" . $userdata['iduser']);
                         $this->InstanceCache->save($CachedString);
@@ -141,9 +148,11 @@ class LoginController extends \App\Controllers\PublicController
                     $output['message'] = 'Welcome Back ' . ucfirst($userdata['username']) . ' 🙂';
                     $output['username'] = $userdata['username'];
                 } else {
+                    $this->checkFailLogin($userpass['tx_username'], true);
                     throw new \Exception("Oops, username or password is incorrect 🙁");
                 }
             } else {
+                $this->checkFailLogin($userpass['tx_username'], true);
                 throw new \Exception("Oops, username or password is incorrect 🙁");
             }
 
@@ -153,7 +162,6 @@ class LoginController extends \App\Controllers\PublicController
             $response = $response->withAddedHeader('JWT', $token);
             $response = $response->withJson($output, 202);
             return $response;
-
         } catch (PDOException $e) {
             /* Return fail message */
             $output['success'] = false;
@@ -165,6 +173,20 @@ class LoginController extends \App\Controllers\PublicController
             $response = $response->withAddedHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
             $response = $response->withJson($output, 401);
             return $response;
+        }
+    }
+
+    private function checkFailLogin(String $username, $fail = false)
+    {
+        $ckey = hash('md5', $this->sign . $username);
+        $CachedString = $this->InstanceCache->getItem($ckey);
+        $loginAttempt = (!$CachedString->isHit()) ? 1 : (int) $CachedString->get() + 1;
+
+        if ($fail) {
+            $CachedString->set($loginAttempt)->expiresAfter(300);
+            $this->InstanceCache->save($CachedString);
+        } elseif ($loginAttempt > $this->maxLoginAttempt) {
+            throw new \Exception("Oops, looks like you forgot your password. Please take a time to remember it, you can back 5 mins later!");
         }
     }
 }

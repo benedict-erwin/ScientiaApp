@@ -201,7 +201,7 @@ $(document).ready(function() {
 		$("input[name=name]").val(data[2]);
 		$("textarea[name=value]").val(data[3]);
 		$("input[name=description]").val(data[4]);
-		$("input[name=scope]").val(data[5]);
+		initChoosen('#scope', data[5]);
 		$('.btn_save').html('<i class="fa fa-save"></i> Update');
 		$('.modal-title').html('Edit Config');
 		$('.formEditorModal').modal();
@@ -224,6 +224,7 @@ $(document).ready(function() {
 function btn_add() {
 	id = '';
 	saveUpdate = 'save';
+	initChoosen('#scope');
 	$('.btn_save').html('<i class="fa fa-save"></i> Save');
 	$('.modal-title').html('New Config');
 	$('.formEditorModal form')[0].reset();
