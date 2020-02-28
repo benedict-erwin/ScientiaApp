@@ -1,17 +1,16 @@
 /* Variables */;
-var apiUrl = SiteRoot + 'role';
-var tbl = '#datatable-responsive tbody';
-var pKey = '';
-var table;
+var apiUrl = SiteRoot + 'groupmenu';
+var tbl = "#datatable-responsive tbody";
+var pKey, table;
 var saveUpdate = "save";
 
 /* Document Ready */
 $(document).ready(function () {
     /* First Event Load */
     var enterBackspace = true;
-    $("input[name=nama]").enterKey(function (e) {
+    $("input[name=aktif]").enterKey(function (e) {
         e.preventDefault();
-        $("textarea[name=deskripsi]").focus();
+        $(".btn_save").click();
     });
 
     /* Datatables set_token */
@@ -23,7 +22,7 @@ $(document).ready(function () {
     /* Datatables handler */
     table = $("#datatable-responsive").DataTable({
         autoWidth: false,
-        "language": {
+        language: {
             "emptyTable": "Tidak ada data yang tersedia",
             "zeroRecords": "Maaf, pencarian Anda tidak ditemukan",
             "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
@@ -33,17 +32,17 @@ $(document).ready(function () {
         },
         "dom": "<'row'<'col-sm-8'B><'col-sm-4'f>><'row'<'col-sm-12't>><'row'<'col-sm-4'<'pull-left' p>><'col-sm-8'<'pull-right' i>>>",
         "buttons": [
-			{
-				extend: "pageLength",
-				className: "btn-sm bt-separ"
-			},
-			{
-				text: "<i id='dtSpiner' class='fa fa-refresh fa-spin'></i> <span id='tx_dtSpiner'>Reload</span>",
-				className: "btn-sm btReload",
-				titleAttr: "Reload Data",
-				action: function() {
-					dtReload(table);
-				}
+            {
+                extend: "pageLength",
+                className: "btn-sm bt-separ"
+            },
+            {
+                text: "<i id='dtSpiner' class='fa fa-refresh fa-spin'></i> <span id='tx_dtSpiner'>Reload</span>",
+                className: "btn-sm btReload",
+                titleAttr: "Reload Data",
+                action: function () {
+                    dtReload(table);
+                }
             },
             {
                 text: "<i class='fa fa-file-pdf-o'></i>",
@@ -53,17 +52,17 @@ $(document).ready(function () {
                 download: "open",
                 orientation: 'portrait', /* portrait | landscape */
                 pageSize: "LEGAL",
-                title: "List of role",
+                title: "List of Groupmenu",
                 exportOptions: {
                     /* Show column */
-                    columns: [1, 2, 3] /* [1, 2, 3] => selected column only */
+                    columns: [1, 2, 3, 5] /* [1, 2, 3] => selected column only */
                 },
                 customize: function (doc) {
                     /* Set Default Table Header Alignment */
                     doc.styles.tableHeader.alignment = 'left';
 
                     /* Set table width each column */
-                    doc.content[1].table.widths = ['10%', '30%', '60%']; /* ['*', '15%', 'auto'] => each column width*/
+                    doc.content[1].table.widths = ['5%', '35%', '35%', '25%']; /* ['*', '15%', 'auto'] => each column width*/
 
                     /* Set column alignment */
                     var rowCount = doc.content[1].table.body.length;
@@ -72,20 +71,25 @@ $(document).ready(function () {
                     };
                 }
             },
-			{
-				text: "<i class='fa fa-plus-circle'></i>",
+            {
+                text: "<i class='fa fa-plus-circle'></i>",
                 className: "btn-sm btn-primary btn_add hidden",
-				titleAttr: "Create New",
-				action: function() {
-					btn_add();
-				}
-			},
-		],
+                titleAttr: "Create New",
+                action: function () {
+                    btn_add();
+                }
+            },
+            {
+                text: "<i class='fa fa-trash'></i>",
+                className: "btn-sm btn-danger btDels act-delete hidden",
+                titleAttr: "Multiple Delete",
+            },
+        ],
         "pagingType": "numbers",
-		"lengthMenu": [
-			[10, 25, 50, 100, -1],
-			[10, 25, 50, 100, 'All']
-		],
+        "lengthMenu": [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, 'All']
+        ],
         "responsive": true,
         "processing": false,
         "ordering": false,
@@ -93,14 +97,15 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl + '/read',
             "type": 'post',
-            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
                 $("#dtableDiv").fadeIn("slow");
-				$("a.btn.btn-default.btn-sm").addClass('disabled');
-				$("#tx_dtSpiner").text('Please wait...');
+                $("a.btn.btn-default.btn-sm").addClass('disabled');
+                $("#tx_dtSpiner").text('Please wait...');
                 $("#dtSpiner").removeClass('pause-spinner');
+
             },
             "dataSrc": function (json) {
                 /* return variable */
@@ -114,10 +119,12 @@ $(document).ready(function () {
                     /* ReOrdering json result */
                     for (var i = 0; i < json.message.data.length; i++) {
                         return_data.push({
-                            0: json.message.data[i].idrole,
+                            0: json.message.data[i].id_groupmenu,
                             1: json.message.data[i].no,
                             2: json.message.data[i].nama,
-                            3: json.message.data[i].deskripsi,
+                            3: json.message.data[i].icon,
+                            4: json.message.data[i].urut,
+                            5: json.message.data[i].aktif,
                         })
                     }
                     return return_data;
@@ -140,47 +147,65 @@ $(document).ready(function () {
         "deferRender": true,
         "columnDefs": [
             {
-                "targets": [0],
-                "visible": false,
-                "searchable": false
+                "targets": 0,
+                "className": "select-checkbox",
+                "checkboxes": {
+                    "selectRow": true
+                },
+                "render": function () {
+                    return '';
+                }
             },
             {
                 "targets": 1,
                 "className": "dt-center",
             },
             {
-				"targets": -1,
-				"className": "dt-center",
-				"data": null,
-				"defaultContent":
-					'<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Edit" id="btEdit" class="hidden btn-act act-edit btn btn-warning warning-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-draft"></i></button></span>' +
-					'<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Delete" id="btDel" class="hidden btn-act act-delete btn btn-danger danger-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-close"></i></button></span>'
-			}
-        ]
-    }).on('draw', function() {
-		/* stop_loader */
-		checkAuth(function(){
-			$("#tx_dtSpiner").text('Reload');
-			$("#dtSpiner").addClass('pause-spinner');
-			$("a.btn.btn-default.btn-sm").removeClass('disabled');
-			setNprogressLoader("done");
-		});
-	});
+                "targets": 3,
+                "render": function (data) {
+                    return '<i class="' + data + '"></i>&nbsp;&nbsp;&nbsp;&nbsp;' + data;
+                }
+            },
+            {
+                "targets": 4,
+                "className": "dt-right",
+            },
+            {
+                "targets": 5,
+                "className": "dt-center",
+                "render": function (data) {
+                    if (data == '1') {
+                        return '<span class="label label-success">ENABLED</span>';
+                    } else {
+                        return '<span class="label label-default">DISABLED</span>';
+                    }
+                }
+            },
+            {
+                "targets": -1,
+                "className": "dt-center",
+                "data": null,
+                "defaultContent":
+                    '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Edit" id="btEdit" class="hidden btn-act act-edit btn btn-warning warning-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-draft"></i></button></span>' +
+                    '<span class="button-icon-btn button-icon-btn-cl sm-res-mg-t-30"><button title="Delete" id="btDel" class="hidden btn-act act-delete btn btn-danger danger-icon-notika btn-reco-mg btn-button-mg waves-effect btn-xs" type="button"><i class="notika-icon notika-close"></i></button></span>'
+            }
+        ],
+        "select": {
+            "style": "multi",
+            "selector": "td:first-child",
+        }
+    }).on('draw', function () {
+        /* stop_loader */
+        checkAuth(function () {
+            $("#tx_dtSpiner").text('Reload');
+            $("#dtSpiner").addClass('pause-spinner');
+            $("a.btn.btn-default.btn-sm").removeClass('disabled');
+            setNprogressLoader("done");
+        });
+    });
 
     /* DataTable search on enter */
-    $('#datatable-responsive_filter input').unbind();
-    $('#datatable-responsive_filter input').bind('keyup', function (event) {
-        var val = this.value;
-        var len = val.length;
-        if (event.keyCode === 13 && len > 0) table.search(this.value).draw();
-        if (len > 0) enterBackspace = true;
-        if (enterBackspace) {
-            if (event.keyCode === 8 && len == 0) {
-                table.search('').draw(true);
-                enterBackspace = false;
-            }
-        }
-    });
+    enterAndSearch(table, '#datatable-responsive', enterBackspace)
 
     /* Button Save Action */
     $('.btn_save').on('click', function () {
@@ -195,9 +220,11 @@ $(document).ready(function () {
 
         /* Set Edit Form Value */
         $("input[name=nama]").val(data[2]);
-        $("textarea[name=deskripsi]").val(data[3]);
+        $("input[name=icon]").val(data[3]);
+        $("input[name=urut]").val(data[4]);
+        switchStatus('input[name=aktif]', data[5]);
         $('.btn_save').html('<i class="fa fa-save"></i> Update');
-        $('.modal-title').html('Form Edit');
+        $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('Edit Groupmenu');
         $('.formEditorModal').modal();
     });
 
@@ -210,18 +237,58 @@ $(document).ready(function () {
     /* Button Delete Multi */
     $('.btDels').on('click', function () {
         let rows_selected = table.column(0).checkboxes.selected();
-		deleteMultiple(apiUrl, table, rows_selected);
+        deleteMultiple(apiUrl, table, rows_selected);
     });
 });
+
+/* Status Change Event */
+$('input[name=aktif]').on('change', function () {
+    if (this.value == 1) {
+        this.value = 0;
+        $('.lbSwitch').text('DISABLED');
+    } else {
+        this.value = 1;
+        $('.lbSwitch').text('ENABLED');
+    }
+});
+
+/* Set Icon */
+$(document).on('click', '.klik-icon', function () {
+    let ic = $(this).find('h2 > i').attr('class');
+    $('input[name=icon]').val(ic);
+    $('.iconModal').modal('hide');
+});
+
+/* Show icon */
+$(document).on('focus', 'input[name=icon]', function () {
+    $('.iconModal').modal();
+});
+
+/* Hover on icon */
+$('.hover-ic').hover(
+    function () {
+        let cl = $(this).attr('class').split(' ');
+        let icon = cl[cl.length - 1];
+        $(this).attr('title', icon);
+        $(this).css('border', '2px solid #00C292');
+        $(this).css('border-width', 'initial');
+        $(this).css('padding', '5px');
+    },
+    function () {
+        $(this).css('border', '0');
+        $(this).css('padding', '0');
+    }
+);
 
 /* Button Create Action */
 function btn_add() {
     id = '';
     saveUpdate = 'save';
     $('.btn_save').html('<i class="fa fa-save"></i> Save');
-    $('.modal-title').html('Form Create');
+    $('.formEditorModal > .modal-dialog > .modal-content > .modal-header > .modal-title').html('New Groupmenu');
     $('.formEditorModal form')[0].reset();
     $('.formEditorModal').modal();
+    switchStatus('input[name=aktif]', 0);
 };
 
 /* Modal on show */
@@ -234,4 +301,10 @@ $('.formEditorModal').on('shown.bs.modal', function () {
 $('.formEditorModal').on('hide.bs.modal', function () {
     /* code */
     $("form#formEditor").parsley().reset();
+    switchStatus('input[name=aktif]', 0);
+});
+
+/* Modal on dissmis */
+$('.iconModal').on('hide.bs.modal', function () {
+    $('input[name=urut]').focus();
 });

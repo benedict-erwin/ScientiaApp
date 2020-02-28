@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_groupmenu extends \App\Plugin\DataTablesMysql
+class M_groupmenu extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -55,7 +55,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -74,7 +74,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
                     hash('sha256', $this->Sign . 'M_menu'),
@@ -82,7 +82,7 @@ class M_groupmenu extends \App\Plugin\DataTablesMysql
                     $this->Sign . '_router',
                 ]);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {

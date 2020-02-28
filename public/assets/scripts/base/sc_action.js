@@ -154,7 +154,7 @@ function saveOrUpdateWithFile(saveUpdate, apiUrl, pKey, form, callback) {
  */
 function deleteSingle(apiUrl, id, identifier, callback) {
     let msg = '<font color="red"><strong>Penghapusan : ' + identifier + '</strong></font>';
-    msg = msg + '<br>Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
+    msg = msg + '<br>Apakah Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
     alertify.confirm('PERINGATAN!', msg, function () {
         /* Ok */
         $.ajax({
@@ -201,7 +201,7 @@ function deleteMultiple(apiUrl, table, rows_selected, callback) {
     });
 
     if (rows.length > 0) {
-        let msg = 'Apaka Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
+        let msg = 'Apakah Anda yakin?<br/>Klik <font color="#4098D4"><strong>OK</strong></font> untuk mengkonfirmasi penghapusan.';
         let post_data = { 'id': rows };
         alertify.confirm('PERINGATAN!', msg, function () {
             /* Ok */
@@ -323,7 +323,7 @@ function populateSelect(apiUrl, opt, post_data, sel, opt_value, opt_text, opt_ad
  * @param {*} selector
  * @param {*} value
  */
-function initChoosen(selector, value=null, placeholder_text=null) {
+function initChoosen(selector, value = null, placeholder_text = null) {
     let opt = $(selector);
     opt.closest(':has(span i)').find('span').css('display', '');
     opt.closest('div').css('display', 'none');

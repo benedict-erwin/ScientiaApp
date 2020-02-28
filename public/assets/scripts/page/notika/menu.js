@@ -111,7 +111,7 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl + '/read',
             "type": 'post',
-            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
@@ -213,15 +213,15 @@ $(document).ready(function () {
                 }
             }
         ]
-    }).on('draw', function() {
-		/* stop_loader */
-		checkAuth(function(){
-			$("#tx_dtSpiner").text('Reload');
-			$("#dtSpiner").addClass('pause-spinner');
-			$("a.btn.btn-default.btn-sm").removeClass('disabled');
-			setNprogressLoader("done");
-		});
-	});
+    }).on('draw', function () {
+        /* stop_loader */
+        checkAuth(function () {
+            $("#tx_dtSpiner").text('Reload');
+            $("#dtSpiner").addClass('pause-spinner');
+            $("a.btn.btn-default.btn-sm").removeClass('disabled');
+            setNprogressLoader("done");
+        });
+    });
 
     /* DataTable search on enter */
     enterAndSearch(table, '#datatable-responsive', enterBackspace);
@@ -291,7 +291,7 @@ $(document).ready(function () {
         if ($("form#formEditor2").parsley().validate({ force: true, group: 'role' })) {
             $.ajax({
                 "type": 'POST',
-                "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+                "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
                 "url": SiteRoot + 'c_menu_setpermission',
                 "data": formData,
                 "dataType": 'json',
@@ -349,7 +349,7 @@ function getJabatan(id) {
     /* Retrieve Jabatan Menu */
     $.ajax({
         "type": 'POST',
-        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "url": SiteRoot + 'c_menu_jabatanmenu',
         "data": post_data,
         "dataType": 'json',
@@ -400,12 +400,12 @@ $('input[name=aktif]').on('change', function () {
 });
 
 /* Tipe Change Event */
-$('#tipe').on('change', function(){
+$('#tipe').on('change', function () {
     if (this.value == 'MENU') {
         $('#tx_star').html('');
         $('#tx_star').removeClass('required');
         $('input[name=controller]').removeAttr('data-parsley-group');
-    }else{
+    } else {
         $('#tx_star').html('*');
         $('#tx_star').addClass('required');
         $('input[name=controller]').attr('data-parsley-group', 'role');

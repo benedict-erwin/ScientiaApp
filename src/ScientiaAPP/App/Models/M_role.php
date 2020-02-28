@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_role extends \App\Plugin\DataTablesMysql
+class M_role extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -55,7 +55,7 @@ class M_role extends \App\Plugin\DataTablesMysql
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -74,14 +74,14 @@ class M_role extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
                     $this->Sign . '_getMenus',
                     $this->Sign . '_router',
                 ]);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
@@ -95,7 +95,7 @@ class M_role extends \App\Plugin\DataTablesMysql
         $this->db->pdo->beginTransaction();
         try {
             /* Save and get last_insert_id */
-            if($idrole = $this->create($data)){
+            if ($idrole = $this->create($data)) {
 
                 /* Select default access */
                 $jmenu = $this->db->select(
@@ -126,10 +126,9 @@ class M_role extends \App\Plugin\DataTablesMysql
                 ]);
 
                 return $idrole;
-            }else {
+            } else {
                 return false;
             }
-
         } catch (\Exception $e) {
             /* Rollback transaction on error */
             $this->db->pdo->rollBack();
@@ -158,7 +157,7 @@ class M_role extends \App\Plugin\DataTablesMysql
                 ];
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 

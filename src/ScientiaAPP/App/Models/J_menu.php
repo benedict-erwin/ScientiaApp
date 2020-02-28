@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class J_menu extends \App\Plugin\DataTablesMysql
+class J_menu extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;

@@ -99,7 +99,7 @@ $(document).ready(function () {
         "ajax": {
             "url": apiUrl,
             "type": 'post',
-            "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
             "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
@@ -182,15 +182,15 @@ $(document).ready(function () {
                 }
             },
         ]
-    }).on('draw', function() {
-		/* stop_loader */
-		checkAuth(function(){
-			$("#tx_dtSpiner").text('Reload');
-			$("#dtSpiner").addClass('pause-spinner');
-			$("a.btn.btn-default.btn-sm").removeClass('disabled');
-			setNprogressLoader("done");
-		});
-	});
+    }).on('draw', function () {
+        /* stop_loader */
+        checkAuth(function () {
+            $("#tx_dtSpiner").text('Reload');
+            $("#dtSpiner").addClass('pause-spinner');
+            $("a.btn.btn-default.btn-sm").removeClass('disabled');
+            setNprogressLoader("done");
+        });
+    });
 
     /* DataTable search on enter */
     enterAndSearch(table, '#datatable-generator', enterBackspace);
@@ -238,7 +238,7 @@ function getTables() {
     opt.chosen("destroy");
     $.ajax({
         "type": 'POST',
-        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "url": apiUrl,
         "data": post_data,
         "dataType": 'json',
@@ -293,7 +293,7 @@ function getJabatan() {
     /* Retrieve Jabatan */
     $.ajax({
         "type": 'POST',
-        "headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
+        "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
         "url": apiUrl,
         "data": post_data,
         "dataType": 'json',

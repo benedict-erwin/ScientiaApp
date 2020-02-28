@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class CRUDGenerator extends \App\Plugin\DataTablesMysql
+class CRUDGenerator extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;

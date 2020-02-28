@@ -27,7 +27,7 @@ class MenuController extends \App\Controllers\PrivateController
 
     public function index()
     {
-        return $this->getMenus((int)$this->user_data['ID_ROLE']);
+        return $this->getMenus((int) $this->user_data['ID_ROLE']);
     }
 
     private function getMenus(int $idrole)
@@ -64,8 +64,8 @@ class MenuController extends \App\Controllers\PrivateController
             } else {
                 $GROUPMENU = $CachedString->get();
             }
-            return $this->jsonSuccess(array_values($GROUPMENU), ['sp_uname'=>$this->user_data['USERNAME']]);
-        } catch (PDOException $e) {
+            return $this->jsonSuccess(array_values($GROUPMENU), ['sp_uname' => $this->user_data['USERNAME']]);
+        } catch (\PDOException $e) {
             throw new \Exception("Cannot generate menu!");
         }
     }
@@ -85,15 +85,15 @@ class MenuController extends \App\Controllers\PrivateController
                 $err = implode(', ', array_values($ers));
 
                 /* Logger */
-                if($this->container->get('settings')['mode'] != 'production'){
+                if ($this->container->get('settings')['mode'] != 'production') {
                     $this->logger->error(__METHOD__ . ' :: ', ['INFO' => $ers]);
                 }
                 throw new \Exception($err);
             } else {
-                $cn = $this->getPermission($safe['path'], (int)$this->user_data['ID_ROLE']);
+                $cn = $this->getPermission($safe['path'], (int) $this->user_data['ID_ROLE']);
                 if ($cn) {
                     return $this->jsonSuccess($cn);
-                }else {
+                } else {
                     return $this->jsonFail('Execution Fail!', ['error' => 'Unauthorized!']);
                 }
             }
@@ -102,7 +102,7 @@ class MenuController extends \App\Controllers\PrivateController
         }
     }
 
-    private function getPermission(string $url = null, int $idrole=null)
+    private function getPermission(string $url = null, int $idrole = null)
     {
         try {
             $data = [];
@@ -115,7 +115,6 @@ class MenuController extends \App\Controllers\PrivateController
                 return array_values(array_unique($data));
             }
             return false;
-
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage());
         }

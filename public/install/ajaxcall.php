@@ -233,7 +233,7 @@ function createENV()
 }
 
 # Create New DB User
-function createNewUserDB(Type $var = null)
+function createNewUserDB()
 {
     $data = [];
     $sql = "CREATE DATABASE `" . $_SESSION['NEWDB'] . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";

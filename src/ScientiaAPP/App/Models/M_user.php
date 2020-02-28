@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_user extends \App\Plugin\DataTablesMysql
+class M_user extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -34,8 +34,8 @@ class M_user extends \App\Plugin\DataTablesMysql
         /* Table Setup */
         $this->setTable('m_user')
             ->setPkey('iduser')
-            ->setSearchCols(['mu.nama' , 'mu.email' , 'mu.telpon' , 'mu.username'])
-            ->setOrderCols(['mu.iduser', null, 'mu.nama' , 'mu.email', 'mu.telpon', null, 'mu.username'])
+            ->setSearchCols(['mu.nama', 'mu.email', 'mu.telpon', 'mu.username'])
+            ->setOrderCols(['mu.iduser', null, 'mu.nama', 'mu.email', 'mu.telpon', null, 'mu.username'])
             ->setQuery($this->alterSql());
     }
 
@@ -70,7 +70,7 @@ class M_user extends \App\Plugin\DataTablesMysql
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -89,10 +89,10 @@ class M_user extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTag($this->TagName);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {

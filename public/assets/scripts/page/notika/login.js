@@ -1,22 +1,22 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var klik = true;
 
     /* Event default */
     $("#tx_username").trigger('focus');
-    $("#tx_username").enterKey(function(e) {
+    $("#tx_username").enterKey(function (e) {
         e.preventDefault();
         klik = true;
         $("#tx_password").trigger('focus');
     });
 
-    $("#tx_password").enterKey(function(e) {
+    $("#tx_password").enterKey(function (e) {
         e.preventDefault();
         klik = true;
         $("#bt_login").click();
     });
 
     /* Click bt_login */
-    $(document).on('click', '#bt_login', function() {
+    $(document).on('click', '#bt_login', function () {
         if (klik) {
             klik = false;
             if ($('#tx_username').val() == '' || $('#tx_password').val() == '') {
@@ -36,11 +36,11 @@ $(document).ready(function() {
                 "url": SiteRoot + 'clogin',
                 "data": post_data,
                 "dataType": 'json',
-                "success": function(data, textStatus, jqXHR) {
+                "success": function (data, textStatus, jqXHR) {
                     if (data.success === true) {
                         set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
                         notification(data.message, 'success');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             window.location.replace('./home');
                         }, 1000);
                     } else {
@@ -50,7 +50,7 @@ $(document).ready(function() {
                         klik = true;
                     }
                 },
-                "error": function(jqXHR, textStatus, errorThrown) {
+                "error": function (jqXHR, textStatus, errorThrown) {
                     klik = true;
                     $('#bt_login').prop('disabled', false);
                     $('#tx_spin').html('LOGIN');

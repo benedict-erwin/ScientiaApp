@@ -14,21 +14,23 @@
  *
  **/
 
-namespace App\Plugin;
+namespace App\Models;
 
 class DataTablesMysql
 {
     /* Declare Property */
     protected $db;
-    private $logger, $mode;
+    private $logger;
+    private $mode;
     private $TABLE;
-    private $COLUMNS    = [];
+    private $COLUMNS = [];
     private $PKEY;
-    private $COLUMN_ORDER  = [];
+    private $COLUMN_ORDER = [];
     private $COLUMN_SEARCH = [];
     private $ORDER = [];
     private $AND_OR = "AND";
-    private $SQL, $LAST_SQL;
+    private $SQL;
+    private $LAST_SQL;
 
     /* Constructor */
     public function __construct(\Slim\Container $container)

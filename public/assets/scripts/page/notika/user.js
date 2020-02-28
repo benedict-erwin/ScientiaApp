@@ -5,7 +5,7 @@ var pKey, table;
 var saveUpdate = "save";
 
 /* Document Ready */
-$(document).ready(function() {
+$(document).ready(function () {
     /* First Event Load */
     var enterBackspace = true;
     getJabatan('#fm_jabatan');
@@ -35,14 +35,14 @@ $(document).ready(function() {
         $(".btn_save").click();
     });
 
-	/* Datatables set_token */
-	$("#datatable-responsive").on('xhr.dt', function(e, settings, json, jqXHR){
+    /* Datatables set_token */
+    $("#datatable-responsive").on('xhr.dt', function (e, settings, json, jqXHR) {
         redirectLogin(jqXHR);
         set_token(API_TOKEN, jqXHR.getResponseHeader('JWT'));
-	});
+    });
 
-	/* Datatables handler */
-	var table = $("#datatable-responsive").DataTable({
+    /* Datatables handler */
+    var table = $("#datatable-responsive").DataTable({
         autoWidth: false,
         language: {
             "emptyTable": "Tidak ada data yang tersedia",
@@ -108,20 +108,20 @@ $(document).ready(function() {
             },
         ],
         "pagingType": "numbers",
-		"lengthMenu": [
-			[10, 25, 50, 100, -1],
-			[10, 25, 50, 100, 'All']
-		],
-		"responsive": true,
-		"processing": false,
+        "lengthMenu": [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, 'All']
+        ],
+        "responsive": true,
+        "processing": false,
         "ordering": true,
         "order": [[2, "asc"]],
-		"serverSide": true,
-		"ajax": {
-			"url": apiUrl + '/read',
-			"type": 'post',
-			"headers": { Authorization: "Bearer " +  get_token(API_TOKEN) },
-			"data": function(data, settings){
+        "serverSide": true,
+        "ajax": {
+            "url": apiUrl + '/read',
+            "type": 'post',
+            "headers": { Authorization: "Bearer " + get_token(API_TOKEN) },
+            "data": function (data, settings) {
                 /* start_loader */
                 $(".cssload-loader").hide();
                 $("#dtableDiv").fadeIn("slow");
@@ -129,43 +129,43 @@ $(document).ready(function() {
                 $("#tx_dtSpiner").text('Please wait...');
                 $("#dtSpiner").removeClass('pause-spinner');
 
-				/* Post Data */
+                /* Post Data */
                 data.opsional = {
                     'idrole': $("#fm_jabatan").val(),
                 };
-			},
-			"dataSrc": function(json) {
-				/* return variable */
-				var return_data = [];
-				if (json.success === true) {
-					/* Redraw json result */
-					json.draw = json.message.draw;
-					json.recordsFiltered = json.message.recordsFiltered;
-					json.recordsTotal = json.message.recordsTotal;
+            },
+            "dataSrc": function (json) {
+                /* return variable */
+                var return_data = [];
+                if (json.success === true) {
+                    /* Redraw json result */
+                    json.draw = json.message.draw;
+                    json.recordsFiltered = json.message.recordsFiltered;
+                    json.recordsTotal = json.message.recordsTotal;
 
-					/* ReOrdering json result */
-					for (var i = 0; i < json.message.data.length; i++) {
-						return_data.push({
-							0: json.message.data[i].iduser,
-							1: json.message.data[i].no,
-							2: json.message.data[i].nama,
-							3: json.message.data[i].username,
-							4: json.message.data[i].email,
-							5: json.message.data[i].idrole,
-							6: json.message.data[i].telpon,
-							7: json.message.data[i].role,
-							8: json.message.data[i].lastlogin,
-						})
-					}
-					return return_data;
-				} else {
-					json.draw = null;
-					json.recordsFiltered = null;
-					json.recordsTotal = null;
-					return_data = [];
+                    /* ReOrdering json result */
+                    for (var i = 0; i < json.message.data.length; i++) {
+                        return_data.push({
+                            0: json.message.data[i].iduser,
+                            1: json.message.data[i].no,
+                            2: json.message.data[i].nama,
+                            3: json.message.data[i].username,
+                            4: json.message.data[i].email,
+                            5: json.message.data[i].idrole,
+                            6: json.message.data[i].telpon,
+                            7: json.message.data[i].role,
+                            8: json.message.data[i].lastlogin,
+                        })
+                    }
+                    return return_data;
+                } else {
+                    json.draw = null;
+                    json.recordsFiltered = null;
+                    json.recordsTotal = null;
+                    return_data = [];
                     notification(json.error, 'warn', 2, json.message);
-					return return_data;
-				}
+                    return return_data;
+                }
             },
             "error": function (jqXHR, textStatus, errorThrown) {
                 notification(jqXHR.responseJSON.error, 'error', 3, 'ERROR');
@@ -175,7 +175,7 @@ $(document).ready(function() {
             }
         },
         "deferRender": true,
-		"columnDefs": [
+        "columnDefs": [
             {
                 "targets": 0,
                 "className": "select-checkbox",
@@ -216,7 +216,7 @@ $(document).ready(function() {
                 "className": "dt-center",
                 "orderable": false,
                 "render": function (data, type, row) {
-                    return (data) ? DateFormat(data.split(' ')[0], '-') + ' ' + data.split(' ')[1]:'-';
+                    return (data) ? DateFormat(data.split(' ')[0], '-') + ' ' + data.split(' ')[1] : '-';
                 }
             },
             {
@@ -233,15 +233,15 @@ $(document).ready(function() {
             "style": "multi",
             "selector": "td:first-child",
         }
-	}).on('draw', function() {
-		/* stop_loader */
-		checkAuth(function(){
-			$("#tx_dtSpiner").text('Reload');
-			$("#dtSpiner").addClass('pause-spinner');
-			$("a.btn.btn-default.btn-sm").removeClass('disabled');
-			setNprogressLoader("done");
-		});
-	});
+    }).on('draw', function () {
+        /* stop_loader */
+        checkAuth(function () {
+            $("#tx_dtSpiner").text('Reload');
+            $("#dtSpiner").addClass('pause-spinner');
+            $("a.btn.btn-default.btn-sm").removeClass('disabled');
+            setNprogressLoader("done");
+        });
+    });
 
     /* DataTable search on enter */
     enterAndSearch(table, '#datatable-responsive', enterBackspace);
@@ -308,10 +308,10 @@ function btn_add() {
     saveUpdate = 'save';
     $('input[name=password]').attr('required', 'required');
     getJabatan('#idjabatan', ($("#fm_jabatan").val() ? $("#fm_jabatan").val() : '0'));
-	$('.btn_save').html('<i class="fa fa-save"></i> Save');
-	$('.modal-title').html('New User');
-	$('.formEditorModal form')[0].reset();
-	$('.formEditorModal').modal();
+    $('.btn_save').html('<i class="fa fa-save"></i> Save');
+    $('.modal-title').html('New User');
+    $('.formEditorModal form')[0].reset();
+    $('.formEditorModal').modal();
 };
 
 /* Modal on show */
@@ -321,8 +321,8 @@ $('.formEditorModal').on('shown.bs.modal', function () {
 });
 
 /* Modal on dissmis */
-$('.formEditorModal').on('hide.bs.modal', function() {
-	/* code */
+$('.formEditorModal').on('hide.bs.modal', function () {
+    /* code */
     $("form#formEditor").parsley().reset();
     $('input[name=password]').val('');
 });

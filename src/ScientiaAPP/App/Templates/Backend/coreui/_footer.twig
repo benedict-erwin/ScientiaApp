@@ -13,11 +13,23 @@
     <script src="{{ base_url }}assets/templates/coreui/modules/popper.js/dist/umd/popper.min.js"></script>
     <script src="{{ base_url }}assets/templates/coreui/modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="{{ base_url }}assets/templates/coreui/modules/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+
+    <!-- JS Dependencies -->
+    <script src="{{ base_url }}assets/templates/notika/vendor/nprogress/nprogress.js"></script>
+    {% if mode == 'development' %}
+    <script src="{{ base_url }}assets/scripts/base/sc_function.js?v={{jsver}}"></script>
+    <script src="{{ base_url }}assets/scripts/base/sc_action.js?v={{jsver}}"></script>
+    {% elseif mode == 'production' %}
+    <script src="{{ base_url }}assets/scripts/base/sc_function.min.js"></script>
+    <script src="{{ base_url }}assets/scripts/base/sc_action.min.js"></script>
+    {% endif %}
     <script src="{{ base_url }}assets/templates/coreui/modules/@coreui/coreui/dist/js/coreui.js"></script>
     <script>
       $('#ui-view').ajaxLoad();
       $(document).ajaxComplete(function() {
-        //Pace.restart()
+        // setTimeout(() => {
+        //   setNprogressLoader("done");
+        // }, 950);
       });
     </script>
   </body>

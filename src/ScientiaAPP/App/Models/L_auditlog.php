@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class L_auditlog extends \App\Plugin\DataTablesMysql
+class L_auditlog extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;

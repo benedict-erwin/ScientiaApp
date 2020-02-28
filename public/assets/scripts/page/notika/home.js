@@ -1,5 +1,5 @@
 /* Document Ready */
-$(document).ready(function() {
+$(document).ready(function () {
     //Home function here
     //$(".cssload-loader").hide();
     //$("#dtableDiv").fadeIn('slow');

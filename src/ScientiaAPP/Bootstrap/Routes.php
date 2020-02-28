@@ -41,13 +41,14 @@ if ($container->get('settings')['cms_template'] == 'coreui') {
     ## Coreui main router template
     $app->get('/scientia/main', function ($request, $response, $args) use ($container) {
         $data['template'] = $container->get('settings')['cms_template'];
-        $data['page'] = '_main';
+        $data['page'] = 'main';
         $data['jsver'] = $this->get('settings')['jsversion'];
         return $this->view->render($response, 'Backend/index.twig', $data);
     });
 
     ## Coreui views
     $app->get('/scientia/views/{page}', function ($request, $response, $args) {
+        sleep(3);
         return $this->view->render($response, 'Backend/coreui/' . $args['page'] . '.twig');
     });
 } else {

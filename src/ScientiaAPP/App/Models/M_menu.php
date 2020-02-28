@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-class M_menu extends \App\Plugin\DataTablesMysql
+class M_menu extends \App\Models\DataTablesMysql
 {
     /* Declare private variable */
     private $Cacher;
@@ -55,7 +55,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
                 $output = $this->getDataById($id);
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -74,11 +74,11 @@ class M_menu extends \App\Plugin\DataTablesMysql
     public function create(array $data = [])
     {
         try {
-            if($this->isDuplicate(['/'.trim($data['url'], '/')], [$data['tipe']])){
+            if ($this->isDuplicate(['/' . trim($data['url'], '/')], [$data['tipe']])) {
                 throw new \Exception('Menu sudah tersedia!');
             }
 
-            if($lastId = $this->saveData($data)){
+            if ($lastId = $this->saveData($data)) {
                 $this->Cacher->deleteItemsByTags([
                     $this->TagName,
                     $this->Sign . '_router',
@@ -86,7 +86,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
                     hash('sha256', $this->Sign . 'CRUDGenerator')
                 ]);
                 return $lastId;
-            }else {
+            } else {
                 return false;
             }
         } catch (\Exception $e) {
@@ -294,7 +294,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
 
                 $CachedString->set($output)->expiresAfter($this->CacheExp)->addTag($this->TagName);
                 $this->Cacher->save($CachedString);
-            }else {
+            } else {
                 $output = $CachedString->get();
             }
 
@@ -315,7 +315,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
     {
         try {
             $output = null;
-            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode(array_merge($url,$tipe)));
+            $cacheKey = hash('md5', $this->Sign . __METHOD__ . json_encode(array_merge($url, $tipe)));
             $CachedString = $this->Cacher->getItem($cacheKey);
 
             if (!$CachedString->isHit()) {
@@ -333,7 +333,7 @@ class M_menu extends \App\Plugin\DataTablesMysql
                 $output = $CachedString->get();
             }
 
-            return ((int)$output > 0) ? true:false;
+            return ((int) $output > 0) ? true : false;
         } catch (\Exception $e) {
             throw new \Exception($this->overrideSQLMsg($e->getMessage()));
         }
