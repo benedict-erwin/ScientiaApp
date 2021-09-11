@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "9036ba3555ac415b96f5d6abc06ba036",
@@ -95,6 +95,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
+            "abandoned": "psr/container",
             "time": "2017-02-14T19:40:03+00:00"
         },
         {
@@ -278,16 +279,16 @@
         },
         {
             "name": "phpfastcache/phpfastcache",
-            "version": "7.0.5",
+            "version": "7.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPSocialNetwork/phpfastcache.git",
-                "reference": "64638b27f473aa26603e84288d91a2b80a4aa388"
+                "reference": "ee5e7fc730aeef7b0e0970adc038168b4087601c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/64638b27f473aa26603e84288d91a2b80a4aa388",
-                "reference": "64638b27f473aa26603e84288d91a2b80a4aa388",
+                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/ee5e7fc730aeef7b0e0970adc038168b4087601c",
+                "reference": "ee5e7fc730aeef7b0e0970adc038168b4087601c",
                 "shasum": ""
             },
             "require": {
@@ -331,15 +332,15 @@
             "authors": [
                 {
                     "name": "Georges.L",
-                    "role": "Actual Project Manager/Developer",
                     "email": "contact@geolim4.com",
-                    "homepage": "https://github.com/Geolim4"
+                    "homepage": "https://github.com/Geolim4",
+                    "role": "Actual Project Manager/Developer"
                 },
                 {
                     "name": "Khoa Bui",
-                    "role": "Former Project Developer/Original Creator",
                     "email": "khoaofgod@gmail.com",
-                    "homepage": "https://www.phpfastcache.com"
+                    "homepage": "https://www.phpfastcache.com",
+                    "role": "Former Project Developer/Original Creator"
                 }
             ],
             "description": "PHP Abstract Cache Class - Reduce your database call using cache system. PhpFastCache handles a lot of drivers such as Apc(u), Cassandra, CouchBase, Couchdb, Mongodb, Files, (P)redis, Leveldb, Memcache(d), Ssdb, Sqlite, Wincache, Xcache, Zend Data Cache.",
@@ -374,7 +375,17 @@
                 "zend memory cache",
                 "zend server"
             ],
-            "time": "2019-03-03T14:39:16+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/geolim4",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/geolim4",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2021-08-12T11:55:02+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -1011,9 +1022,9 @@
             "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data",
             "homepage": "https://wixelhq.com/",
             "support": {
-                "source": "https://github.com/benedict-erwin/GUMP/tree/master"
+                "source": "https://github.com/benedict-erwin/GUMP/tree/dev-master"
             },
-            "time": "2019-07-04 17:22:23"
+            "time": "2019-07-04T17:22:23+00:00"
         }
     ],
     "packages-dev": [],
@@ -1025,5 +1036,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
